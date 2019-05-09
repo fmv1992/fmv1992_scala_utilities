@@ -64,7 +64,7 @@ test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 test_sbt: $(SBT_FILES)
 
 compile: $(SBT_FILES) $(SCALA_FILES)
-	cd ./scala_pandoc && sbt compile
+	cd $(dir $@) && sbt compile
 
 $(SBT_FILES): $(SCALA_FILES)
 	cd $(dir $@) && sbt test assembly
