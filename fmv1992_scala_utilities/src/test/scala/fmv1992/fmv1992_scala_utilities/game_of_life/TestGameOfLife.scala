@@ -211,9 +211,9 @@ class TestGameOfLifeOscillators extends FunSuite  with TestGameOfLifeHelper {
 
 class TestGameOfLifePoolOfCases extends FunSuite  with TestGameOfLifeHelper {
 
- val defectiveSeed01= 1785599012
- val defectiveSeed02= -709633859
- val defectiveSeed03= -92084096
+ val defectiveSeed01 = 1785599012
+ val defectiveSeed02 = -709633859
+ val defectiveSeed03 = -92084096
 
 test("Test that seeding these crahses current GOL.") {
 

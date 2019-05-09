@@ -46,10 +46,10 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
     res
   }
 
-  override def toString(): String = this.representation
+  override def toString: String = this.representation
 
   /** Get next state for this game of life. */
-  def next(): GameOfLife = {
+  def next: GameOfLife = {
     GameOfLife(this.state.map(l ⇒ l.map(c ⇒ Cell.getNextState(c, state))))
   }
 
@@ -221,54 +221,58 @@ object Main extends CLIConfigTestableMain {
 
   val CLIConfigPath = "./src/main/resources/game_of_life_cli_config.conf"
 
-  def isRepeating(s: Stream[GameOfLife]): Stream[Boolean] = {
-    println(s)
-    if (s.tail.isEmpty) {
-      Stream.continually(false)
-    } else if (s.tail.tail.isEmpty) {
-      Stream.continually(false)
-    } else {
-      Stream(false, false) ++ s.zip(s.tail.tail).map(x ⇒ x._1 == x._2)
-    }
+  // ???: Uniformize the juggling of Int → Random and vice versa in this
+  // package.
+  def getInfiniteStreamOfGames(i: Int): Stream[String] = {
+
+    def origStream: Stream[GameOfLife] = infiniteGameOfLife(i)
+    // ???: Print at least one dead game.
+    def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
+
+    def truncNonRepeatingStream: Stream[GameOfLife] = ???
+      // isRepeating(truncEndingStream)
+        // .zip(truncEndingStream)
+        // .filter(_._1)
+        // .map(_._2)
+
+    // Lazily append streams.
+    val r = new scala.util.Random(i)
+    truncNonRepeatingStream.map(_.toString) #::: getInfiniteStreamOfGames(r.nextInt)
+
+  }
+
+  def findCycles(): Seq[String] = {
+     ???
   }
 
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
 
-    // Parse seed.
-    val seedString: String = args.filter(_.longName == "seed")(0).value(0)
-    val seedInt: Int =
-      scala.util.Try(seedString.toInt).getOrElse(System.nanoTime.toInt)
-    val r = new scala.util.Random(seedInt)
+    val (seedString, o1) = splitArgumentFromOthers(args, "seed")
+    val (findCycle, o2) = splitArgumentFromOthers(o1, "find-cyclic")
+    val (makeGames, o3) = splitArgumentFromOthers(o2, "make-games")
+    val (nGamesString, o4) = splitArgumentFromOthers(o3, "n-games")
 
-    // Parse game size.
-    val nGamesString: String = args.filter(_.longName == "ngames")(0).value(0)
-    // Removed infinite loop scenario.
     val nGames: Int = scala.util.Try(nGamesString.toInt).getOrElse(0)
 
-    // ???: Uniformize the juggling of Int → Random and vice versa in this
-    // package.
-    def go(goRandom: scala.util.Random): Stream[String] = {
+    // Fix seed.
+    val seedInt: Int =
+      scala.util.Try(seedString.toInt).getOrElse(System.nanoTime.toInt)
 
-      // ???: Arguments are disconsidered at this stage.
-      def origStream: Stream[GameOfLife] =
-        infiniteGameOfLife(goRandom.nextInt)
-      // ???: Print at least one dead game.
-      def truncEndingStream: Stream[GameOfLife] =
-        origStream.takeWhile(!_.isOver)
+    // Get main action.
+    val action = findCycle.orElse(makeGames).getOrElse(throw new Exception())
 
-      def truncNonRepeatingStream: Stream[GameOfLife] =
-        isRepeating(truncEndingStream)
-          .zip(truncEndingStream)
-          .filter(_._1)
-          .map(_._2)
+    // action.
 
-      // Lazily append streams.
-      truncNonRepeatingStream.map(_.toString) #::: go(r)
+    val res: Seq[String] =
+        if (action.longName == "find-cyclic") {
+          findCycles()
+        } else if (action.longName == "make-games") {
+          getInfiniteStreamOfGames(seedInt).take(nGames)
+      }
 
-    }
-
-    go(r).take(nGames)
+    throw new Exception()
+    res
 
   }
 
