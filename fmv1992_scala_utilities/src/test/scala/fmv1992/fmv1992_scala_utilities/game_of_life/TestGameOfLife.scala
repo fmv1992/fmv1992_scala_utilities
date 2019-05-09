@@ -57,7 +57,7 @@ trait TestGameOfLifeHelper {
   // Test parsing.
   val parser = GNUParser(Main.CLIConfigPath)
 
-  val finiteArguments = parser.parse(List("--ngames", "7"))
+  val finiteArguments = parser.parse(List("--n-games", "7"))
 
 }
 
@@ -177,7 +177,7 @@ class TestGameOfLife extends FunSuite with TestGameOfLifeHelper {
 
     // Assert that random seed determines games..
     def deterministicArguments(x: Int): Seq[Argument] = {
-      parser.parse(s"--ngames ${x} --seed 987".split(" ").toList)
+      parser.parse(s"--n-games ${x} --seed 987".split(" ").toList)
     }
     assert(Main.testableMain(deterministicArguments(0)) != Seq(""))
     assert(
@@ -218,7 +218,7 @@ class TestGameOfLifePoolOfCases extends FunSuite  with TestGameOfLifeHelper {
 test("Test that seeding these crahses current GOL.") {
 
     val arg1: Seq[Argument] = {
-      parser.parse(s"--ngames 10 --seed 1785599012".split(" ").toList)
+      parser.parse(s"--make-games --n-games 10 --seed 1785599012".split(" ").toList)
     }
     println(Main.testableMain(arg1))
 }

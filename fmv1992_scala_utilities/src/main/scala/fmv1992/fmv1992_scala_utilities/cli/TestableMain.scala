@@ -81,17 +81,15 @@ trait TestableMain {
   def splitArgumentFromOthers(
       args: Seq[Argument],
       longName: String
-  ): Tuple2[Option[Seq[Argument]], Seq[Argument]] = {
+  ): Tuple2[Seq[Argument], Seq[Argument]] = {
 
-    def isInputArg(x: Argument): Boolean = x.longName == "input"
+    def isXArg(x: Argument): Boolean = x.longName == longName
 
-    val inputArg: Seq[Argument] = args.filter(isInputArg)
-    val otherArgs: Seq[Argument] = args.filterNot(isInputArg(_))
+    val inputArg: Seq[Argument] = args.filter(isXArg)
+    val otherArgs: Seq[Argument] = args.filterNot(isXArg(_))
     require(inputArg.length <= 1)
 
-    val inputArgOpt: Option[Seq[Argument]] = if (inputArg.isEmpty) None else Some(inputArg)
-
-    (inputArgOpt, otherArgs)
+    (inputArg, otherArgs)
 
   }
 

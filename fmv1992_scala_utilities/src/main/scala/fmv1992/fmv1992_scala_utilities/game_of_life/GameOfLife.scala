@@ -229,11 +229,17 @@ object Main extends CLIConfigTestableMain {
     // ???: Print at least one dead game.
     def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
 
-    def truncNonRepeatingStream: Stream[GameOfLife] = ???
-      // isRepeating(truncEndingStream)
-        // .zip(truncEndingStream)
-        // .filter(_._1)
-        // .map(_._2)
+    // ???: Games take O(n) memory.
+    type SGOL = Set[GameOfLife]
+    lazy val previousGames: Stream[SGOL] = {
+      (Set.empty: Set[GameOfLife]) #::
+      previousGames.zip(truncEndingStream).map({ case (a: SGOL, b:GameOfLife) ⇒ a + b})
+    }
+    def truncNonRepeatingStream: Stream[GameOfLife] =
+    previousGames
+        .zip(truncEndingStream)
+        .filter({ case (a: SGOL, b:GameOfLife) ⇒ ! a.contains(b)})
+        .map(_._2)
 
     // Lazily append streams.
     val r = new scala.util.Random(i)
@@ -253,25 +259,23 @@ object Main extends CLIConfigTestableMain {
     val (makeGames, o3) = splitArgumentFromOthers(o2, "make-games")
     val (nGamesString, o4) = splitArgumentFromOthers(o3, "n-games")
 
-    val nGames: Int = scala.util.Try(nGamesString.toInt).getOrElse(0)
+    val nGames: Int = nGamesString(0).value(0).toInt
 
     // Fix seed.
-    val seedInt: Int =
-      scala.util.Try(seedString.toInt).getOrElse(System.nanoTime.toInt)
-
-    // Get main action.
-    val action = findCycle.orElse(makeGames).getOrElse(throw new Exception())
+    val seedInt: Int = seedString(0).value(0).toInt
 
     // action.
 
-    val res: Seq[String] =
-        if (action.longName == "find-cyclic") {
+    val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) ⇒ {
+        if (a.longName == "find-cyclic") {
           findCycles()
-        } else if (action.longName == "make-games") {
+        } else if (a.longName == "make-games") {
           getInfiniteStreamOfGames(seedInt).take(nGames)
+      } else {
+        l
       }
+    })
 
-    throw new Exception()
     res
 
   }
