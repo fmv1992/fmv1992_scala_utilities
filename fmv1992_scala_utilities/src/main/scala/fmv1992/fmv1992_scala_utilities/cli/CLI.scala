@@ -63,17 +63,20 @@ trait ConfigFileParser extends CLIParser {
       }
     }
 
-    // Add default arguments if there are any.
+    val parsedArgs: Seq[Argument] = go(args, Nil).reverse
+    val argsLongNames = parsedArgs.map(_.longName)
+
+    // Add default arguments if there is any.
     val defaultKeys: Seq[String] =
       format.filter(x ⇒ x._2.contains("default")).keys.toSeq
-    val notIncludedDefaultKeys
-        : Seq[String] = (defaultKeys diff format.values.toSeq)
-
+    val notIncludedDefaultKeys: Seq[String] = (defaultKeys diff argsLongNames)
+    require(argsLongNames.intersect(notIncludedDefaultKeys).isEmpty,
+      argsLongNames + "|" + notIncludedDefaultKeys)
     val additionalArgs: Seq[Argument] = {
       notIncludedDefaultKeys.map(x ⇒ GNUArg(x, List(format(x)("default"))))
     }
 
-    go(args, Nil).reverse ++ additionalArgs
+     parsedArgs ++ additionalArgs
 
   }
 

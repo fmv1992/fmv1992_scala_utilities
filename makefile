@@ -21,7 +21,7 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 # ???: Google drive link to download ~/.sbt needed to compile this project.
 # https://drive.google.com/open?id=1FoY3kQi52PWllwc3ytYU9452qJ4ack1u
 
-all: dev test assembly publishlocal doc
+all: dev test assembly publishlocal doc coverage
 
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc

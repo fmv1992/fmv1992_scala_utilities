@@ -234,13 +234,12 @@ object Main extends CLIConfigTestableMain {
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
 
+    Console.err.println(args)
     // Parse seed.
-    // ???: Very un-idiomatic stuff going on here: ()()().
-    // ???: Improve `cli.Arguments` system.
     val seedString: String = args.filter(_.longName == "seed")(0).value(0)
-    // val seed: Int = ErrorUtilities.lift((x: String) ⇒ x.toInt)(seedString).getOrElse(System.nanoTime.toInt)
     val seedInt: Int =
       scala.util.Try(seedString.toInt).getOrElse(System.nanoTime.toInt)
+    Console.err.println(seedInt)
     val r = new scala.util.Random(seedInt)
 
     // Parse game size.

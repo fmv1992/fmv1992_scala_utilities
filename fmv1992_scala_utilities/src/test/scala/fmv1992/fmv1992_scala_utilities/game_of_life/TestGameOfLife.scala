@@ -10,7 +10,7 @@ import fmv1992.fmv1992_scala_utilities.cli.Argument
 // Se matchers here:
 // http://www.scalatest.org/user_guide/using_matchers#checkingObjectIdentity
 
-object TestHelper {
+object TestGameOfLifeHelper {
 
   val a = Alive(-1, -1)
   val d = Dead(-1, -1)
@@ -56,9 +56,9 @@ object TestHelper {
 
 }
 
-class GOLFun1 extends FunSuite {
+class TestGameOfLife extends FunSuite {
 
-  val h = TestHelper
+  val h = TestGameOfLifeHelper
 
   test("Ensure constants across the same package version.") {
     assert(h.standardGOL.toString == "oxxxx\nxxooo\nxxoxo\noooox\nxoxxx")
@@ -160,13 +160,14 @@ class GOLFun1 extends FunSuite {
     assert(h.infiniteGameOfLife.exists(_.isOver))
   }
 
-  // ???: Problem with reproduction of these tests.
-  ignore("Test testableMain.") {
+  // ???: Problem with reproduction of these tests. Approximately 1 in 20 enter
+  // an endless loop.
+  test("Test testableMain.") {
 
     // Test parsing.
     val parser = GNUParser(Main.CLIConfigPath)
 
-    val finiteArguments = parser.parse(List("--ngames", "10"))
+    val finiteArguments = parser.parse(List("--ngames", "7"))
 
     // // Test API.
     Main.testableMain(finiteArguments)
@@ -194,9 +195,7 @@ class GOLFun1 extends FunSuite {
 
 }
 
-class GOLOscillators extends FunSuite {
-
-  val h = TestHelper
+class TestGameOfLifeOscillators extends FunSuite {
 
   test("Oscillator 01.") {
 

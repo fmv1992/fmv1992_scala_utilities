@@ -37,16 +37,6 @@ object Utilities {
 
 }
 
-object ErrorUtilities {
-
-  // From my : package scalainitiatives.functional_programming_in_scala
-  //
-  // :)
-  //
-  def lift[A, B](f: A => B): Option[A] => Option[B] = _ map f
-
-}
-
 //  Run this in vim:
 //
 // vim source: 1,$-10s/=>/⇒/ge
