@@ -11,9 +11,9 @@ java_name=$(basename $java_abs)
 
 cd $tempdir && cp "$java_abs" .
 
-java -jar "${java_name}" --version &
-java -jar "${java_name}" --help &
-java -jar "${java_name}" --seed 0 --ngames 15 &
+java -jar "${java_name}" --version
+java -jar "${java_name}" --help
+java -jar "${java_name}" --seed 0 --ngames 15
 
 wait
 
