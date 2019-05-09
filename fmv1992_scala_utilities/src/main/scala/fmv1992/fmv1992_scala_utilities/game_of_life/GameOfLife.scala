@@ -222,6 +222,7 @@ object Main extends CLIConfigTestableMain {
   val CLIConfigPath = "./src/main/resources/game_of_life_cli_config.conf"
 
   def isRepeating(s: Stream[GameOfLife]): Stream[Boolean] = {
+    println(s)
     if (s.tail.isEmpty) {
       Stream.continually(false)
     } else if (s.tail.tail.isEmpty) {
@@ -234,12 +235,10 @@ object Main extends CLIConfigTestableMain {
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
 
-    Console.err.println(args)
     // Parse seed.
     val seedString: String = args.filter(_.longName == "seed")(0).value(0)
     val seedInt: Int =
       scala.util.Try(seedString.toInt).getOrElse(System.nanoTime.toInt)
-    Console.err.println(seedInt)
     val r = new scala.util.Random(seedInt)
 
     // Parse game size.

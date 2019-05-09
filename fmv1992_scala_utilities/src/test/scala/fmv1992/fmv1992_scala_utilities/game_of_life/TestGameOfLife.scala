@@ -10,7 +10,7 @@ import fmv1992.fmv1992_scala_utilities.cli.Argument
 // Se matchers here:
 // http://www.scalatest.org/user_guide/using_matchers#checkingObjectIdentity
 
-object TestGameOfLifeHelper {
+trait TestGameOfLifeHelper {
 
   val a = Alive(-1, -1)
   val d = Dead(-1, -1)
@@ -54,14 +54,17 @@ object TestGameOfLifeHelper {
   val stretchedGame = GameOfLife(stretchedGameStr)
   val stretchedGameNextManual = GameOfLife(stretchedGameNextManualStr)
 
+  // Test parsing.
+  val parser = GNUParser(Main.CLIConfigPath)
+
+  val finiteArguments = parser.parse(List("--ngames", "7"))
+
 }
 
-class TestGameOfLife extends FunSuite {
-
-  val h = TestGameOfLifeHelper
+class TestGameOfLife extends FunSuite with TestGameOfLifeHelper {
 
   test("Ensure constants across the same package version.") {
-    assert(h.standardGOL.toString == "oxxxx\nxxooo\nxxoxo\noooox\nxoxxx")
+    assert(standardGOL.toString == "oxxxx\nxxooo\nxxoxo\noooox\nxoxxx")
   }
 
   test("The most basic tests.") {
@@ -73,101 +76,96 @@ class TestGameOfLife extends FunSuite {
 
   test("Test all neighbours combinations.") {
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(0)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(0)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(1)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(1)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(2)) === h.a
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(2)) === a
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(3)) === h.a
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(3)) === a
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(4)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(4)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(5)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(5)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(6)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(6)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.a, h.lAliveNeighbourCases(7)) === h.d
+      Cell.getNextStateFromNeighbours(a, lAliveNeighbourCases(7)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(0)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(0)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(1)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(1)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(2)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(2)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(3)) === h.a
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(3)) === a
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(4)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(4)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(5)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(5)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(6)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(6)) === d
     )
     assert(
-      Cell.getNextStateFromNeighbours(h.d, h.lAliveNeighbourCases(7)) === h.d
+      Cell.getNextStateFromNeighbours(d, lAliveNeighbourCases(7)) === d
     )
   }
 
   test("Test counting of cells.") {
     assert(
-      List.tabulate(9)(identity) == h.lAliveNeighbourCases
+      List.tabulate(9)(identity) == lAliveNeighbourCases
         .map(Cell.countAliveCells)
     )
   }
 
   test("Manual case 01.") {
-    assert(h.stretchedGame.next.toString === h.stretchedGameNextManualStr)
+    assert(stretchedGame.next.toString === stretchedGameNextManualStr)
   }
 
   test("Manual case 02.") {
-    assert(h.tinyGame.toString == h.tinyGameStr)
-    assert(h.tinyGameNextManual.toString == h.tinyGameNextManualStr)
+    assert(tinyGame.toString == tinyGameStr)
+    assert(tinyGameNextManual.toString == tinyGameNextManualStr)
 
-    val defectiveMutation = h.tinyGame.state(1)(0)
+    val defectiveMutation = tinyGame.state(1)(0)
     val defectiveMutated =
-      Cell.getNextState(defectiveMutation, h.tinyGame.state)
+      Cell.getNextState(defectiveMutation, tinyGame.state)
     assert(defectiveMutation === Dead(1, 0))
     assert(defectiveMutation.x === defectiveMutated.x)
     assert(defectiveMutation.y === defectiveMutated.y)
 
-    assert(h.tinyGame.next.toString == h.tinyGameNextManual.toString)
+    assert(tinyGame.next.toString == tinyGameNextManual.toString)
   }
 
   test("Test an infinite stream of games.") {
-    assert(h.infiniteGameOfLife.take(1)(0) === h.standardGOL)
-    assert(h.infiniteGameOfLife.take(2).last === h.standardGOL.next)
-    assert(h.infiniteGameOfLife.take(3).last === h.standardGOL.next.next)
+    assert(infiniteGameOfLife.take(1)(0) === standardGOL)
+    assert(infiniteGameOfLife.take(2).last === standardGOL.next)
+    assert(infiniteGameOfLife.take(3).last === standardGOL.next.next)
   }
 
   test("Test if our initial game ever ends.") {
-    assert(h.infiniteGameOfLife.take(1)(0) === h.standardGOL)
-    assert(h.infiniteGameOfLife.take(2).last === h.standardGOL.next)
-    assert(h.infiniteGameOfLife.take(3).last === h.standardGOL.next.next)
-    assert(h.infiniteGameOfLife.exists(_.isOver))
+    assert(infiniteGameOfLife.take(1)(0) === standardGOL)
+    assert(infiniteGameOfLife.take(2).last === standardGOL.next)
+    assert(infiniteGameOfLife.take(3).last === standardGOL.next.next)
+    assert(infiniteGameOfLife.exists(_.isOver))
   }
 
   // ???: Problem with reproduction of these tests. Approximately 1 in 20 enter
   // an endless loop.
   test("Test testableMain.") {
-
-    // Test parsing.
-    val parser = GNUParser(Main.CLIConfigPath)
-
-    val finiteArguments = parser.parse(List("--ngames", "7"))
 
     // // Test API.
     Main.testableMain(finiteArguments)
@@ -195,7 +193,7 @@ class TestGameOfLife extends FunSuite {
 
 }
 
-class TestGameOfLifeOscillators extends FunSuite {
+class TestGameOfLifeOscillators extends FunSuite  with TestGameOfLifeHelper {
 
   test("Oscillator 01.") {
 
@@ -208,6 +206,22 @@ class TestGameOfLifeOscillators extends FunSuite {
       .foreach(x ⇒ assert(x._1.toString == x._2.toString))
 
   }
+
+}
+
+class TestGameOfLifePoolOfCases extends FunSuite  with TestGameOfLifeHelper {
+
+ val defectiveSeed01= 1785599012
+ val defectiveSeed02= -709633859
+ val defectiveSeed03= -92084096
+
+test("Test that seeding these crahses current GOL.") {
+
+    val arg1: Seq[Argument] = {
+      parser.parse(s"--ngames 10 --seed 1785599012".split(" ").toList)
+    }
+    println(Main.testableMain(arg1))
+}
 
 }
 

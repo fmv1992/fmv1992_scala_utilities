@@ -28,7 +28,7 @@ lazy val commonSettings = Seq(
     // 'namedTest'.
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5",
     // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
-    // parallelExecution := false
+    // parallelExecution := false,
 
     // logLevel in assembly := Level.Debug,
 
