@@ -57,7 +57,8 @@ trait TestGameOfLifeHelper {
   // Test parsing.
   val parser = GNUParser(Main.CLIConfigPath)
 
-  val finiteArguments = parser.parse(List("--n-games", "7"))
+  val finiteArguments =
+    parser.parse("--make-games --n-games 7".split(" ").toList)
 
 }
 
@@ -193,7 +194,7 @@ class TestGameOfLife extends FunSuite with TestGameOfLifeHelper {
 
 }
 
-class TestGameOfLifeOscillators extends FunSuite  with TestGameOfLifeHelper {
+class TestGameOfLifeOscillators extends FunSuite with TestGameOfLifeHelper {
 
   test("Oscillator 01.") {
 
@@ -209,19 +210,25 @@ class TestGameOfLifeOscillators extends FunSuite  with TestGameOfLifeHelper {
 
 }
 
-class TestGameOfLifePoolOfCases extends FunSuite  with TestGameOfLifeHelper {
+class TestGameOfLifePoolOfCases extends FunSuite with TestGameOfLifeHelper {
 
- val defectiveSeed01 = 1785599012
- val defectiveSeed02 = -709633859
- val defectiveSeed03 = -92084096
+  val defectiveSeed01 = 1785599012
+  val defectiveSeed02 = -709633859
+  val defectiveSeed03 = -92084096
+  val defectiveSeeds = List(defectiveSeed01, defectiveSeed02, defectiveSeed03)
 
-test("Test that seeding these crahses current GOL.") {
+  test("Test that seeding these crahses current GOL.") {
 
-    val arg1: Seq[Argument] = {
-      parser.parse(s"--make-games --n-games 10 --seed 1785599012".split(" ").toList)
-    }
-    println(Main.testableMain(arg1))
-}
+    defectiveSeeds.foreach(x ⇒ {
+      val arg1: Seq[Argument] = {
+        parser.parse(
+          s"--make-games --n-games 100 --seed ${x}".split(" ").toList
+        )
+      }
+      // Force evaluation of testableMain.
+      Main.testableMain(arg1).toList
+    })
+  }
 
 }
 

@@ -233,22 +233,26 @@ object Main extends CLIConfigTestableMain {
     type SGOL = Set[GameOfLife]
     lazy val previousGames: Stream[SGOL] = {
       (Set.empty: Set[GameOfLife]) #::
-      previousGames.zip(truncEndingStream).map({ case (a: SGOL, b:GameOfLife) ⇒ a + b})
+        previousGames
+          .zip(truncEndingStream)
+          .map({ case (a: SGOL, b: GameOfLife) ⇒ a + b })
     }
     def truncNonRepeatingStream: Stream[GameOfLife] =
-    previousGames
+      previousGames
         .zip(truncEndingStream)
-        .filter({ case (a: SGOL, b:GameOfLife) ⇒ ! a.contains(b)})
+        .takeWhile({ case (a: SGOL, b: GameOfLife) ⇒ !a.contains(b) })
         .map(_._2)
 
     // Lazily append streams.
     val r = new scala.util.Random(i)
-    truncNonRepeatingStream.map(_.toString) #::: getInfiniteStreamOfGames(r.nextInt)
+    truncNonRepeatingStream.map(_.toString) #::: getInfiniteStreamOfGames(
+      r.nextInt
+    )
 
   }
 
   def findCycles(): Seq[String] = {
-     ???
+    ???
   }
 
   /** Testable interface for main program. */
@@ -262,15 +266,18 @@ object Main extends CLIConfigTestableMain {
     val nGames: Int = nGamesString(0).value(0).toInt
 
     // Fix seed.
-    val seedInt: Int = seedString(0).value(0).toInt
+    val seedInt: Int =
+      scala.util
+        .Try(seedString(0).value(0).toInt)
+        .getOrElse(System.nanoTime.toInt)
 
     // action.
 
     val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) ⇒ {
-        if (a.longName == "find-cyclic") {
-          findCycles()
-        } else if (a.longName == "make-games") {
-          getInfiniteStreamOfGames(seedInt).take(nGames)
+      if (a.longName == "find-cyclic") {
+        findCycles()
+      } else if (a.longName == "make-games") {
+        getInfiniteStreamOfGames(seedInt).take(nGames)
       } else {
         l
       }
