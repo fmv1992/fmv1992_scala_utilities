@@ -13,7 +13,9 @@ cd $tempdir && cp "$java_abs" .
 
 java -jar "${java_name}" --version
 java -jar "${java_name}" --help
-java -jar "${java_name}" --seed 0 --ngames 15
+# Make a single default argument implicit (that is, do not require
+# '--make-games'.
+java -jar "${java_name}" --make-games --seed 0 --n-games 15
 
 wait
 
