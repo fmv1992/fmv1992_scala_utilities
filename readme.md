@@ -1,5 +1,5 @@
 ![Build status](https://travis-ci.com/fmv1992/fmv1992_scala_utilities.svg?branch=dev)
-[![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/v1.x/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
+[![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/dev/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
 
 # fmv1992_scala_utilities
 
