@@ -4,14 +4,39 @@ coverageMinimum := 90
 coverageFailOnMinimum := true
 
 name := "fmv1992_scala_utilities"
-homepage := Some(url("https:???"))
+homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities"))
+organization := "fmv1992"
+
+// Publishing information. --- {{{
+// See: https://github.com/xerial/sbt-sonatype
+
+// Your profile name of the sonatype account. The default is the same with the organization value
+sonatypeProfileName := "io.github.fmv1992"
+// To sync with Maven central, you need to supply the following information:
+publishMavenStyle := true
+licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")
+// Where is the source code hosted
+import xerial.sbt.Sonatype._
+sonatypeProjectHosting := Some(GitHubHosting("fmv1992", name.toString, "fmv1992@gmail.com"))
+usePgpKeyHex("1FEB8CD8FBFDC1CB")
+
+// --- }}}
+
+version := IO.readLines(new File("./src/main/resources/version")).mkString("")
+
+
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
 lazy val commonSettings = Seq(
     organization := "fmv1992",
-    licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
     version := IO.readLines(new File("./src/main/resources/version")).mkString(""),
     scalaVersion := "2.12.8",
     pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
+
+    publishTo := sonatypePublishTo.value,
+    publishConfiguration := publishConfiguration.value.withOverwrite(true),
+    publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
 
     // Workaround according to: https://github.com/sbt/sbt/issues/3497
     watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
@@ -20,6 +45,7 @@ lazy val commonSettings = Seq(
     // Ship resource files with each jar.
     resourceDirectory in Compile := file(".") / "./src/main/resources",
     resourceDirectory in Runtime := file(".") / "./src/main/resources",
+
 
     // This final part makes test artifacts being only importable by the test files
     // libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test,
@@ -73,9 +99,16 @@ lazy val uniq       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_u
 lazy val cli        = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli")).settings(commonSettings).dependsOn(util)
 
 // Root project.
-lazy val fmv1992_scala_utilities = (project in file(".")).settings(fmv1992_scala_utilitiesSettings).settings(commonSettings).aggregate(
+lazy val fmv1992_scala_utilities = (project in file("."))
+  .settings(fmv1992_scala_utilitiesSettings)
+  .settings(commonSettings)
+  .settings(publishArtifact := false,  // ???: Remove this section on next publishing?
+            publishTo := None,
+            skip in publish := true)
+  .aggregate(
     cli,
     gameOfLife,
     uniq,
     util
     )
+lazy val root = fmv1992_scala_utilities
