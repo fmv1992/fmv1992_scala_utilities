@@ -1,3 +1,5 @@
+![Build status](https://travis-ci.com/fmv1992/fmv1992_scala_utilities.svg?branch=dev)
+
 # fmv1992_scala_utilities
 
 ## TODO

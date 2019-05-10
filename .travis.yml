@@ -1,6 +1,13 @@
 language: scala
+
 jdk: oraclejdk8
+
 scala:
    - 2.12.8
+
 script:
     - make
+
+after_success:
+  - export CODECOV_TOKEN="15bf6b07-622f-48d8-b746-e001b5fc8e73"
+  - bash <(curl -s https://codecov.io/bash)
