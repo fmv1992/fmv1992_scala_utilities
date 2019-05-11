@@ -22,6 +22,7 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 # https://drive.google.com/open?id=1FoY3kQi52PWllwc3ytYU9452qJ4ack1u
 
 all: dev test assembly publishlocal doc coverage
+	exit 1
 
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc

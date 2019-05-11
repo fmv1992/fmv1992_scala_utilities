@@ -21,4 +21,6 @@ do
     make clean && make test
 done
 
+exit 1
+
 # vim: set filetype=sh fileformat=unix wrap:

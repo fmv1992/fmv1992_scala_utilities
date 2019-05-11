@@ -1,3 +1,6 @@
+throw new Exception()
+// Look for string: "***???***: take a look at at this:" on `readme.md`.
+
 package fmv1992.fmv1992_scala_utilities.cli
 
 import java.io.File

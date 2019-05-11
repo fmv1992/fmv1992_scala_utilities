@@ -1,6 +1,10 @@
 ![Build status](https://travis-ci.com/fmv1992/fmv1992_scala_utilities.svg?branch=dev)
 [![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/dev/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
 
+***???***: take a look at at this:
+
+    1.  https://github.com/xerial/sbt-sonatype/issues/71
+
 # fmv1992_scala_utilities
 
 ## TODO
@@ -24,3 +28,5 @@
     *   Create a GNU style documentation.
 
     *   Move this readme to a documentation folder; create readme programatically.
+
+[comment]: # ( vim: set filetype=markdown fileformat=unix nowrap spell spelllang=en: )

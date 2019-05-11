@@ -51,4 +51,6 @@ git add -f "$fileversion"
 
 echo "Do not forget to run: 'stty sane'"
 
+exit 1
+
 # vim: set filetype=sh fileformat=unix nowrap:
