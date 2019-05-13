@@ -1,3 +1,6 @@
+![Build status](https://travis-ci.com/fmv1992/fmv1992_scala_utilities.svg?branch=dev)
+[![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/dev/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
+
 # fmv1992_scala_utilities
 
 ## TODO
@@ -14,6 +17,8 @@
 
     1.  <https://docs.scala-lang.org/tour/packages-and-imports.html>
 
+        *   ???: Use the `io.github.fmv1992` scheme.
+
     1.  <https://docs.scala-lang.org/style/scaladoc.html>
 
     1.  <https://docs.scala-lang.org/overviews/scaladoc/for-library-authors.html>
@@ -21,3 +26,5 @@
     *   Create a GNU style documentation.
 
     *   Move this readme to a documentation folder; create readme programatically.
+
+[comment]: # ( vim: set filetype=markdown fileformat=unix nowrap spell spelllang=en: )

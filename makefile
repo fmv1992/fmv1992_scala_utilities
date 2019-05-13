@@ -33,7 +33,6 @@ clean:
 	find . -type d -empty -delete
 
 coverage:
-	make clean
 	# ???: hack to build the report.
 	cd ./fmv1992_scala_utilities && sbt clean coverage test && (sbt coverageReport || sbt coverageAggregate || true)
 	echo "Report can be found on '$$(find . -iname "index.html")'."

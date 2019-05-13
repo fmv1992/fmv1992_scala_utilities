@@ -4,10 +4,6 @@ package fmv1992.fmv1992_scala_utilities.uniq
 
 import org.scalatest.FunSuite
 
-import fmv1992.fmv1992_scala_utilities.util.TestUtility
-
-// import fmv1992_scala_utilities.Uniq
-
 object TestCases {
 
   def multiLineStringtoSeq: String ⇒ Seq[String] = {
@@ -68,45 +64,6 @@ class TestUniq extends FunSuite {
     // assert(Uniq.filterUnique(
     // Stream.continually("e"))
     // .take(megabytes500).toList == List("e"))
-
-  }
-
-  test("Test filter-adjacent.") {
-
-    // ???: Re enable this on a future version.
-    // `testableMain` assumes that all arguments were correctly parsed.
-    assertThrows[scala.NotImplementedError](
-      TestUtility.mockStdin(
-        Uniq.main("--filter-adjacent 30 a".split(" ")),
-        Stream.continually('a').take(100).mkString("\n")
-      )
-    )
-    // val (in, out, err) = res
-    // assert(in == "a\n" * 30)
-
-  }
-
-  test("Test main.") {
-
-    assertThrows[scala.IllegalArgumentException](
-      TestUtility.mockStdin(Uniq.main(Array("--mock")), TestCases.s3.mkString)
-    )
-
-    val res =
-      TestUtility.mockStdin(Uniq.main(Array()), TestCases.s3.mkString("\n"))
-    val (in, out, err) = res
-    // The newline is because `println` is used instead of `println`.
-    assert(out == "a\n")
-    assert(err.isEmpty)
-
-    val res2 = TestUtility.mockStdin(
-      Uniq.main(Array("--unique")),
-      TestCases.s3.mkString("\n")
-    )
-    val (in2, out2, err2) = res2
-    // The newline is because `println` is used instead of `println`.
-    assert(out2 == "a\n")
-    assert(err2.isEmpty)
 
   }
 

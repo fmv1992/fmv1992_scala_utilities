@@ -3,7 +3,6 @@ package fmv1992.fmv1992_scala_utilities.cli
 import org.scalatest.FunSuite
 
 import fmv1992.fmv1992_scala_utilities.util.Example
-import fmv1992.fmv1992_scala_utilities.util.TestUtility
 
 class TestStandardParser extends FunSuite {
 
@@ -30,9 +29,6 @@ class TestStandardParser extends FunSuite {
         Example.cli05Parser.parse("--sum 2 7".split(" ").toList)
       ) == List("9")
     )
-
-    TestUtility.mockStdin(TestSum.main("--version".split(" ")), "")
-    TestUtility.mockStdin(TestSum.main("--help".split(" ")), "")
 
   }
 
