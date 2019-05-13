@@ -12,21 +12,6 @@ class TestTestUtility extends FunSuite {
     Console.err.print(input.toLowerCase)
   }
 
-  // ???: Re enable.
-  test("Test functionality of TestUtility.") {
-    val mixedCase = "MixedCase"
-    assert(
-      TestUtility.mockStdin(mockProgramRunning, mixedCase) ==
-        (mixedCase, mixedCase.toUpperCase, mixedCase.toLowerCase)
-    )
-
-    val mixedCase02 = "aNo0T-_erMixed"
-    assert(
-      TestUtility.mockStdin(mockProgramRunning, mixedCase02) ==
-        (mixedCase02, mixedCase02.toUpperCase, mixedCase02.toLowerCase)
-    )
-  }
-
 }
 
 //  Run this in vim:
