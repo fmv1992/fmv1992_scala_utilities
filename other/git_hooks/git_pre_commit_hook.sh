@@ -1,5 +1,7 @@
 #! /bin/bash
 
+export MAKEFLAGS='-j1'
+
 # This git pre commit hook is intended to work on both cygwin and unix
 # machines.
 # It should be symlinked to ../../.git/hooks/pre-commit.
