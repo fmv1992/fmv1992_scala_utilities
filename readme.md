@@ -3,6 +3,27 @@
 
 # fmv1992_scala_utilities
 
+This project illustrates my journey in learning Scala and trying to deploy my first project for other people to use.
+
+## Sub-projects
+
+### CLI
+
+A simple yet powerful command line parser.
+
+### Game of life
+
+A [game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) implementation in Scala.
+
+### Uniq
+
+A [uniq](https://en.wikipedia.org/wiki/Uniq) implementation in Scala in which the order of the lines does not matter.
+
+### Util
+
+A very broad utilities package for Scala.
+
+<!--
 ## TODO
 
 1.  Publish on a central repository. See:
@@ -26,5 +47,6 @@
     *   Create a GNU style documentation.
 
     *   Move this readme to a documentation folder; create readme programatically.
+-->
 
 [comment]: # ( vim: set filetype=markdown fileformat=unix nowrap spell spelllang=en: )
