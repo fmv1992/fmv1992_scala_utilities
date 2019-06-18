@@ -1,5 +1,7 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
+import ParserTypes._
+
 /** Parse a CLI config file. This file consists of:
   *
   * 1.  Empty lines.
@@ -31,16 +33,27 @@ package fmv1992.fmv1992_scala_utilities.cli
   *
   * This design is influenced by <https://github.com/fpinscala/fpinscala>.
   */
-trait Parser
+
+object ParserTypes {
+type MS = Map[String, String]
+type MSS = Map[String, Map[String, String]]
+type Parser = String ⇒ Result
+}
+
+trait Parsers
+
+
+trait Result
+case class Success(get: MSS) extends Result
+object Failure extends Result
+
 object Parser {
 
 }
 
 trait CLIConfigParser
-object CLIConfigParser extends Parser {
+object CLIConfigParser extends Parsers {
 
-  type MS = Map[String, String]
-  type MSS = Map[String, Map[String, String]]
 
   // Parser combinators. --- {{{
 
