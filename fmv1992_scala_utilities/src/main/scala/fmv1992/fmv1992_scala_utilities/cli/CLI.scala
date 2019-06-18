@@ -70,13 +70,15 @@ trait ConfigFileParser extends CLIParser {
     val defaultKeys: Seq[String] =
       format.filter(x ⇒ x._2.contains("default")).keys.toSeq
     val notIncludedDefaultKeys: Seq[String] = (defaultKeys diff argsLongNames)
-    require(argsLongNames.intersect(notIncludedDefaultKeys).isEmpty,
-      argsLongNames + "|" + notIncludedDefaultKeys)
+    require(
+      argsLongNames.intersect(notIncludedDefaultKeys).isEmpty,
+      argsLongNames + "|" + notIncludedDefaultKeys
+    )
     val additionalArgs: Seq[Argument] = {
       notIncludedDefaultKeys.map(x ⇒ GNUArg(x, List(format(x)("default"))))
     }
 
-     parsedArgs ++ additionalArgs
+    parsedArgs ++ additionalArgs
 
   }
 
@@ -186,8 +188,3 @@ case class GNUArg(longName: String, value: Seq[String]) extends Argument {
 /** Companion object for GNUArg. */
 object GNUArg {}
 
-//  Run this in vim:
-//
-// vim source: 1,$-10s/=>/⇒/ge
-//
-// vim: set filetype=scala fileformat=unix foldmarker={,} nowrap tabstop=2 softtabstop=2 spell:

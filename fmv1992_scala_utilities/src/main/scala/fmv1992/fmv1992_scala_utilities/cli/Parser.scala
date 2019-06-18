@@ -56,9 +56,32 @@ object ReferenceTypes {
 
 /** Define what is common to all parsers. */
 trait Parsers[Parser[+ _]] {
-  self ⇒ }
+  self ⇒
+  def string(s: String): Parser[String]
+}
 
 /** Define what is common to CLI config parsers. */
-object RefereceParser extends Parsers[Parser] {}
+object RefereceParser extends Parsers[Parser] {
+
+  def run[A](p: Parser[A])(s: String): Either[ParseError, A] = {
+    ???
+  }
+
+}
+
+trait CLIConfig
+
+object CLIConfig {
+
+  case object Newline extends CLIConfig
+  case class Comment(get: String) extends CLIConfig
+  case class Config(get: Map[String, Map[String, String]]) extends CLIConfig
+
+  def CLIConfigParser(P: Parsers[Parser]): Parser[CLIConfig] = {
+
+    import P.{string ⇒ _, _}
+
+    ???
+  }
 
 object CLIConfigParser {}

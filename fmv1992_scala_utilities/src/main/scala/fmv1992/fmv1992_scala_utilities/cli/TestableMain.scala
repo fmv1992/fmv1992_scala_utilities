@@ -75,7 +75,8 @@ trait TestableMain {
   def testableMain(args: Seq[Argument]): Traversable[String]
 
   /** Split input [[Argument Arguments]] from other arguments. */
-  def splitInputArgumentFromOthers(args: Seq[Argument]) = splitArgumentFromOthers(args, "input")
+  def splitInputArgumentFromOthers(args: Seq[Argument]) =
+    splitArgumentFromOthers(args, "input")
 
   /** Split input [[Argument Arguments]] from other arguments. */
   def splitArgumentFromOthers(
@@ -104,8 +105,3 @@ trait TestableMain {
 
 }
 
-//  Run this in vim:
-//
-// vim source: 1,$-10s/=>/⇒/ge
-//
-// vim: set filetype=scala fileformat=unix foldmarker={,} nowrap tabstop=2 softtabstop=2 spell:
