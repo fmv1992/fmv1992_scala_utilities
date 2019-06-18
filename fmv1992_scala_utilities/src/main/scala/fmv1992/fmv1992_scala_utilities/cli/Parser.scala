@@ -1,10 +1,5 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
-import scala.language.higherKinds
-// import scala.language.implicitConversions
-
-import ReferenceTypes._
-
 /** Parse a CLI config file. This file consists of:
   *
   * 1.  Empty lines.
@@ -36,52 +31,38 @@ import ReferenceTypes._
   *
   * This design is influenced by <https://github.com/fpinscala/fpinscala>.
   */
-object ReferenceTypes {
-
-  /** A parser is a kind of state action that can fail. */
-  type Parser[+A] = ParseState ⇒ Result[A]
-
-  case class ParseError(stack: List[(Location, String)] = List()) {}
-
-  case class ParseState(loc: Location) {}
-
-  case class Location(input: String, offset: Int = 0) {}
-
-  sealed trait Result[+A]
-  case class Success[+A](get: A, length: Int) extends Result[A]
-  case class Failure(get: ParseError, isCommitted: Boolean)
-      extends Result[Nothing]
+trait Parser
+object Parser {
 
 }
 
-/** Define what is common to all parsers. */
-trait Parsers[Parser[+ _]] {
-  self ⇒
-  def string(s: String): Parser[String]
-}
+trait CLIConfigParser
+object CLIConfigParser extends Parser {
 
-/** Define what is common to CLI config parsers. */
-object RefereceParser extends Parsers[Parser] {
+  type MS = Map[String, String]
+  type MSS = Map[String, Map[String, String]]
 
-  def run[A](p: Parser[A])(s: String): Either[ParseError, A] = {
+  // Parser combinators. --- {{{
+
+  def or(p1: Parser, p2: Parser): Parser = {
+     ???
+  }
+
+  def many1(p1: Parser): Parser = {
+     ???
+  }
+
+  // --- }}}
+
+  case object Newline extends CLIConfigParser {
+    val get = "\n"
+  }
+  case class Comment(get: String) extends CLIConfigParser
+  case class Config(get: MSS) extends CLIConfigParser
+  case class SubConfig(get: MSS) extends CLIConfigParser
+
+  def parse(s: String): MSS = {
     ???
   }
 
 }
-
-trait CLIConfig
-
-object CLIConfig {
-
-  case object Newline extends CLIConfig
-  case class Comment(get: String) extends CLIConfig
-  case class Config(get: Map[String, Map[String, String]]) extends CLIConfig
-
-  def CLIConfigParser(P: Parsers[Parser]): Parser[CLIConfig] = {
-
-    import P.{string ⇒ _, _}
-
-    ???
-  }
-
-object CLIConfigParser {}

@@ -187,4 +187,3 @@ case class GNUArg(longName: String, value: Seq[String]) extends Argument {
 
 /** Companion object for GNUArg. */
 object GNUArg {}
-
