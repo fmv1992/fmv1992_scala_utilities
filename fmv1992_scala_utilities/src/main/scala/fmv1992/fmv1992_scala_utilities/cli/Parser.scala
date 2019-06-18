@@ -35,34 +35,45 @@ import ParserTypes._
   */
 
 object ParserTypes {
-type MS = Map[String, String]
-type MSS = Map[String, Map[String, String]]
-type Parser = String ⇒ Result
+  type MS = Map[String, String]
+  type OMS = Option[MS]
+  type Parser = String ⇒ (String, OMS)
 }
 
 trait Parsers
 
-
-trait Result
-case class Success(get: MSS) extends Result
-object Failure extends Result
-
-object Parser {
-
-}
+object Parser {}
 
 trait CLIConfigParser
-object CLIConfigParser extends Parsers {
 
+object CLIConfigParser extends Parsers {
 
   // Parser combinators. --- {{{
 
+  lazy val Success: Parser = x ⇒ (x, Some(Map.empty))
+
   def or(p1: Parser, p2: Parser): Parser = {
-     ???
+    (x: String) ⇒ {
+        val (s1: String, newP: OMS) = p1(x)
+        newP match {
+          case Some(_) ⇒ (s1, newP)
+          case None ⇒ p2(x)
+        }
+      }
   }
 
   def many1(p1: Parser): Parser = {
-     ???
+    (x: String) ⇒ {
+        val (s1: String, newP: OMS) = p1(x)
+        newP match {
+          case Some(_) ⇒ many(p1)(x)
+          case None ⇒ (x, newP)
+        }
+      }
+  }
+
+  def many(p1: Parser): Parser = {
+    ???
   }
 
   // --- }}}
@@ -70,11 +81,11 @@ object CLIConfigParser extends Parsers {
   case object Newline extends CLIConfigParser {
     val get = "\n"
   }
-  case class Comment(get: String) extends CLIConfigParser
-  case class Config(get: MSS) extends CLIConfigParser
-  case class SubConfig(get: MSS) extends CLIConfigParser
+  case class Comment(get: OMS) extends CLIConfigParser
+  case class Config(get: OMS) extends CLIConfigParser
+  case class SubConfig(get: OMS) extends CLIConfigParser
 
-  def parse(s: String): MSS = {
+  def parse(s: String)(p: Parser): OMS = {
     ???
   }
 
