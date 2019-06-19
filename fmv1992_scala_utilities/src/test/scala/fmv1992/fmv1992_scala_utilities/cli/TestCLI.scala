@@ -65,38 +65,18 @@ class TestGNUParser extends FunSuite {
 
 class TestNewParser extends FunSuite {
 
-  val t1 = """
-  |# Comment.
-  |
-  |Name: name.
-  |
-  |Name2: name2.
-  |
-  |# Comment2.
-  |
-  """.trim.stripMargin
-
   def ParserChar(c: Char)(x: String) =
     if (x.startsWith(c.toString))
       (x.slice(1, x.length), Some(Map.empty: ParserTypes.MS))
     else (x, None)
 
-  // test("Test API.") {
-  // println(
-  // CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
-  // )
-  // }
-
   test("Test many1.") {
     val parserAs = CLIConfigParser.many1(ParserChar('a'))
-    // assertThrows[scala.IllegalArgumentException](
     val parsedOK = parserAs("aaa")
     parsedOK._2.orElse(throw new Exception())
 
     val parsedError = parserAs("xaaaa")
-    assert(! parsedError._2.isDefined)
-    // assert(! parsedError._1 == "X")
-    // parsedError._2.orElse(throw new Exception())
+    assert(!parsedError._2.isDefined)
   }
 
   test("Test newlines.") {
@@ -116,6 +96,27 @@ class TestNewParser extends FunSuite {
     val parsedError = parseAorB("abaaaabaX")
     assert(parsedError._1 == "X")
     parsedError._2.orElse(throw new Exception())
+  }
+
+}
+
+class TestSingle extends FunSuite {
+
+  val t1 = """
+  |# Comment.
+  |
+  |Name: name.
+  |
+  |Name2: name2.
+  |
+  |# Comment2.
+  |
+  """.trim.stripMargin
+
+  test("Test API.") {
+    println(
+      CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
+    )
   }
 
 }
