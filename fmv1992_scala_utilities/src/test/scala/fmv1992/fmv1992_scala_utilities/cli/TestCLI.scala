@@ -62,3 +62,24 @@ class TestGNUParser extends FunSuite {
   }
 
 }
+
+class TestNewParser extends FunSuite {
+
+  val t1 = """
+  |# Comment.
+  |
+  |Name: name.
+  |
+  |Name2: name2.
+  |
+  |# Comment2.
+  |
+  """.trim.stripMargin
+
+  test("Test API.") {
+    println(
+      CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
+      )
+  }
+
+}
