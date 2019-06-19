@@ -43,41 +43,47 @@ object ParserTypes {
 object PrimitiveParsers {
 
   def newLine(s: String): (String, OMS) = {
-    println("|" * 79)
+    println("+" * 79)
     println(s)
+    println("+" * 79)
     val newlines = s.takeWhile(_ == '\n')
-    println(newlines)
-    println("|" * 79)
     val rest = s.drop(newlines.size)
     if (newlines.isEmpty) {
       (s, None)
     } else {
-      // throw new Exception()
-      (rest, Some(Map.empty))
+      println("r" * 79)
+      println(rest)
+      println("r" * 79)
+      (rest, Some(Map(("s", "s"))))
     }
   }
 
   def comment(s: String): (String, OMS) = {
+    println("#" * 79)
+    println(s)
+    println("#" * 79)
     val lines: List[String] = s.split("\n").toList
     val commentLines = lines.takeWhile(_.startsWith("#"))
     val otherLines = lines.drop(commentLines.length)
     if (commentLines.isEmpty) {
       (s, None)
     } else {
-      (otherLines.mkString("\n"), Some(Map.empty))
+      (otherLines.mkString("\n"), Some(Map(("c", "c"))))
     }
   }
 
   def kvp(s: String): (String, OMS) = {
+    println("_" * 79)
+    println(s)
+    println("_" * 79)
     val lines: List[String] = s.split("\n").toList
     val nonSpaceLines =
       lines.takeWhile(x ⇒ (!x(0).isSpaceChar) && (!(x(0) == '#')))
     val otherLines = nonSpaceLines.drop(nonSpaceLines.length)
-    (otherLines.mkString("\n"), Some(Map.empty))
     if (nonSpaceLines.isEmpty) {
       (s, None)
     } else {
-      (otherLines.mkString("\n"), Some(Map.empty))
+      (otherLines.mkString("\n"), Some(Map(("k", "k"))))
     }
   }
 
@@ -85,11 +91,11 @@ object PrimitiveParsers {
 
 object CompoundedParsers {
 
-  val lines: Parser = CLIConfigParser.many(PrimitiveParsers.newLine)
+  val lines: Parser = CLIConfigParser.many1(PrimitiveParsers.newLine)
 
-  val comments: Parser = CLIConfigParser.many(PrimitiveParsers.comment)
+  val comments: Parser = CLIConfigParser.many1(PrimitiveParsers.comment)
 
-  val content: Parser = CLIConfigParser.many(PrimitiveParsers.kvp)
+  val content: Parser = CLIConfigParser.many1(PrimitiveParsers.kvp)
 
   val orThree: Parser =
     CLIConfigParser.or(lines, CLIConfigParser.or(comments, content))
@@ -110,31 +116,30 @@ object CLIConfigParser extends Parsers {
   // Parser combinators. --- {{{
 
   def or(p1: Parser, p2: Parser): Parser = {
-    println(p1)
-    println(p2)
     (x: String) ⇒ {
-      val (s1: String, newP: OMS) = p1(x)
-      val res = newP match {
-        case Some(_) ⇒ (s1, newP)
-        case None ⇒ p2(x)
+        val (s1: String, newP: OMS) = p1(x)
+        val res = newP match {
+          case Some(_) ⇒ (s1, newP)
+          case None ⇒ p2(x)
+        }
+        res
       }
-      res
-    }
   }
 
   def many1(p1: Parser): Parser = {
     (x: String) ⇒ {
         val (s1: String, newP: OMS) = p1(x)
-        // println("-" * 79)
-        // println(s1)
-        // println(newP)
-        // println("-" * 79)
+        println(s1)
+        println(newP)
+        println("*" * 79)
         newP match {
           case Some(_) ⇒ many(p1)(s1)
-          case None ⇒ (x, newP)
+          case None ⇒ throw new Exception()
         }
       }
   }
+
+  def Success(a: String): Parser = (x ⇒ (a, Some(Map.empty)))
 
   def many(p1: Parser): Parser = {
     (x: String) ⇒ {
@@ -145,19 +150,19 @@ object CLIConfigParser extends Parsers {
             } else {
               many(p1)(s1)
             }
-          case None ⇒ (s1, newP)
+          case None ⇒ Success(x)("")
         }
       }
   }
 
   def raiseError(p1: Parser): Parser = {
     (x: String) ⇒ {
+        // println("|" * 79)
+        // println(x)
         val (s1: String, newP: OMS) = p1(x)
-        // println("-" * 79)
         // println(s1)
-        // println(newP)
+        // println("|" * 79)
         newP.orElse(throw new Exception())
-        // println("-" * 79)
         (s1, newP)
       }
   }

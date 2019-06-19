@@ -76,8 +76,8 @@ class TestNewParser extends FunSuite {
   |
   """.trim.stripMargin
 
-  def ParserA(x: String) =
-    if (x.startsWith("a"))
+  def ParserChar(c: Char)(x: String) =
+    if (x.startsWith(c.toString))
       (x.slice(1, x.length), Some(Map.empty: ParserTypes.MS))
     else (x, None)
 
@@ -88,8 +88,24 @@ class TestNewParser extends FunSuite {
   // }
 
   test("Test many1.") {
-    val parsedAs = CLIConfigParser.many1(ParserA)("aaa")
+    val parsedAs = CLIConfigParser.many1(ParserChar('a'))("aaa")
     parsedAs._2.orElse(throw new Exception())
+  }
+
+  test("Test newlines.") {
+    val p = CompoundedParsers.lines("\n\n \n \n  \n")
+    assert(p._1 == " \n \n  \n")
+    p._2.orElse(throw new Exception())
+  }
+
+  test("Test or.") {
+    val parseAorB = CLIConfigParser.many1(
+      CLIConfigParser.or(ParserChar('a'), ParserChar('b'))
+    )
+    val parsed = parseAorB("ab")
+    println(parsed)
+    assert(parsed._1.isEmpty)
+    parsed._2.orElse(throw new Exception())
   }
 
 }
