@@ -47,6 +47,9 @@ A very broad utilities package for Scala.
     *   Create a GNU style documentation.
 
     *   Move this readme to a documentation folder; create readme programatically.
+
+1. Add references to `SICP` and `FPIS`.
+
 -->
 
 [comment]: # ( vim: set filetype=markdown fileformat=unix nowrap spell spelllang=en: )

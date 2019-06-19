@@ -34,6 +34,41 @@ import ParserTypes._
   * This design is influenced by <https://github.com/fpinscala/fpinscala>.
   */
 
+ /** As we could see in SICP: <https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-14.html#%25_sec_2.1.2>
+ *
+ * """
+ * Constraining the dependence on the representation to a few interface
+ * procedures helps us design programs as well as modify them, because it
+ * allows us to maintain the flexibility to consider alternate implementations.
+ * """
+ *
+ * And that's precisely what it is done in the chapter 09 (parsing) of FPIS:
+ *
+ * Abstraction:
+ *
+ * ```
+ * trait Parsers[Parser[+_]] { self ⇒
+ *                                // so inner classes may call methods of trait
+ *   def run[A](p: Parser[A])(input: String): Either[ParseError,A]
+ *
+ *   ...
+ *
+ * ```
+ *
+ * Implementation:
+ *
+ * ```
+ * object ReferenceTypes {
+ *
+ *   \/\*\* A parser is a kind of state action that can fail. \*\/
+ *   type Parser[+A] = ParseState ⇒ Result[A]
+ *
+ *   ...
+ *
+ * ```
+ *
+ */
+
 object ParserTypes {
   type MS = Map[String, String]
   type OMS = Option[MS]
@@ -117,13 +152,13 @@ object CLIConfigParser extends Parsers {
 
   def or(p1: Parser, p2: Parser): Parser = {
     (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        val res = newP match {
-          case Some(_) ⇒ (s1, newP)
-          case None ⇒ p2(x)
-        }
-        res
+      val (s1: String, newP: OMS) = p1(x)
+      val res = newP match {
+        case Some(_) ⇒ (s1, newP)
+        case None ⇒ p2(x)
       }
+      res
+    }
   }
 
   def many1(p1: Parser): Parser = {
