@@ -88,8 +88,15 @@ class TestNewParser extends FunSuite {
   // }
 
   test("Test many1.") {
-    val parsedAs = CLIConfigParser.many1(ParserChar('a'))("aaa")
-    parsedAs._2.orElse(throw new Exception())
+    val parserAs = CLIConfigParser.many1(ParserChar('a'))
+    // assertThrows[scala.IllegalArgumentException](
+    val parsedOK = parserAs("aaa")
+    parsedOK._2.orElse(throw new Exception())
+
+    val parsedError = parserAs("xaaaa")
+    assert(! parsedError._2.isDefined)
+    // assert(! parsedError._1 == "X")
+    // parsedError._2.orElse(throw new Exception())
   }
 
   test("Test newlines.") {
@@ -102,10 +109,13 @@ class TestNewParser extends FunSuite {
     val parseAorB = CLIConfigParser.many1(
       CLIConfigParser.or(ParserChar('a'), ParserChar('b'))
     )
-    val parsed = parseAorB("ab")
-    println(parsed)
-    assert(parsed._1.isEmpty)
-    parsed._2.orElse(throw new Exception())
+    val parsedOK = parseAorB("abaaaaba")
+    assert(parsedOK._1.isEmpty)
+    parsedOK._2.orElse(throw new Exception())
+
+    val parsedError = parseAorB("abaaaabaX")
+    assert(parsedError._1 == "X")
+    parsedError._2.orElse(throw new Exception())
   }
 
 }

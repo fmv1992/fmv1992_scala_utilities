@@ -169,7 +169,7 @@ object CLIConfigParser extends Parsers {
         println("*" * 79)
         newP match {
           case Some(_) ⇒ many(p1)(s1)
-          case None ⇒ throw new Exception()
+          case None ⇒ (x, None)
         }
       }
   }
