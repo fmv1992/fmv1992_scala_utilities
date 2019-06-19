@@ -76,10 +76,20 @@ class TestNewParser extends FunSuite {
   |
   """.trim.stripMargin
 
-  test("Test API.") {
-    println(
-      CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
-      )
+  def ParserA(x: String) =
+    if (x.startsWith("a"))
+      (x.slice(1, x.length), Some(Map.empty: ParserTypes.MS))
+    else (x, None)
+
+  // test("Test API.") {
+  // println(
+  // CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
+  // )
+  // }
+
+  test("Test many1.") {
+    val parsedAs = CLIConfigParser.many1(ParserA)("aaa")
+    parsedAs._2.orElse(throw new Exception())
   }
 
 }

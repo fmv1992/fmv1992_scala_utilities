@@ -52,7 +52,7 @@ object PrimitiveParsers {
     if (newlines.isEmpty) {
       (s, None)
     } else {
-      throw new Exception()
+      // throw new Exception()
       (rest, Some(Map.empty))
     }
   }
@@ -70,8 +70,8 @@ object PrimitiveParsers {
 
   def kvp(s: String): (String, OMS) = {
     val lines: List[String] = s.split("\n").toList
-    val nonSpaceLines = lines.takeWhile(
-      x ⇒ (! x(0).isSpaceChar) && (!( x(0) == '#')))
+    val nonSpaceLines =
+      lines.takeWhile(x ⇒ (!x(0).isSpaceChar) && (!(x(0) == '#')))
     val otherLines = nonSpaceLines.drop(nonSpaceLines.length)
     (otherLines.mkString("\n"), Some(Map.empty))
     if (nonSpaceLines.isEmpty) {
@@ -91,14 +91,11 @@ object CompoundedParsers {
 
   val content: Parser = CLIConfigParser.many(PrimitiveParsers.kvp)
 
-  val orThree: Parser = CLIConfigParser.or(
-    lines,
-    CLIConfigParser.or(
-      comments,
-      content))
+  val orThree: Parser =
+    CLIConfigParser.or(lines, CLIConfigParser.or(comments, content))
 
-  val many1Three: Parser = CLIConfigParser.raiseError(
-    CLIConfigParser.many1(orThree))
+  val many1Three: Parser =
+    CLIConfigParser.raiseError(CLIConfigParser.many1(orThree))
 
 }
 
@@ -116,24 +113,21 @@ object CLIConfigParser extends Parsers {
     println(p1)
     println(p2)
     (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        val res = newP match {
-          case Some(_) ⇒ (s1, newP)
-          case None ⇒ p2(x)
-        }
-        res
+      val (s1: String, newP: OMS) = p1(x)
+      val res = newP match {
+        case Some(_) ⇒ (s1, newP)
+        case None ⇒ p2(x)
       }
+      res
+    }
   }
 
   def many1(p1: Parser): Parser = {
     (x: String) ⇒ {
         val (s1: String, newP: OMS) = p1(x)
         // println("-" * 79)
-        // // println(p1)
-        // // println(s1)
-        // // println(x)
-        // // println(newP)
-        // newP.orElse(throw new Exception())
+        // println(s1)
+        // println(newP)
         // println("-" * 79)
         newP match {
           case Some(_) ⇒ many(p1)(s1)
@@ -146,7 +140,11 @@ object CLIConfigParser extends Parsers {
     (x: String) ⇒ {
         val (s1: String, newP: OMS) = p1(x)
         newP match {
-          case Some(_) ⇒ many(p1)(s1)
+          case Some(_) ⇒ if (s1.isEmpty) {
+              (s1, newP)
+            } else {
+              many(p1)(s1)
+            }
           case None ⇒ (s1, newP)
         }
       }
@@ -155,11 +153,11 @@ object CLIConfigParser extends Parsers {
   def raiseError(p1: Parser): Parser = {
     (x: String) ⇒ {
         val (s1: String, newP: OMS) = p1(x)
-        println("-" * 79)
-        println(s1)
-        println(newP)
+        // println("-" * 79)
+        // println(s1)
+        // println(newP)
         newP.orElse(throw new Exception())
-        println("-" * 79)
+        // println("-" * 79)
         (s1, newP)
       }
   }
