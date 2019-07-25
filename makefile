@@ -75,9 +75,6 @@ $(SBT_FILES): $(SCALA_FILES)
 assembly: $(FINAL_TARGET)
 
 publishlocal: .FORCE
-	# sbt "clean" "set offline := true" "clean" 'publishLocal'
-	# test -e $(HOME)/.ivy2/local/fmv1992.org
-	exit 1
 	cd ./fmv1992_scala_utilities && sbt clean update publishLocal
 
 dev:

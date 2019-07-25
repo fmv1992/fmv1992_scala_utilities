@@ -4,8 +4,8 @@ package fmv1992.fmv1992_scala_utilities.uniq
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
 
-import fmv1992.fmv1992_scala_utilities.cli.Argument
-import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+import fmv1992.scala_cli_parser.CLIConfigTestableMain
+import fmv1992.scala_cli_parser.Argument
 
 /** Filter repeated lines independent of their position.
   *

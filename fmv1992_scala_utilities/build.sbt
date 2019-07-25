@@ -62,10 +62,18 @@ lazy val commonSettings = Seq(
     // Removed on commit 'cd9d482' to enable 'trait ScalaInitiativesTest' define
     // 'namedTest'.
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5",
-    // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
+    libraryDependencies += "fmv1992" %% "scala_cli_parser" % "(,9.0[",
     // parallelExecution := false,
 
     // logLevel in assembly := Level.Debug,
+    test in assembly := {},
+    assemblyMergeStrategy in assembly := {
+      case "version" ⇒ MergeStrategy.first
+      case x ⇒ {
+      val oldStrategy = (assemblyMergeStrategy in assembly).value
+      oldStrategy(x)
+      }
+    },
 
     scalacOptions ++= (
       Seq(
@@ -105,18 +113,15 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(assemblyJarName in assembly := "r
 //
 lazy val util       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util")).settings(commonSettings)
 
-lazy val gameOfLife = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life")).dependsOn(util).dependsOn(cli).settings(commonSettings).settings(GOLSettings)
+lazy val gameOfLife = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life")).dependsOn(util).settings(commonSettings).settings(GOLSettings)
 
-lazy val uniq       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq")).dependsOn(util).dependsOn(cli).settings(commonSettings).settings(uniqSettings)
-
-lazy val cli        = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli")).dependsOn(util).settings(commonSettings)
+lazy val uniq       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq")).dependsOn(util).settings(commonSettings).settings(uniqSettings)
 
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
 // Root project.
 lazy val fmv1992_scala_utilities = (project in file(".")).settings(fmv1992_scala_utilitiesSettings).settings(commonSettings).aggregate(
-    cli,
     gameOfLife,
     uniq,
     util
