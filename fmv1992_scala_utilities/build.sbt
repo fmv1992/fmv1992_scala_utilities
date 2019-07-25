@@ -1,20 +1,55 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
+import xerial.sbt.Sonatype._
 
 coverageMinimum := 90
 coverageFailOnMinimum := true
 
 name := "fmv1992_scala_utilities"
-homepage := Some(url("https:???"))
+
+publishTo in ThisBuild := sonatypePublishTo.value
+sonatypeProfileName := "io.github.fmv1992"
+publishMavenStyle := true
+sonatypeProjectHosting := Some(GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com"))
+licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"))
+organization := "io.github.fmv1992"
+
+
+
+// or if you want to set these fields manually
+homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities"))
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/fmv1992/fmv1992_scala_utilities"),
+    "scm:git@github.com:fmv1992/fmv1992_scala_utilities.git"
+  )
+)
+developers := List(
+  Developer(id="fmv1992", name="Felipe Martins Vieira", email="fmv1992@gmail.com", url=url("https://github.com/fmv1992/"))
+)
+
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+
 
 lazy val commonSettings = Seq(
-    organization := "fmv1992",
-    licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
+
+    publishConfiguration := publishConfiguration.value.withOverwrite(true),
+    publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
+
+
+    sonatypeProfileName := "io.github.fmv1992",
+    publishMavenStyle := true,
+    sonatypeProjectHosting := Some(GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")),
+    licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
+    organization := "io.github.fmv1992",
+
+
     version := IO.readLines(new File("./src/main/resources/version")).mkString(""),
     scalaVersion := "2.12.8",
     pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
 
     // Workaround according to: https://github.com/sbt/sbt/issues/3497
-    watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
+    watchService := (() ⇒ new sbt.io.PollingWatchService(pollInterval.value)),
     maxErrors := 100,
 
     // Ship resource files with each jar.
@@ -37,7 +72,11 @@ lazy val commonSettings = Seq(
         "-feature",
         "-deprecation",
         "-Xfatal-warnings")
-      ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq)
+      ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq),
+
+    publishConfiguration := publishConfiguration.value.withOverwrite(true),
+    publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+
       )
 
 lazy val GOLSettings = Seq(assemblyJarName in assembly := "game_of_life.jar")
@@ -66,11 +105,14 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(assemblyJarName in assembly := "r
 //
 lazy val util       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util")).settings(commonSettings)
 
-lazy val gameOfLife = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life")).settings(commonSettings).settings(GOLSettings).dependsOn(util).dependsOn(cli)
+lazy val gameOfLife = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life")).dependsOn(util).dependsOn(cli).settings(commonSettings).settings(GOLSettings)
 
-lazy val uniq       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq")).settings(commonSettings).settings(uniqSettings).dependsOn(util).dependsOn(cli)
+lazy val uniq       = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq")).dependsOn(util).dependsOn(cli).settings(commonSettings).settings(uniqSettings)
 
-lazy val cli        = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli")).settings(commonSettings).dependsOn(util)
+lazy val cli        = (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli")).dependsOn(util).settings(commonSettings)
+
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
 // Root project.
 lazy val fmv1992_scala_utilities = (project in file(".")).settings(fmv1992_scala_utilitiesSettings).settings(commonSettings).aggregate(
