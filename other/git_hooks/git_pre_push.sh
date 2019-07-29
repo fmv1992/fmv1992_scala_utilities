@@ -18,9 +18,8 @@ fi
 
 for i in $(seq 1 "$full_checks")
 do
-    make clean && make test
+    make --jobs 1 clean
+    make --jobs 1 test
 done
-
-exit 1
 
 # vim: set filetype=sh fileformat=unix wrap:
