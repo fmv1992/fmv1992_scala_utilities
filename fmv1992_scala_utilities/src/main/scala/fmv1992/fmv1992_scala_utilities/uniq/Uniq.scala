@@ -4,8 +4,8 @@ package fmv1992.fmv1992_scala_utilities.uniq
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
 
-import fmv1992.fmv1992_scala_utilities.cli.Argument
-import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+import fmv1992.scala_cli_parser.CLIConfigTestableMain
+import fmv1992.scala_cli_parser.Argument
 
 /** Filter repeated lines independent of their position.
   *
@@ -27,12 +27,11 @@ object Uniq extends CLIConfigTestableMain {
 
     // ???: This so common parsing should be responsibility of `main`.
     val (inputArgs, otherArgs) = splitInputArgumentFromOthers(args)
-    val inputString = readInputArgument(inputArgs)
 
     val res = otherArgs
       .foldLeft(Seq.empty: Seq[String])((l, x) ⇒ {
         if (x.longName == "unique") {
-          filterUnique(inputString)
+          filterUnique(readInputArgument(inputArgs).toStream)
         } else if (x.longName == "filter-adjacent") {
           throw new scala.NotImplementedError()
         } else {
@@ -54,15 +53,58 @@ object Uniq extends CLIConfigTestableMain {
     ???
   }
 
-  /** Filter unique elements. */
-  def filterUnique[A](seq: Seq[A]): Seq[A] = {
+  /** Filter unique elements.
+    *
+    * Also this Set stuff is bullshit:
+    *
+    * https://stackoverflow.com/a/6183115/5544140
+    *
+    * For the record:
+    *
+    * 1.  Stream approach (`comm9652bc5`).
+    *
+    * *     Pros: prints lines continuously.
+    *
+    * *     Cons: slow; StackOverflowError on ~5k lines.
+    *
+    * 2.  Tail recursive approach (`commc503cf2`):
+    *
+    * *     Pros: fast; has an upper bound for memory.
+    *
+    * *     Cons: Does not print lines continuously.
+    *
+    * 3.  Functional non tail recursive approach (`commbd7096d`):
+    *
+    * *     Pros: Prints lines continuously; fast.
+    *
+    * *     Cons: throws OutOfMemoryError.
+    *
+    * 4.  Imperative approach (`comm2fde2d2`):
+    *
+    * *     Pros: Prints lines continuously; fast.
+    *
+    * *     Cons: is imperative (?).
+    *
+    * Test version: `comm9652bc5`.
+    *
+    * */
+  def filterUnique[A](inSeq: Seq[A]): Seq[A] = {
 
-    val set: Set[A] = Set.empty
-    // By using a def we ensure that no references to the Steam exists.
-    def uniqueSets: Stream[Set[A]] =
-      set #:: Set(seq.head) #::
-        uniqueSets.tail.zip(seq.tail).map(x ⇒ x._1 + x._2)
-    seq.zip(uniqueSets).filter(x ⇒ !x._2.contains(x._1)).map(_._1)
+    def go(it: Iterator[A], s: Set[A]): Stream[A] = {
+      if (it.hasNext) {
+        val cur: A = it.next
+        if (s.contains(cur)) {
+          go(it, s)
+        } else {
+          Stream.cons(cur, go(it, s + cur))
+        }
+      } else {
+        Stream.empty
+      }
+    }
 
+    go(inSeq.iterator, Set.empty).toSeq
+    //       ↑↑↑↑↑↑↑↑ Actually prevents "GC overhead limit exceeded".
   }
+
 }

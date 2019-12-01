@@ -4,8 +4,8 @@ package fmv1992.fmv1992_scala_utilities.game_of_life
 
 import org.scalatest.FunSuite
 
-import fmv1992.fmv1992_scala_utilities.cli.GNUParser
-import fmv1992.fmv1992_scala_utilities.cli.Argument
+import fmv1992.scala_cli_parser.GNUParser
+import fmv1992.scala_cli_parser.Argument
 
 // Se matchers here:
 // http://www.scalatest.org/user_guide/using_matchers#checkingObjectIdentity

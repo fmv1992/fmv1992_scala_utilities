@@ -9,19 +9,9 @@ This project illustrates my journey in learning Scala and trying to deploy my fi
 
 ### CLI
 
-A simple yet powerful command line parser.
+Deprecated sub-project. It is not a project of its own:
 
-### Game of life
-
-A [game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) implementation in Scala.
-
-### Uniq
-
-A [uniq](https://en.wikipedia.org/wiki/Uniq) implementation in Scala in which the order of the lines does not matter.
-
-### Util
-
-A very broad utilities package for Scala.
+???
 
 <!--
 ## TODO

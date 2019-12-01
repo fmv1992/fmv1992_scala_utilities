@@ -2,7 +2,7 @@ package fmv1992.fmv1992_scala_utilities.util
 
 import java.io.File
 
-import fmv1992.fmv1992_scala_utilities.cli.StandardParser
+import fmv1992.scala_cli_parser.StandardParser
 
 object Example {
 
@@ -53,6 +53,14 @@ object Example {
   val cli05File: File = new File(cli05Path)
   require(cli05File.exists, cli05File.getCanonicalPath)
   val cli05Parser: StandardParser = StandardParser(cli05File)
+
+  // --- }
+
+  // Provide examples for Uniq. --- {
+
+  val uniq01Path: String = "./src/test/resources/test_uniq_01.txt"
+  val uniq01File: File = new File(reader01Path)
+  require(uniq01File.exists, uniq01File.getCanonicalPath)
 
   // --- }
 

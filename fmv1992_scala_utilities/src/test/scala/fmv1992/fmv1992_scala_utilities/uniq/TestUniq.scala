@@ -2,6 +2,10 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
+import fmv1992.fmv1992_scala_utilities.util.Example
+
+import fmv1992.scala_cli_parser.GNUParser
+
 import org.scalatest.FunSuite
 
 object TestCases {
@@ -65,6 +69,14 @@ class TestUniq extends FunSuite {
     // Stream.continually("e"))
     // .take(megabytes500).toList == List("e"))
 
+  }
+
+  test("Test main function.") {
+    assert(
+      Uniq.testableMain(
+        GNUParser(Uniq.CLIConfigPath).parse(List("--input", Example.uniq01Path))
+      ) == "abce".toList.map(_.toString)
+    )
   }
 
 }
