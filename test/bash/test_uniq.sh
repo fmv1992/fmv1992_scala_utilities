@@ -9,7 +9,7 @@ tempdir=$(mktemp -d)
 java_abs=$(find . -iname "uniq.jar" -print0 | xargs -0 readlink -f )
 java_name=$(basename $java_abs)
 
-randomstring=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 30)†
+randomstring=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 30)¦
 
 cd $tempdir && cp "$java_abs" .
 
