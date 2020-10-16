@@ -31,7 +31,14 @@ object TestCases {
     |###
     |lastline""")
 
-  val s3 = multiLineStringtoSeq(Stream.fill(10)("a").mkString("\n"))
+  val s3 = multiLineStringtoSeq(s"""a
+    |
+    |x
+    |
+    |
+    |a""")
+
+  val s4 = multiLineStringtoSeq(Stream.fill(10)("a").mkString("\n"))
 
 }
 
@@ -57,7 +64,15 @@ class TestUniq extends FunSuite {
       .zip(copyOfs2)
       .foreach((x: Tuple2[String, String]) ⇒ assert(x._1 == x._2))
 
-    assert(Uniq.filterUnique(TestCases.s3).mkString("") == "a")
+    assert(Uniq.filterUnique(TestCases.s4).mkString("") == "a")
+
+  }
+
+  test("--skip-empty-lines parameter") {
+    assert(
+      Uniq.filterUnique(TestCases.s3, skipEmptyLines = true)
+        == Stream("a", "", "x", "", "")
+    )
 
   }
 

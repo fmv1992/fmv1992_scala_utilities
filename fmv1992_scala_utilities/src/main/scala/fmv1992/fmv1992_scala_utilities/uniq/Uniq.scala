@@ -28,10 +28,13 @@ object Uniq extends CLIConfigTestableMain {
     // ???: This so common parsing should be responsibility of `main`.
     val (inputArgs, otherArgs) = splitInputArgumentFromOthers(args)
 
+    val skipEmptyLines: Boolean =
+      otherArgs.exists(_.longName == "skip-empty-lines")
+
     val res = otherArgs
       .foldLeft(Seq.empty: Seq[String])((l, x) ⇒ {
         if (x.longName == "unique") {
-          filterUnique(readInputArgument(inputArgs).toStream)
+          filterUnique(readInputArgument(inputArgs).toStream, skipEmptyLines)
         } else if (x.longName == "filter-adjacent") {
           throw new scala.NotImplementedError()
         } else {
@@ -88,15 +91,22 @@ object Uniq extends CLIConfigTestableMain {
     * Test version: `comm9652bc5`.
     *
     * */
-  def filterUnique[A](inSeq: Seq[A]): Seq[A] = {
+  def filterUnique[A](
+      inSeq: Seq[A],
+      skipEmptyLines: Boolean = false
+  ): Seq[A] = {
 
     def go(it: Iterator[A], s: Set[A]): Stream[A] = {
       if (it.hasNext) {
         val cur: A = it.next
-        if (s.contains(cur)) {
-          go(it, s)
-        } else {
+        if (skipEmptyLines && cur == "") {
           Stream.cons(cur, go(it, s + cur))
+        } else {
+          if (s.contains(cur)) {
+            go(it, s)
+          } else {
+            Stream.cons(cur, go(it, s + cur))
+          }
         }
       } else {
         Stream.empty
