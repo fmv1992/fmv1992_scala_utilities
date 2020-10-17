@@ -1,8 +1,8 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
 
-// References on how to do multi project builds:
-// 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
-// 2.   https://github.com/sbt/sbt-projectmatrix
+lazy val scala212 = "2.12.8"
+lazy val scala211 = "2.11.12"
+lazy val supportedScalaVersions = List(scala212, scala211)
 
 coverageMinimum := 90
 coverageFailOnMinimum := true
@@ -10,7 +10,8 @@ coverageFailOnMinimum := true
 name := "fmv1992_scala_utilities"
 homepage := Some(url("https:???"))
 
-ThisBuild / scalaVersion := "2.12.8"
+ThisBuild / scalaVersion := scala212
+ThisBuild / crossScalaVersions := supportedScalaVersions
 
 lazy val commonSettings = Seq(
   organization := "fmv1992",
@@ -40,23 +41,12 @@ lazy val commonSettings = Seq(
     ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq)
 )
 
-lazy val GOLSettings = Seq(
-  assemblyJarName in assembly := "game_of_life.jar",
-  mainClass in (Compile, run) := Some(
-    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
-  )
-)
+lazy val GOLSettings = Seq(assemblyJarName in assembly := "game_of_life.jar")
 
-lazy val uniqSettings = Seq(
-  assemblyJarName in assembly := "uniq.jar",
-  mainClass in (Compile, run) := Some(
-    "fmv1992.fmv1992_scala_utilities.uniq.Uniq"
-  )
-)
+lazy val uniqSettings = Seq(assemblyJarName in assembly := "uniq.jar")
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
   assemblyJarName in assembly := "root.jar"
-  // crossScalaVersions := Nil
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
@@ -78,38 +68,40 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // ```
 //
 lazy val util =
-  (projectMatrix in file(
-    "./src/main/scala/fmv1992/fmv1992_scala_utilities/util"
-  )).settings(commonSettings)
-    .jvmPlatform(scalaVersions = Seq("2.12.8", "2.11.12"))
+  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+    .settings(commonSettings)
+    .settings(crossScalaVersions := supportedScalaVersions)
 
-lazy val gameOfLife = (projectMatrix in file(
+lazy val gameOfLife = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"
 )).settings(commonSettings)
   .settings(GOLSettings)
+  .settings(crossScalaVersions := supportedScalaVersions)
   .dependsOn(util)
   .dependsOn(cli)
-  .jvmPlatform(scalaVersions = Seq("2.12.8", "2.11.12"))
 
 lazy val uniq =
-  (projectMatrix in file(
-    "./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"
-  )).settings(commonSettings)
+  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+    .settings(commonSettings)
     .settings(uniqSettings)
+    .settings(crossScalaVersions := supportedScalaVersions)
     .dependsOn(util)
     .dependsOn(cli)
-    .jvmPlatform(scalaVersions = Seq("2.12.8", "2.11.12"))
 
-lazy val cli = (projectMatrix in file(
+lazy val cli = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
 )).settings(commonSettings)
+  .settings(crossScalaVersions := supportedScalaVersions)
   .dependsOn(util)
-  .jvmPlatform(scalaVersions = Seq("2.12.8", "2.11.12"))
 
 // Root project.
-lazy val fmv1992_scala_utilities = ((project in file("."))
+lazy val fmv1992_scala_utilities = (project in file("."))
   .settings(fmv1992_scala_utilitiesSettings)
   .settings(commonSettings)
+  .settings(crossScalaVersions := supportedScalaVersions)
   .aggregate(
-    cli.projectRefs ++ gameOfLife.projectRefs ++ uniq.projectRefs ++ util.projectRefs: _*
-  ))
+    cli,
+    gameOfLife,
+    uniq,
+    util
+  )

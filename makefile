@@ -8,6 +8,7 @@ SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
 export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
+export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
@@ -61,13 +62,10 @@ test: test_sbt test_bash
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
 test_sbt: $(SBT_FILES)
+	cd $(dir $@) && sbt '+ test'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(dir $@) && sbt compile
-
-$(SBT_FILES): $(SCALA_FILES)
-	cd $(dir $@) && sbt test assembly
-	touch --no-create -m $@
 
 # --- }}}
 
@@ -86,7 +84,7 @@ dev:
 	chmod a+x ./.git/hooks/pre-push
 
 $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
-	cd ./fmv1992_scala_utilities && sbt assembly
+	cd ./fmv1992_scala_utilities && sbt '+ assembly'
 	touch --no-create -m $@
 
 test%.sh: .FORCE
