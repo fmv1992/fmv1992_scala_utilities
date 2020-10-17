@@ -1,5 +1,11 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
 
+// References on how to do multi project builds:
+// 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
+//      *   Used by this repos.
+// 2.   https://github.com/sbt/sbt-projectmatrix
+//      *   For some reason this messed up with `sbt-assembly`.
+
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala212, scala211)
