@@ -41,6 +41,10 @@ object Reader {
 
   def readLines(f: File): Seq[String] = {
     val path = f.getCanonicalPath
+    // ???: Scala Native does not support [java
+    // resources](https://docs.oracle.com/javase/8/docs/technotes/guides/lang/resources.html#sys_res).
+    Console.err.println(path)
+    throw new Exception()
     val bufSource: scala.io.Source = if (f.exists) {
       // Raises java.io.FileNotFoundException if it does not exist.
       scala.io.Source.fromFile(f)

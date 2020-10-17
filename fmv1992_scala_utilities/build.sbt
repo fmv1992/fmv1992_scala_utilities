@@ -8,7 +8,7 @@
 
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
-lazy val supportedScalaVersions = List(scala212, scala211)
+lazy val supportedScalaVersions = List(scala211)
 
 coverageMinimum := 90
 coverageFailOnMinimum := true
@@ -19,13 +19,18 @@ homepage := Some(url("https:???"))
 ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := supportedScalaVersions
 
+enablePlugins(ScalaNativePlugin)
+nativeLinkStubs := true
+nativeLinkStubs in runMain := true
+Test / nativeLinkStubs := true
+
 lazy val commonSettings = Seq(
   organization := "fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
   version := IO
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
-  scalaVersion := "2.12.8",
+  scalaVersion := scala211,
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
   watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
@@ -38,7 +43,7 @@ lazy val commonSettings = Seq(
   //                                                                   ↑↑↑↑↑
   // Removed on commit 'cd9d482' to enable 'trait ScalaInitiativesTest' define
   // 'namedTest'.
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5",
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.1.0" % Test,
   // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
   // parallelExecution := false,
 

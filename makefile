@@ -7,7 +7,7 @@ SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
-export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
+# export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
 export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
 # Build files.
@@ -28,9 +28,9 @@ doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
 
 clean:
-	find . -iname '*.class' -print0 | xargs -0 rm -rf
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
+	find . -iname '*.class' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
 coverage:
@@ -61,8 +61,8 @@ test: test_sbt test_bash
 
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
-test_sbt: $(SBT_FILES)
-	cd $(dir $@) && sbt '+ test'
+test_sbt:
+	cd ./$(notdir $(PWD)) && sbt '+ test'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(dir $@) && sbt compile
