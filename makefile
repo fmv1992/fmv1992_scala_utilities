@@ -23,13 +23,17 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
+format:
+	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config .scalafmt.conf
+
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
 
 clean:
-	find . -iname '*.class' -print0 | xargs -0 rm -rf
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
+	find . -iname '*.class' -print0 | xargs -0 rm -rf
+	find . -iname '*.hnir' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
 coverage:
