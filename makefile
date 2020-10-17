@@ -65,7 +65,8 @@ test: test_sbt test_bash
 
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
-test_sbt: $(SBT_FILES)
+test_sbt:
+	cd ./fmv1992_scala_utilities && sbt test
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(dir $@) && sbt compile

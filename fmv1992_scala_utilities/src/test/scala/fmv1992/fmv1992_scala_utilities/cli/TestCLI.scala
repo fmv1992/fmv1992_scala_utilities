@@ -114,9 +114,7 @@ class TestSingle extends AnyFunSuite {
   """.trim.stripMargin
 
   test("Test API.") {
-    println(
-      CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
-    )
+    CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
   }
 
 }
