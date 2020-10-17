@@ -5,18 +5,9 @@
 package fmv1992.fmv1992_scala_utilities.util
 
 import java.io.File
+import java.io.FileNotFoundException
 
 object Reader {
-
-  def loanPattern[A](
-      closeable: scala.io.Source
-  )(f: scala.io.Source ⇒ A): A = {
-    try {
-      f(closeable)
-    } finally {
-      closeable.close()
-    }
-  }
 
   // See:
   // https://stackoverflow.com/a/33972743/5544140
@@ -41,21 +32,13 @@ object Reader {
 
   def readLines(f: File): Seq[String] = {
     val path = f.getCanonicalPath
-    // ???: Scala Native does not support [java
-    // resources](https://docs.oracle.com/javase/8/docs/technotes/guides/lang/resources.html#sys_res).
-    Console.err.println(path)
-    throw new Exception()
-    val bufSource: scala.io.Source = if (f.exists) {
-      // Raises java.io.FileNotFoundException if it does not exist.
-      scala.io.Source.fromFile(f)
+    val res: Seq[String] = if (f.exists) {
+      scala.io.Source.fromFile(f).getLines.toList
     } else {
-      // When loading resource at runtime.
-      val shortenedPath = path.slice(path.lastIndexOf("/"), path.length)
-      scala.io.Source
-        .fromInputStream(getClass.getResourceAsStream(shortenedPath))
+      throw new FileNotFoundException(
+        s"File '$path' does not exist. Scala Native does not support java resources."
+      )
     }
-    val res: List[String] = loanPattern(bufSource)(_.getLines.toList)
-    require(res.hasDefiniteSize)
     res
   }
 

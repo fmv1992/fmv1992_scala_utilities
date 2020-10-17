@@ -23,6 +23,23 @@ enablePlugins(ScalaNativePlugin)
 nativeLinkStubs := true
 nativeLinkStubs in runMain := true
 Test / nativeLinkStubs := true
+// ???: [error] (Compile / doc) Scaladoc generation failed
+sources in (Compile, doc) := Seq.empty
+
+test in assembly := {}
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
+  // case PathList(ps @ _*) if ps.contains("scalanative") => MergeStrategy.first
+  // case x if x.contains("org.scala-native") => MergeStrategy.first
+  // case PathList(ps @ _*) if ps.last.endsWith(".nir") => MergeStrategy.keep
+  // case PathList(ps @ _*)                               => scala.Console.err.println("‡" + ps.toString) ; MergeStrategy.first
+  // case PathList(ps @ _*)                               => scala.Console.err.println("‡" + ps.toString) ; MergeStrategy.singleOrError
+  case x => MergeStrategy.first
+  // case x => {
+  //   val oldStrategy = (assemblyMergeStrategy in assembly).value
+  //   oldStrategy(x)
+  // }
+}
 
 lazy val commonSettings = Seq(
   organization := "fmv1992",
@@ -43,7 +60,7 @@ lazy val commonSettings = Seq(
   //                                                                   ↑↑↑↑↑
   // Removed on commit 'cd9d482' to enable 'trait ScalaInitiativesTest' define
   // 'namedTest'.
-  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.1.0" % Test,
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
   // parallelExecution := false,
 
