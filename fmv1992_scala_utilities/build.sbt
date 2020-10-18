@@ -10,6 +10,8 @@ lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala211)
 
+resolvers += Resolver.mavenLocal
+
 coverageMinimum := 90
 coverageFailOnMinimum := true
 
@@ -18,6 +20,9 @@ homepage := Some(url("https:???"))
 
 ThisBuild / scalaVersion := scala211
 ThisBuild / crossScalaVersions := supportedScalaVersions
+ThisBuild / mainClass in Compile := Some(
+  "fmv1992.fmv1992_scala_utilities.uniq.Uniq"
+)
 
 enablePlugins(ScalaNativePlugin)
 nativeLinkStubs := true
@@ -81,20 +86,30 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
+  libraryDependencies += "fmv1992" %%% "scala_cli_parser" % "0.+",
   // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
   // parallelExecution := false,
 
   // logLevel in assembly := Level.Debug,
-  scalacOptions ++= (Seq("-feature", "-deprecation", "-Xfatal-warnings")
+  scalacOptions ++= (Seq(
+    "-feature",
+    "-deprecation",
+    "-Xfatal-warnings"
+    // "-optmize"
+  )
     ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq)
 )
 
 lazy val GOLSettings = Seq(assemblyJarName in assembly := "game_of_life.jar")
 
-lazy val uniqSettings = Seq(assemblyJarName in assembly := "uniq.jar")
+lazy val uniqSettings = Seq(
+  assemblyJarName in assembly := "uniq.jar",
+  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
+)
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
-  assemblyJarName in assembly := "root.jar"
+  assemblyJarName in assembly := "root.jar",
+  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name

@@ -7,6 +7,7 @@ SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
+# export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused -opt-inline-from:**
 export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
 export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
