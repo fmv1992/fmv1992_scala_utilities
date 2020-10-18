@@ -7,32 +7,6 @@ import fmv1992.fmv1992_scala_utilities.util.Reader
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
 
-// From https://stackoverflow.com/a/33786312/5544140 --- {{{
-import reflect.macros.blackbox.Context
-
-import language.experimental.macros
-
-import scala.io._
-
-// Entering paste mode (ctrl-D to finish)
-
-class S(val c: Context) {
-  import c._, universe._
-  def smac(file: c.Expr[String]): c.Expr[String] = file.tree match {
-    case Literal(Constant(s: String)) =>
-      val res = Source.fromFile(s, "UTF-8").getLines.mkString("\n")
-      c.Expr[String](Literal(Constant(res)))
-  }
-}
-
-// Exiting paste mode, now interpreting.
-
-def f(file: String): String = macro S.smac
-
-f("text.txt")
-
-// --- }}}
-
 /** Filter repeated lines independent of their position.
   *
   * The memory requirements are O(n).
@@ -42,7 +16,7 @@ f("text.txt")
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version = Reader.readLines("./src/main/resources/version").mkString
+  val version = S.f("./src/main/resources/version")
 
   val programName = "Uniq"
 

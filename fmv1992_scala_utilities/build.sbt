@@ -16,7 +16,7 @@ coverageFailOnMinimum := true
 name := "fmv1992_scala_utilities"
 homepage := Some(url("https:???"))
 
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala211
 ThisBuild / crossScalaVersions := supportedScalaVersions
 
 enablePlugins(ScalaNativePlugin)
@@ -61,6 +61,8 @@ lazy val commonSettings = Seq(
   // Removed on commit 'cd9d482' to enable 'trait ScalaInitiativesTest' define
   // 'namedTest'.
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
+  // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
+  libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oU"),
   // parallelExecution := false,
 
