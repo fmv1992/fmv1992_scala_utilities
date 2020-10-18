@@ -41,24 +41,23 @@ assemblyMergeStrategy in assembly := {
   // }
 }
 
-
 // ???: Try to remove all resource files from the assembly process to check if
 // the macro is working.
 //
 // (unmanagedResourceDirectories in Compile) := (unmanagedResourceDirectories in Compile).value .filter(x => false)
 // (unmanagedResourceDirectories in assembly) := (unmanagedResourceDirectories in assembly).value .filter(x => false)
 //
-mappings in (Compile, packageBin) ~= {
-  x =>
-    {
-      scala.Console.err.println(x)
-      x.filter(y => {
-        scala.Console.err.println(y)
-        !y._1.getName.endsWith(".conf")
-      })
-      throw new Exception()
-    }
-}
+// mappings in (Compile, packageBin) ~= {
+//   x =>
+//     {
+//       scala.Console.err.println(x)
+//       x.filter(y => {
+//         scala.Console.err.println(y)
+//         !y._1.getName.endsWith(".conf")
+//       })
+//       throw new Exception()
+//     }
+// }
 
 lazy val commonSettings = Seq(
   organization := "fmv1992",
