@@ -107,16 +107,14 @@ lazy val gameOfLife = (project in file(
 )).settings(commonSettings)
   .settings(GOLSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
-  .dependsOn(util)
-  .dependsOn(cli)
+  .dependsOn(util, cli)
 
 lazy val uniq =
   (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
     .settings(commonSettings)
     .settings(uniqSettings)
     .settings(crossScalaVersions := supportedScalaVersions)
-    .dependsOn(util)
-    .dependsOn(cli)
+    .dependsOn(util, cli)
 
 lazy val cli = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
@@ -129,6 +127,7 @@ lazy val fmv1992_scala_utilities = (project in file("."))
   .settings(fmv1992_scala_utilitiesSettings)
   .settings(commonSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
+  .dependsOn(util)
   .aggregate(
     cli,
     gameOfLife,

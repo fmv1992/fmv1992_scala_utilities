@@ -3,9 +3,12 @@
 package fmv1992.fmv1992_scala_utilities.uniq
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+
+import scala.language.experimental.macros
 
 /** Filter repeated lines independent of their position.
   *
@@ -16,7 +19,7 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version = S.f("./src/main/resources/version")
+  val version = S.putfile("./src/main/resources/version")
 
   val programName = "Uniq"
 
