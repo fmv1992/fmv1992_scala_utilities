@@ -12,12 +12,18 @@ object S {
 
   def putfile_impl(c: Context)(file: c.Expr[String]): c.Expr[String] = {
     import c._, universe._
+    // file.tree match {
+    //   case Literal(Constant(s: String)) =>
+    //     val res = Source.fromFile(s, "UTF-8").getLines.mkString("\n")
+    //     c.Expr[String](Literal(Constant(res)))
+    //   case x => throw new Exception()
+
     file.tree match {
       case Literal(Constant(s: String)) =>
         val res = Source.fromFile(s, "UTF-8").getLines.mkString("\n")
-        c.Expr[String](Literal(Constant(res)))
-      case x => throw new Exception()
+        c.Expr[String](q"$res")
     }
+
   }
 
   def putfile(file: String): String = macro S.putfile_impl

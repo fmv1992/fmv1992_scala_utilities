@@ -30,6 +30,7 @@ format:
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
 
+# ???: Preserve `.metals` and `./fmv1992_scala_utilities/.bloop`.
 clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
