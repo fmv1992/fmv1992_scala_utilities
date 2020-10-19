@@ -66,7 +66,6 @@ import ParserTypes._
   * ```
   *
   */
-
 object ParserTypes {
   type MS = Map[String, String]
   type OMS = Option[MS]
@@ -138,49 +137,50 @@ object CLIConfigParser extends Parsers {
 
   // Parser combinators. --- {{{
 
-  def or(p1: Parser, p2: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        val res = newP match {
-          case Some(_) ⇒ (s1, newP)
-          case None ⇒ p2(x)
-        }
-        res
+  def or(p1: Parser, p2: Parser): Parser = { (x: String) ⇒
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      val res = newP match {
+        case Some(_) ⇒ (s1, newP)
+        case None ⇒ p2(x)
       }
+      res
+    }
   }
 
-  def many1(p1: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        newP match {
-          case Some(_) ⇒ many(p1)(s1)
-          case None ⇒ (x, None)
-        }
+  def many1(p1: Parser): Parser = { (x: String) ⇒
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      newP match {
+        case Some(_) ⇒ many(p1)(s1)
+        case None ⇒ (x, None)
       }
+    }
   }
 
   def Success(a: String): Parser = (x ⇒ (a, Some(Map.empty)))
 
-  def many(p1: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        newP match {
-          case Some(_) ⇒ if (s1.isEmpty) {
-              (s1, newP)
-            } else {
-              many(p1)(s1)
-            }
-          case None ⇒ Success(x)("")
-        }
+  def many(p1: Parser): Parser = { (x: String) ⇒
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      newP match {
+        case Some(_) ⇒
+          if (s1.isEmpty) {
+            (s1, newP)
+          } else {
+            many(p1)(s1)
+          }
+        case None ⇒ Success(x)("")
       }
+    }
   }
 
-  def raiseError(p1: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        newP.orElse(throw new Exception())
-        (s1, newP)
-      }
+  def raiseError(p1: Parser): Parser = { (x: String) ⇒
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      newP.orElse(throw new Exception())
+      (s1, newP)
+    }
   }
 
   // --- }}}
