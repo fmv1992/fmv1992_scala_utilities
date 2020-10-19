@@ -22,15 +22,18 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 # ???: Google drive link to download ~/.sbt needed to compile this project.
 # https://drive.google.com/open?id=1FoY3kQi52PWllwc3ytYU9452qJ4ack1u
 
-all: dev test assembly publishlocal doc coverage
+all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
+
+format:
+	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config .scalafmt.conf
 
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
 
 clean:
-	find . -iname '*.class' -print0 | xargs -0 rm -rf
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
+	find . -iname '*.class' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
 coverage:
@@ -73,8 +76,6 @@ compile: $(SBT_FILES) $(SCALA_FILES)
 assembly: $(FINAL_TARGET)
 
 publishlocal: .FORCE
-	# sbt "clean" "set offline := true" "clean" 'publishLocal'
-	# test -e $(HOME)/.ivy2/local/fmv1992.org
 	cd ./fmv1992_scala_utilities && sbt clean update publishLocal
 
 dev:
