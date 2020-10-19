@@ -1,4 +1,5 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
+import xerial.sbt.Sonatype._
 
 // References on how to do multi project builds:
 // 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
@@ -9,19 +10,54 @@
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala212, scala211)
+ThisBuild / scalaVersion := scala212
+ThisBuild / crossScalaVersions := supportedScalaVersions
 
 coverageMinimum := 90
 coverageFailOnMinimum := true
 
 name := "fmv1992_scala_utilities"
-homepage := Some(url("https:???"))
 
-ThisBuild / scalaVersion := scala212
-ThisBuild / crossScalaVersions := supportedScalaVersions
+publishTo in ThisBuild := sonatypePublishTo.value
+sonatypeProfileName := "io.github.fmv1992"
+publishMavenStyle := true
+sonatypeProjectHosting := Some(
+  GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")
+)
+licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"))
+organization := "io.github.fmv1992"
+
+// or if you want to set these fields manually
+homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities"))
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/fmv1992/fmv1992_scala_utilities"),
+    "scm:git@github.com:fmv1992/fmv1992_scala_utilities.git"
+  )
+)
+developers := List(
+  Developer(
+    id = "fmv1992",
+    name = "Felipe Martins Vieira",
+    email = "fmv1992@gmail.com",
+    url = url("https://github.com/fmv1992/")
+  )
+)
+
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
 lazy val commonSettings = Seq(
-  organization := "fmv1992",
-  licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
+  publishConfiguration := publishConfiguration.value.withOverwrite(true),
+  publishLocalConfiguration := publishLocalConfiguration.value
+    .withOverwrite(true),
+  sonatypeProfileName := "io.github.fmv1992",
+  publishMavenStyle := true,
+  sonatypeProjectHosting := Some(
+    GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")
+  ),
+  licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
+  organization := "io.github.fmv1992",
   version := IO
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
