@@ -23,8 +23,13 @@ RUN rm sbt.zip
 ENV PATH $PATH:/home/user/bin/sbt/bin
 
 WORKDIR /home/user/
+RUN mkdir ./${PROJECT_NAME}
+COPY ./${PROJECT_NAME} ./${PROJECT_NAME}
+RUN find ${PROJECT_NAME} -regextype 'egrep' \( \! -iregex '.*(\.properties|\.sbt|/version)' \) -type f -print0 | xargs -0 rm --verbose -rf
+RUN find ${PROJECT_NAME} -type d -print0 | xargs -0 rmdir || true
+RUN cd ./${PROJECT_NAME} && sbt update
+RUN rm -rf ./${PROJECT_NAME}
 COPY . .
-RUN cd ./${PROJECT_NAME} && sbt sbtVersion
 RUN make publishlocal
 
 CMD bash
