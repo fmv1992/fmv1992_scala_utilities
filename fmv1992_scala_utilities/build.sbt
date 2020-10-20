@@ -24,12 +24,15 @@ ThisBuild / mainClass in Compile := Some(
   "fmv1992.fmv1992_scala_utilities.uniq.Uniq"
 )
 
+lazy val nativeSettings = Seq(
+  nativeLinkStubs := true,
+  nativeLinkStubs in runMain := true,
+  Test / nativeLinkStubs := true,
+  // ???: [error] (Compile / doc) Scaladoc generation failed
+  sources in (Compile, doc) := Seq.empty
+)
+
 enablePlugins(ScalaNativePlugin)
-nativeLinkStubs := true
-nativeLinkStubs in runMain := true
-Test / nativeLinkStubs := true
-// ???: [error] (Compile / doc) Scaladoc generation failed
-sources in (Compile, doc) := Seq.empty
 
 test in assembly := {}
 assemblyMergeStrategy in assembly := {
@@ -134,32 +137,41 @@ lazy val util =
   (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
     .settings(commonSettings)
     .settings(crossScalaVersions := supportedScalaVersions)
+    .settings(nativeSettings)
+    .enablePlugins(ScalaNativePlugin)
 
 lazy val gameOfLife = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"
 )).settings(commonSettings)
   .settings(GOLSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
+  .settings(nativeSettings)
   .dependsOn(util, cli)
+  .enablePlugins(ScalaNativePlugin)
 
 lazy val uniq =
   (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
     .settings(commonSettings)
     .settings(uniqSettings)
     .settings(crossScalaVersions := supportedScalaVersions)
+    .settings(nativeSettings)
     .dependsOn(util, cli)
+    .enablePlugins(ScalaNativePlugin)
 
 lazy val cli = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
 )).settings(commonSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
+  .settings(nativeSettings)
   .dependsOn(util)
+  .enablePlugins(ScalaNativePlugin)
 
 // Root project.
 lazy val fmv1992_scala_utilities = (project in file("."))
   .settings(fmv1992_scala_utilitiesSettings)
   .settings(commonSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
+  .settings(nativeSettings)
   .dependsOn(util)
   .aggregate(
     cli,
@@ -167,3 +179,4 @@ lazy val fmv1992_scala_utilities = (project in file("."))
     uniq,
     util
   )
+  .enablePlugins(ScalaNativePlugin)
