@@ -1,5 +1,8 @@
 FROM ubuntu:18.04@sha256:b58746c8a89938b8c9f5b77de3b8cf1fe78210c696ab03a1442e235eea65d84f
 
+ARG project_name
+ENV PROJECT_NAME $project_name
+
 RUN apt-get update
 
 # Install java.
@@ -21,6 +24,7 @@ ENV PATH $PATH:/home/user/bin/sbt/bin
 
 WORKDIR /home/user/
 COPY . .
+RUN cd ./${PROJECT_NAME} && sbt sbtVersion
 RUN make publishlocal
 
 CMD bash
