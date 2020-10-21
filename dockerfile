@@ -28,7 +28,7 @@ ENV PATH $PATH:/home/user/bin/sbt/bin
 # `scala_cli_parser`.
 WORKDIR /tmp
 RUN git clone https://github.com/fmv1992/scala_cli_parser
-RUN cd ./fmv1992_scala_utilities \
+RUN cd ./scala_cli_parser \
     && git reset --hard 60514eb0621040361670c4ff5feb42240675b713 \
     && make publishlocal
 RUN rm -rf ./scala_cli_parser
