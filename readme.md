@@ -6,9 +6,13 @@
 
     *   [![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/dev/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
 
-*   `dev_0.x_scala_native`:
+*   `v1.x`:
 
-    *   ![Build status](https://travis-ci.org/fmv1992/scala_cli_parser.svg?branch=dev_0.x_scala_native)
+    *   ![Build status](https://travis-ci.org/fmv1992/scala_cli_parser.svg?branch=v1.x)
+
+*   `dev_1.x_scala_native`:
+
+    *   ![Build status](https://travis-ci.org/fmv1992/scala_cli_parser.svg?branch=dev_1.x_scala_native)
 
 This project illustrates my journey in learning Scala and trying to deploy my first project for other people to use.
 
