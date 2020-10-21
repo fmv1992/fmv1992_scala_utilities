@@ -40,8 +40,14 @@ clean:
 
 coverage:
 	# ???: hack to build the report.
-	cd ./fmv1992_scala_utilities && sbt clean coverage test && (sbt coverageReport || sbt coverageAggregate || true)
-	echo "Report can be found on '$$(find . -iname "index.html")'."
+	exit_code=0 \
+        && cd ./fmv1992_scala_utilities \
+        && sbt clean coverage test \
+        && (sbt coverageReport || true) \
+        && sbt coverageAggregate \
+        ; exit_code=$$? \
+        ; echo "Report can be found on '$$(find . -iname "index.html")'." \
+        ; exit "$${exit_code}"
 
 # Test actions. --- {{{
 # Killing a running process with:
