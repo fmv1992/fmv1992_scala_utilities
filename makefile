@@ -2,6 +2,8 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+export PROJECT_NAME := $(notdir $(ROOT_DIR))
+
 # Find all scala files.
 SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
@@ -40,8 +42,14 @@ clean:
 
 coverage:
 	# ???: hack to build the report.
-	cd ./fmv1992_scala_utilities && sbt clean coverage test && (sbt coverageReport || sbt coverageAggregate || true)
-	echo "Report can be found on '$$(find . -iname "index.html")'."
+	exit_code=0 \
+        && cd ./fmv1992_scala_utilities \
+        && sbt clean coverage test \
+        && (sbt coverageReport || true) \
+        && sbt coverageAggregate \
+        ; exit_code=$$? \
+        ; echo "Report can be found on '$$(find . -iname "index.html")'." \
+        ; exit "$${exit_code}"
 
 # Test actions. --- {{{
 # Killing a running process with:
@@ -96,6 +104,30 @@ $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
 
 test%.sh: .FORCE
 	bash -xv $@
+
+
+# Docker actions. --- {{{
+
+docker_build:
+	docker build \
+        --file ./dockerfile \
+        --tag $(PROJECT_NAME) \
+        --build-arg project_name=$(PROJECT_NAME) \
+        -- . \
+        1>&2
+
+docker_run:
+	docker run \
+        --interactive \
+        --tty \
+        --entrypoint '' \
+        $(PROJECT_NAME) \
+        $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
+
+docker_test:
+	DOCKER_CMD='make test' make docker_run
+
+# --- }}}
 
 .FORCE:
 
