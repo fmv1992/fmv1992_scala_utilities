@@ -24,6 +24,14 @@ RUN unzip sbt.zip
 RUN rm sbt.zip
 ENV PATH $PATH:/home/user/bin/sbt/bin
 
+# `scala_cli_parser:60514eb:dockerfile:29`
+WORKDIR /tmp
+RUN git clone https://github.com/fmv1992/fmv1992_scala_utilities
+RUN cd ./fmv1992_scala_utilities \
+    && git reset --hard 3c37a2dc1e8f3cf544159dc5ef79ad1c42cc2c74 \
+    && make publishlocal
+RUN rm -rf ./fmv1992_scala_utilities
+#
 # Install commit `60514eb0621040361670c4ff5feb42240675b713` at
 # `scala_cli_parser`.
 WORKDIR /tmp
