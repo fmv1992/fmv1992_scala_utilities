@@ -2,7 +2,7 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 object TestCases {
 
@@ -35,7 +35,7 @@ object TestCases {
 //
 // Se matchers here:
 // http://www.scalatest.org/user_guide/using_matchers#checkingObjectIdentity
-class TestUniq extends FunSuite {
+class TestUniq extends AnyFunSuite {
 
   test("Simplemost test.") {
     assert(

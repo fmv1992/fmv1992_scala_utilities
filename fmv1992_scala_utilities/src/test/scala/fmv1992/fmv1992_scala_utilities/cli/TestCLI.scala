@@ -1,10 +1,10 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 import fmv1992.fmv1992_scala_utilities.util.Example
 
-class TestStandardParser extends FunSuite {
+class TestStandardParser extends AnyFunSuite {
 
   val defaultArgs = "--debug --verbose".split(" ").toList
 
@@ -34,7 +34,7 @@ class TestStandardParser extends FunSuite {
 
 }
 
-class TestGNUParser extends FunSuite {
+class TestGNUParser extends AnyFunSuite {
 
   test("Test API.") {
     // Test valid instantiation.

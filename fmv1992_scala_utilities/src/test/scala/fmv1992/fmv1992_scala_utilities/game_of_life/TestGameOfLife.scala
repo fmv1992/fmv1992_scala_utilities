@@ -2,7 +2,7 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.game_of_life
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 import fmv1992.fmv1992_scala_utilities.cli.GNUParser
 import fmv1992.fmv1992_scala_utilities.cli.Argument
@@ -62,7 +62,7 @@ trait TestGameOfLifeHelper {
 
 }
 
-class TestGameOfLife extends FunSuite with TestGameOfLifeHelper {
+class TestGameOfLife extends AnyFunSuite with TestGameOfLifeHelper {
 
   test("Ensure constants across the same package version.") {
     assert(standardGOL.toString == "oxxxx\nxxooo\nxxoxo\noooox\nxoxxx")
@@ -194,7 +194,7 @@ class TestGameOfLife extends FunSuite with TestGameOfLifeHelper {
 
 }
 
-class TestGameOfLifeOscillators extends FunSuite with TestGameOfLifeHelper {
+class TestGameOfLifeOscillators extends AnyFunSuite with TestGameOfLifeHelper {
 
   test("Oscillator 01.") {
 
@@ -210,7 +210,7 @@ class TestGameOfLifeOscillators extends FunSuite with TestGameOfLifeHelper {
 
 }
 
-class TestGameOfLifePoolOfCases extends FunSuite with TestGameOfLifeHelper {
+class TestGameOfLifePoolOfCases extends AnyFunSuite with TestGameOfLifeHelper {
 
   val defectiveSeed01 = 1785599012
   val defectiveSeed02 = -709633859

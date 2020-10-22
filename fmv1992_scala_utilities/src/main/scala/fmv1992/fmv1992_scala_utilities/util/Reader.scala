@@ -51,7 +51,8 @@ object Reader {
         .fromInputStream(getClass.getResourceAsStream(shortenedPath))
     }
     val res: List[String] = loanPattern(bufSource)(_.getLines().toList)
-    require(res.knownSize >= 0)
+    // ???
+    // require(res.knownSize >= 0)
     res
   }
 

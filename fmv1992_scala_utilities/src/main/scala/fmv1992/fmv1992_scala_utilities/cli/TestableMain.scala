@@ -1,6 +1,7 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import scala.Iterable
 
 /** Testable main trait with a configurable file CLI implementation.
   *
@@ -72,7 +73,7 @@ trait TestableMain {
   // Does not need to specify the input stream (i.e. file or stdin). These
   // should be encoded by the parsed arguments.
   /** Testable interface for main program. */
-  def testableMain(args: Seq[Argument]): Traversable[String]
+  def testableMain(args: Seq[Argument]): Iterable[String]
 
   /** Split input [[Argument Arguments]] from other arguments. */
   def splitInputArgumentFromOthers(args: Seq[Argument]) =

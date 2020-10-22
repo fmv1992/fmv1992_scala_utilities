@@ -12,7 +12,6 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
   * The memory requirements are O(n).
   *
   * @see [[https://en.wikipedia.org/wiki/Uniq]]
-  *
   */
 object Uniq extends CLIConfigTestableMain {
 
