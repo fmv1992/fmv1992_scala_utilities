@@ -103,7 +103,12 @@ lazy val commonSettings = Seq(
     ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq)
 )
 
-lazy val GOLSettings = Seq(assemblyJarName in assembly := "game_of_life.jar")
+lazy val GOLSettings = Seq(
+  assemblyJarName in assembly := "game_of_life.jar",
+  mainClass in Compile := Some(
+    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
+  )
+)
 
 lazy val uniqSettings = Seq(
   assemblyJarName in assembly := "uniq.jar",

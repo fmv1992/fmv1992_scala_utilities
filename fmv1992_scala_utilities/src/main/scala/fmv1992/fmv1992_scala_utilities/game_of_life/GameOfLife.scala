@@ -29,7 +29,7 @@ trait Game {
   * 4. Any dead cell with exactly three live neighbours becomes a live cell, as
   * if by reproduction.
   */
-case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
+case class GameOfLifeGame(state: Seq[Seq[Cell]]) extends Game {
 
   lazy val isOver: Boolean = {
 
@@ -50,14 +50,14 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
   override def toString: String = this.representation
 
   /** Get next state for this game of life. */
-  def next: GameOfLife = {
-    GameOfLife(this.state.map(l ⇒ l.map(c ⇒ Cell.getNextState(c, state))))
+  def next: GameOfLifeGame = {
+    GameOfLifeGame(this.state.map(l ⇒ l.map(c ⇒ Cell.getNextState(c, state))))
   }
 
 }
 
 /** Companion object for Game of Life. */
-object GameOfLife {
+object GameOfLifeGame {
 
   // ???: Tests must be "resistant" to these (parametrize!).
   val xdim = 5
@@ -74,13 +74,13 @@ object GameOfLife {
     listOfCells.toSeq
   }
 
-  def apply(seed: Int): GameOfLife = {
+  def apply(seed: Int): GameOfLifeGame = {
     val rState = new scala.util.Random(seed)
     val cells = getCells(rState)
-    GameOfLife(cells)
+    GameOfLifeGame(cells)
   }
 
-  def apply(repr: String): GameOfLife = {
+  def apply(repr: String): GameOfLifeGame = {
 
     val splitted = repr.split('\n')
     val xdim = splitted(0).length - 1
@@ -100,7 +100,7 @@ object GameOfLife {
 
     val constructedAsCells = constructed.grouped(xdim + 1).toSeq
 
-    GameOfLife(constructedAsCells)
+    GameOfLifeGame(constructedAsCells)
 
   }
 
@@ -215,11 +215,11 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 }
 
 /** Main program. */
-object Main extends CLIConfigTestableMain {
+object GameOfLife extends CLIConfigTestableMain {
 
   val version = Reader.readLines("./src/main/resources/version").mkString
 
-  val programName = "GameOfLife"
+  val programName = "GameOfLifeGame"
 
   val CLIConfigPath = "./src/main/resources/game_of_life_cli_config.conf"
 
@@ -227,22 +227,23 @@ object Main extends CLIConfigTestableMain {
   // package.
   def getInfiniteStreamOfGames(i: Int): Stream[String] = {
 
-    def origStream: Stream[GameOfLife] = infiniteGameOfLife(i)
+    def origStream: Stream[GameOfLifeGame] = infiniteGameOfLife(i)
     // ???: Print at least one dead game.
-    def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
+    def truncEndingStream: Stream[GameOfLifeGame] =
+      origStream.takeWhile(!_.isOver)
 
     // ???: Games take O(n) memory.
-    type SGOL = Set[GameOfLife]
+    type SGOL = Set[GameOfLifeGame]
     lazy val previousGames: Stream[SGOL] = {
-      (Set.empty: Set[GameOfLife]) #::
+      (Set.empty: Set[GameOfLifeGame]) #::
         previousGames
           .zip(truncEndingStream)
-          .map({ case (a: SGOL, b: GameOfLife) ⇒ a + b })
+          .map({ case (a: SGOL, b: GameOfLifeGame) ⇒ a + b })
     }
-    def truncNonRepeatingStream: Stream[GameOfLife] =
+    def truncNonRepeatingStream: Stream[GameOfLifeGame] =
       previousGames
         .zip(truncEndingStream)
-        .takeWhile({ case (a: SGOL, b: GameOfLife) ⇒ !a.contains(b) })
+        .takeWhile({ case (a: SGOL, b: GameOfLifeGame) ⇒ !a.contains(b) })
         .map(_._2)
 
     // Lazily append streams.
@@ -289,13 +290,13 @@ object Main extends CLIConfigTestableMain {
 
   }
 
-  def infiniteGameOfLife(seed: Int = 0): Stream[GameOfLife] = {
-    val first = GameOfLife(seed)
+  def infiniteGameOfLife(seed: Int = 0): Stream[GameOfLifeGame] = {
+    val first = GameOfLifeGame(seed)
     infiniteGameOfLife(first)
   }
 
-  def infiniteGameOfLife(game: GameOfLife): Stream[GameOfLife] = {
-    def s1: Stream[GameOfLife] = game #:: s1.map(_.next)
+  def infiniteGameOfLife(game: GameOfLifeGame): Stream[GameOfLifeGame] = {
+    def s1: Stream[GameOfLifeGame] = game #:: s1.map(_.next)
     s1
   }
 
