@@ -28,10 +28,10 @@ trait CLIConfigTestableMain extends TestableMain {
     */
   def printHelp(format: Map[String, Map[String, String]]): Seq[String] = {
     val usage: String = s"$programName " + format.keys.toList.sorted
-      .map(x ⇒ "--" + x.format("name"))
+      .map(x => "--" + x.format("name"))
       .mkString(" ")
     val description: String = format.keys.toList.sorted
-      .map(x ⇒ " " * 4 + "--" + x.format("name") + ": " + format(x)("help"))
+      .map(x => " " * 4 + "--" + x.format("name") + ": " + format(x)("help"))
       .mkString("\n")
     Seq(usage, description)
   }

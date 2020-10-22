@@ -6,7 +6,7 @@ import org.scalatest.FunSuite
 
 object TestCases {
 
-  def multiLineStringtoSeq: String ⇒ Seq[String] = {
+  def multiLineStringtoSeq: String => Seq[String] = {
     _.stripMargin.trim.split("\n").toSeq
   }
 
@@ -51,7 +51,7 @@ class TestUniq extends FunSuite {
     Uniq
       .filterUnique(TestCases.s2)
       .zip(copyOfs2)
-      .foreach((x: Tuple2[String, String]) ⇒ assert(x._1 == x._2))
+      .foreach((x: Tuple2[String, String]) => assert(x._1 == x._2))
 
     assert(Uniq.filterUnique(TestCases.s3).mkString("") == "a")
 

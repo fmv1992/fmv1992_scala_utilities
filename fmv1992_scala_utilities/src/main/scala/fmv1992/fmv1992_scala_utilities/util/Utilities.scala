@@ -16,7 +16,7 @@ object Utilities {
     ): List[(Int, Int)] = {
       val nextIndexCounter = indexCounter + 1
       gl match {
-        case h :: t ⇒ {
+        case h :: t => {
           if (curEl == h) {
             go(t, curIndex, nextIndexCounter, curEl, acc)
           } else {
@@ -29,7 +29,7 @@ object Utilities {
             )
           }
         }
-        case Nil ⇒ (curIndex, nextIndexCounter) +: acc
+        case Nil => (curIndex, nextIndexCounter) +: acc
       }
     }
     go(l.tail, 0, 0, l.head, Nil).reverse

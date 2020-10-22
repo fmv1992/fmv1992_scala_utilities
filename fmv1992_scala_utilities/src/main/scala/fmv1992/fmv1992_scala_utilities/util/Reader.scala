@@ -10,7 +10,7 @@ object Reader {
 
   def loanPattern[A](
       closeable: scala.io.Source
-  )(f: scala.io.Source ⇒ A): A = {
+  )(f: scala.io.Source => A): A = {
     try {
       f(closeable)
     } finally {
@@ -22,7 +22,7 @@ object Reader {
   // https://stackoverflow.com/a/33972743/5544140
   //
   //    ```
-  //    Using(Source.fromFile("file.txt")) { source ⇒ source.mkString }
+  //    Using(Source.fromFile("file.txt")) { source => source.mkString }
   //    ```
   //
   // See:
@@ -50,8 +50,8 @@ object Reader {
       scala.io.Source
         .fromInputStream(getClass.getResourceAsStream(shortenedPath))
     }
-    val res: List[String] = loanPattern(bufSource)(_.getLines.toList)
-    require(res.hasDefiniteSize)
+    val res: List[String] = loanPattern(bufSource)(_.getLines().toList)
+    require(res.knownSize >= 0)
     res
   }
 

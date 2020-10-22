@@ -27,7 +27,7 @@ trait TestGameOfLifeHelper {
     buildAliveNeighbours(8 - i)
   }
 
-  val lAliveNeighbourCases = List.tabulate(9)(x ⇒ buildAliveNeighbours(x))
+  val lAliveNeighbourCases = List.tabulate(9)(x => buildAliveNeighbours(x))
   val cCases = List(a, d)
 
   val tinyGameStr = """
@@ -204,7 +204,7 @@ class TestGameOfLifeOscillators extends FunSuite with TestGameOfLifeHelper {
     stream01
       .zip(stream02)
       .take(100)
-      .foreach(x ⇒ assert(x._1.toString == x._2.toString))
+      .foreach(x => assert(x._1.toString == x._2.toString))
 
   }
 
@@ -219,7 +219,7 @@ class TestGameOfLifePoolOfCases extends FunSuite with TestGameOfLifeHelper {
 
   test("Test that seeding these crahses current GOL.") {
 
-    defectiveSeeds.foreach(x ⇒ {
+    defectiveSeeds.foreach(x => {
       val arg1: Seq[Argument] = {
         parser.parse(
           s"--make-games --n-games 100 --seed ${x}".split(" ").toList

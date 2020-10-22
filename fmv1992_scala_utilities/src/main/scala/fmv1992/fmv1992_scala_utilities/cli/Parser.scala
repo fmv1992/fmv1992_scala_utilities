@@ -33,11 +33,10 @@ import ParserTypes._
   *
   * This design is influenced by <https://github.com/fpinscala/fpinscala>.
   */
-
 object ParserTypes {
   type MS = Map[String, String]
   type OMS = Option[MS]
-  type Parser = String ⇒ (String, OMS)
+  type Parser = String => (String, OMS)
 }
 
 trait Parsers
@@ -50,26 +49,26 @@ object CLIConfigParser extends Parsers {
 
   // Parser combinators. --- {{{
 
-  lazy val Success: Parser = x ⇒ (x, Some(Map.empty))
+  lazy val Success: Parser = x => (x, Some(Map.empty))
 
-  def or(p1: Parser, p2: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        newP match {
-          case Some(_) ⇒ (s1, newP)
-          case None ⇒ p2(x)
-        }
+  def or(p1: Parser, p2: Parser): Parser = { (x: String) =>
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      newP match {
+        case Some(_) => (s1, newP)
+        case None    => p2(x)
       }
+    }
   }
 
-  def many1(p1: Parser): Parser = {
-    (x: String) ⇒ {
-        val (s1: String, newP: OMS) = p1(x)
-        newP match {
-          case Some(_) ⇒ many(p1)(x)
-          case None ⇒ (x, newP)
-        }
+  def many1(p1: Parser): Parser = { (x: String) =>
+    {
+      val (s1: String, newP: OMS) = p1(x)
+      newP match {
+        case Some(_) => many(p1)(x)
+        case None    => (x, newP)
       }
+    }
   }
 
   def many(p1: Parser): Parser = {

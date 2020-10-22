@@ -34,9 +34,10 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
   lazy val isOver: Boolean = {
 
     state.flatten.forall(
-      c ⇒ c match {
-          case _: Dead ⇒ true
-          case _: Alive ⇒ false
+      c =>
+        c match {
+          case _: Dead  => true
+          case _: Alive => false
         }
     )
   }
@@ -50,7 +51,7 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
 
   /** Get next state for this game of life. */
   def next: GameOfLife = {
-    GameOfLife(this.state.map(l ⇒ l.map(c ⇒ Cell.getNextState(c, state))))
+    GameOfLife(this.state.map(l => l.map(c => Cell.getNextState(c, state))))
   }
 
 }
@@ -64,7 +65,8 @@ object GameOfLife {
 
   private def getCells(r: scala.util.Random): Seq[Seq[Cell]] = {
     val listOfCells = Seq.tabulate(xdim)(
-      x ⇒ Seq.tabulate(ydim)(y ⇒ {
+      x =>
+        Seq.tabulate(ydim)(y => {
           val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
           c
         })
@@ -85,14 +87,14 @@ object GameOfLife {
     val ydim = splitted.length - 1
 
     val index: IndexedSeq[Tuple2[Int, Int]] =
-      (0 to xdim).map(x ⇒ (0 to ydim).map(y ⇒ (x, y))).flatten
+      (0 to xdim).map(x => (0 to ydim).map(y => (x, y))).flatten
 
-    val constructed = index.map(i ⇒ {
+    val constructed = index.map(i => {
       val cAsString = splitted(i._1)(i._2).toChar
       cAsString match {
-        case 'x' ⇒ Dead(i._1, i._2)
-        case 'o' ⇒ Alive(i._1, i._2)
-        case _ ⇒ throw new Exception()
+        case 'x' => Dead(i._1, i._2)
+        case 'o' => Alive(i._1, i._2)
+        case _   => throw new Exception()
       }
     })
 
@@ -120,11 +122,11 @@ object Cell {
 
   def countAliveCells(l: Seq[Cell]): Int = {
 
-    val aliveCount: Int = l.count(c ⇒ {
+    val aliveCount: Int = l.count(c => {
       c match {
-        case _: Alive ⇒ true
-        case _: Dead ⇒ false
-        case _ ⇒ throw new Exception()
+        case _: Alive => true
+        case _: Dead  => false
+        case _        => throw new Exception()
       }
     })
 
@@ -149,10 +151,10 @@ object Cell {
 
     lazy val xindexes = ((cell.x - 1) to (cell.x + 1)).toSeq
     lazy val yindexes = ((cell.y - 1) to (cell.y + 1)).toSeq
-    lazy val cp = yindexes.flatMap(y ⇒ xindexes.map(x ⇒ (x, y)))
+    lazy val cp = yindexes.flatMap(y => xindexes.map(x => (x, y)))
     // NOTE: Defective product here caused big bug...
     lazy val cpNotSelf =
-      cp.filter(_ != (cell.x, cell.y)).map(x ⇒ mapOutOfBoundsToDeadCells(x))
+      cp.filter(_ != (cell.x, cell.y)).map(x => mapOutOfBoundsToDeadCells(x))
 
     require(cpNotSelf.length == 8)
     cpNotSelf
@@ -180,9 +182,9 @@ object Cell {
     }
 
     val res: Cell = cell match {
-      case _: Alive ⇒ getNextGenStateForAlive
-      case _: Dead ⇒ getNextGenStateForDead
-      case _ ⇒ throw new Exception()
+      case _: Alive => getNextGenStateForAlive
+      case _: Dead  => getNextGenStateForDead
+      case _        => throw new Exception()
     }
 
     require(res.x == cell.x)
@@ -235,12 +237,12 @@ object Main extends CLIConfigTestableMain {
       (Set.empty: Set[GameOfLife]) #::
         previousGames
           .zip(truncEndingStream)
-          .map({ case (a: SGOL, b: GameOfLife) ⇒ a + b })
+          .map({ case (a: SGOL, b: GameOfLife) => a + b })
     }
     def truncNonRepeatingStream: Stream[GameOfLife] =
       previousGames
         .zip(truncEndingStream)
-        .takeWhile({ case (a: SGOL, b: GameOfLife) ⇒ !a.contains(b) })
+        .takeWhile({ case (a: SGOL, b: GameOfLife) => !a.contains(b) })
         .map(_._2)
 
     // Lazily append streams.
@@ -273,7 +275,7 @@ object Main extends CLIConfigTestableMain {
 
     // action.
 
-    val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) ⇒ {
+    val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) => {
       if (a.longName == "find-cyclic") {
         findCycles()
       } else if (a.longName == "make-games") {
