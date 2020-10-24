@@ -10,7 +10,7 @@ lazy val scala211 = "2.11.12"
 lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.3"
 lazy val supportedScalaVersions = List(
-  // scala211,
+  scala211,
   scala212,
   scala213
 )
@@ -97,16 +97,29 @@ lazy val commonDependencies = Seq(
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
   //
-  scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
-  libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
   addCompilerPlugin(scalafixSemanticdb),
   //
+  scalafixDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, n)) if n == 11 => List()
+      case Some((2, n)) if n == 12 =>
+        List(
+        )
+      case Some((2, n)) if n == 13 =>
+        List(
+          "org.scala-lang" %% "scala-rewrites" % "0.1.2"
+        )
+      case _ => Nil
+    }
+  },
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 => List()
-      case Some((2, n)) if n == 12 => List()
-      case Some((2, n)) if n == 13 => List()
-      case _                       => Nil
+      case Some((2, n)) if n == 12 =>
+        List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
+      case Some((2, n)) if n == 13 =>
+        List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
+      case _ => Nil
     }
   },
   Compile / scalacOptions ++= {
