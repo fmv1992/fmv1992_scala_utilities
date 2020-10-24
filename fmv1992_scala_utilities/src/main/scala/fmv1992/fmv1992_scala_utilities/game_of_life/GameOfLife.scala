@@ -225,21 +225,21 @@ object Main extends CLIConfigTestableMain {
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.
-  def getInfiniteStreamOfGames(i: Int): Stream[String] = {
+  def getInfiniteStreamOfGames(i: Int): LazyList[String] = {
 
-    def origStream: Stream[GameOfLife] = infiniteGameOfLife(i)
+    def origStream: LazyList[GameOfLife] = infiniteGameOfLife(i)
     // ???: Print at least one dead game.
-    def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
+    def truncEndingStream: LazyList[GameOfLife] = origStream.takeWhile(!_.isOver)
 
     // ???: Games take O(n) memory.
     type SGOL = Set[GameOfLife]
-    lazy val previousGames: Stream[SGOL] = {
+    lazy val previousGames: LazyList[SGOL] = {
       (Set.empty: Set[GameOfLife]) #::
         previousGames
           .zip(truncEndingStream)
           .map({ case (a: SGOL, b: GameOfLife) => a + b })
     }
-    def truncNonRepeatingStream: Stream[GameOfLife] =
+    def truncNonRepeatingStream: LazyList[GameOfLife] =
       previousGames
         .zip(truncEndingStream)
         .takeWhile({ case (a: SGOL, b: GameOfLife) => !a.contains(b) })
@@ -289,13 +289,13 @@ object Main extends CLIConfigTestableMain {
 
   }
 
-  def infiniteGameOfLife(seed: Int = 0): Stream[GameOfLife] = {
+  def infiniteGameOfLife(seed: Int = 0): LazyList[GameOfLife] = {
     val first = GameOfLife(seed)
     infiniteGameOfLife(first)
   }
 
-  def infiniteGameOfLife(game: GameOfLife): Stream[GameOfLife] = {
-    def s1: Stream[GameOfLife] = game #:: s1.map(_.next)
+  def infiniteGameOfLife(game: GameOfLife): LazyList[GameOfLife] = {
+    def s1: LazyList[GameOfLife] = game #:: s1.map(_.next)
     s1
   }
 
