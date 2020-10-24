@@ -36,12 +36,11 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
 
   lazy val isOver: Boolean = {
 
-    state.flatten.forall(
-      c =>
-        c match {
-          case _: Dead  => true
-          case _: Alive => false
-        }
+    state.flatten.forall(c =>
+      c match {
+        case _: Dead  => true
+        case _: Alive => false
+      }
     )
   }
 
@@ -67,12 +66,11 @@ object GameOfLife {
   val ydim = 5
 
   private def getCells(r: scala.util.Random): Seq[Seq[Cell]] = {
-    val listOfCells = Seq.tabulate(xdim)(
-      x =>
-        Seq.tabulate(ydim)(y => {
-          val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
-          c
-        })
+    val listOfCells = Seq.tabulate(xdim)(x =>
+      Seq.tabulate(ydim)(y => {
+        val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
+        c
+      })
     )
     listOfCells.toSeq
   }

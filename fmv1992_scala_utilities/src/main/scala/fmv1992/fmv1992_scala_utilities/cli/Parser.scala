@@ -24,7 +24,6 @@ import ParserTypes._
   * type: int
   * help: Help text.
   *
-  *
   * name: verbose
   * n: 0
   * type: int

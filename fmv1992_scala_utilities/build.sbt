@@ -104,7 +104,7 @@ lazy val commonDependencies = Seq(
       case Some((2, n)) if n == 11 => List()
       case Some((2, n)) if n == 12 =>
         List(
-          )
+        )
       case Some((2, n)) if n == 13 =>
         List(
           "org.scala-lang" %% "scala-rewrites" % "0.1.2"

@@ -9,7 +9,6 @@ import fmv1992.fmv1992_scala_utilities.util.Utilities
   *
   * @define parseDoc Parse a sequence of strings into a sequence of
   * [[Argument Arguments]].
-  *
   */
 trait CLIParser {
 
@@ -36,7 +35,6 @@ trait ConfigFileParser extends CLIParser {
     *
     * Map(debug -> Map(n -> 0, type -> int, help -> Help text.),
     * verbose -> Map(n -> 0, type -> int, help -> Help text.))
-    *
     */
   val format: Map[String, Map[String, String]]
 
