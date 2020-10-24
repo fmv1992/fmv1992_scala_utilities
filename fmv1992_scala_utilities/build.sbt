@@ -11,11 +11,11 @@ lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.3"
 lazy val supportedScalaVersions = List(
   scala211,
-  scala212
-  // scala213
+  scala212,
+  scala213
 )
-ThisBuild / scalaVersion := scala212
-scalaVersion := scala212
+ThisBuild / scalaVersion := scala213
+scalaVersion := scala213
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
@@ -45,6 +45,22 @@ scalaVersion := scala212
 //     }
 // }
 
+inThisBuild(
+  List(
+    libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
+    // semanticdbEnabled := true,
+    // semanticdbOptions += "-P:semanticdb:synthetics:on", // make sure to add this
+    // semanticdbVersion := scalafixSemanticdb.revision,
+    scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
+      scalaVersion.value
+    ),
+    addCompilerPlugin(
+      "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full
+    ),
+    addCompilerPlugin(scalafixSemanticdb)
+  )
+)
+
 lazy val commonSettings = Seq(
   homepage := Some(url("https:???")),
   organization := "fmv1992",
@@ -53,7 +69,7 @@ lazy val commonSettings = Seq(
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
   //
-  scalaVersion := scala212,
+  scalaVersion := scala213,
   crossScalaVersions := supportedScalaVersions,
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
@@ -65,29 +81,32 @@ lazy val commonSettings = Seq(
   resourceDirectory in Runtime := file(".") / "./src/main/resources",
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   //
-  scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
   addCompilerPlugin(scalafixSemanticdb),
   scalacOptions ++= List("-Yrangepos", "-P:semanticdb:synthetics:on"),
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
-  scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
+  // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
+  // scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   //
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
   //
-  addCompilerPlugin(scalafixSemanticdb),
   scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
+  libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
+  addCompilerPlugin(scalafixSemanticdb),
   //
   // logLevel in assembly := Level.Debug,
-  scalacOptions ++= (Seq(
-    "-feature",
-    "-deprecation",
-    "-Xfatal-warnings"
-    // "-Ywarn-unuse"
-  )
-    ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
-    ++ Seq("-Yrangepos")),
+  scalacOptions ++= (
+    Seq(
+      "-feature",
+      "-deprecation",
+      "-Xfatal-warnings"
+      // "-Ywarn-unuse"
+    )
+      ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
+      ++ Seq("-Yrangepos")
+  ),
   //
   test in assembly := {},
   assemblyMergeStrategy in assembly := {
