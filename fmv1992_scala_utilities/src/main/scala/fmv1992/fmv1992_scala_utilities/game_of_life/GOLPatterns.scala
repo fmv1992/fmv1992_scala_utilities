@@ -4,7 +4,7 @@ package fmv1992.fmv1992_scala_utilities.game_of_life
 
 object GameOfLifeOscillators {
 
-  val oscillator01 = """
+  val oscillator01: String = """
   |xxxxx
   |xxoxx
   |xxoxx

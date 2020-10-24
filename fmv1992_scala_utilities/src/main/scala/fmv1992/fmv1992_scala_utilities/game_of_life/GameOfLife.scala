@@ -217,7 +217,7 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 /** Main program. */
 object Main extends CLIConfigTestableMain {
 
-  val version = Reader.readLines("./src/main/resources/version").mkString
+  val version: String = Reader.readLines("./src/main/resources/version").mkString
 
   val programName = "GameOfLife"
 

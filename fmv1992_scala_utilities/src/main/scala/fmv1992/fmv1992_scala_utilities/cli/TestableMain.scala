@@ -76,7 +76,7 @@ trait TestableMain {
   def testableMain(args: Seq[Argument]): Iterable[String]
 
   /** Split input [[Argument Arguments]] from other arguments. */
-  def splitInputArgumentFromOthers(args: Seq[Argument]) =
+  def splitInputArgumentFromOthers(args: Seq[Argument]): (Seq[Argument], Seq[Argument]) =
     splitArgumentFromOthers(args, "input")
 
   /** Split input [[Argument Arguments]] from other arguments. */

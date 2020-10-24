@@ -15,7 +15,7 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version = Reader.readLines("./src/main/resources/version").mkString
+  val version: String = Reader.readLines("./src/main/resources/version").mkString
 
   val programName = "Uniq"
 
