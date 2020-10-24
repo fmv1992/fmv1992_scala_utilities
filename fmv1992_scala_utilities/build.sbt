@@ -32,11 +32,9 @@ scalaVersion := scala213
 inThisBuild(
   List(
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
-    // ???: https://github.com/scala/scala-rewrites/issues/67
-    //
-    // semanticdbEnabled := true,
-    // semanticdbOptions += "-P:semanticdb:synthetics:on", // make sure to add this
-    // semanticdbVersion := scalafixSemanticdb.revision,
+    semanticdbEnabled := true,
+    semanticdbOptions += "-P:semanticdb:synthetics:on",
+    semanticdbVersion := scalafixSemanticdb.revision,
     scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
       scalaVersion.value
     ),
@@ -58,7 +56,7 @@ lazy val commonSettings = Seq(
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
-  watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
+  // watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
   maxErrors := 100,
   // Ship resource files with each jar.
   resourceDirectory in Compile := file(".") / "./src/main/resources",

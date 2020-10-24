@@ -2,14 +2,12 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-export PROJECT_NAME := $(notdir $(ROOT_DIR))
-
 # Find all scala files.
 SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
-export PROJECT_NAME := $(notdir $(ROOT_DIR))
+export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
 
 export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
