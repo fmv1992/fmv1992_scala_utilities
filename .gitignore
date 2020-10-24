@@ -22,8 +22,11 @@
 # ...even if they are in subdirectories
 !*/
 
-# But do ignore these directories
+# But do ignore these directories:
 tmp/
 target/
+
+# And these files:
+metals.sbt
 
 # vim: set fileformat=unix filetype=conf wrap :

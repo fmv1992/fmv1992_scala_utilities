@@ -24,7 +24,11 @@ A [uniq](https://en.wikipedia.org/wiki/Uniq) implementation in Scala in which th
 A very broad utilities package for Scala.
 
 <!--
+
 ## TODO
+
+*   Important commit: `b13d013d897bfbde2f6c94a6264cc3e5319078f6`: has no
+    circular dependencies with other projects.
 
 1.  Publish on a central repository. See:
 
@@ -47,6 +51,9 @@ A very broad utilities package for Scala.
     *   Create a GNU style documentation.
 
     *   Move this readme to a documentation folder; create readme programatically.
+
+1. Add references to `SICP` and `FPIS`.
+
 -->
 
 [comment]: # ( vim: set filetype=markdown fileformat=unix nowrap spell spelllang=en: )
