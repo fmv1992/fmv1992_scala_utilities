@@ -11,7 +11,6 @@ SBT_FOLDERS := $(dir $(SBT_FILES))
 
 export PROJECT_NAME := $(notdir $(ROOT_DIR))
 
-export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
 export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
 # Build files.

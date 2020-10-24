@@ -26,7 +26,7 @@ WORKDIR /home/user/
 RUN mkdir ./${PROJECT_NAME}
 COPY ./${PROJECT_NAME} ./${PROJECT_NAME}
 RUN find ${PROJECT_NAME} -regextype 'egrep' \( \! -iregex '.*(\.properties|\.sbt|/version)' \) -type f -print0 | xargs -0 rm --verbose -rf
-RUN find ${PROJECT_NAME} -type d -print0 | xargs -0 rmdir || true
+RUN find ${PROJECT_NAME} -type d -print0 | xargs -0 rmdir --parents || true
 RUN cd ./${PROJECT_NAME} && sbt update
 RUN rm -rf ./${PROJECT_NAME}
 COPY . .

@@ -10,6 +10,7 @@ import xerial.sbt.Sonatype._
 lazy val scala211 = "2.11.12"
 lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.3"
+
 lazy val supportedScalaVersions = List(
   scala211,
   scala212,
@@ -66,12 +67,12 @@ lazy val commonSettings = Seq(
   addCompilerPlugin(scalafixSemanticdb),
   scalacOptions ++= (
     Seq(
-      "-Yrangepos",
       "-P:semanticdb:synthetics:on",
-      "-feature",
+      "-Yrangepos",
+      "-Ywarn-dead-code",
       "-deprecation",
-      "-Xfatal-warnings",
-      "-Yrangepos"
+      "-feature"
+      // "-Xfatal-warnings",
       // "-Ywarn-unuse"
     )
       ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
@@ -152,8 +153,8 @@ lazy val commonDependencies = Seq(
   Compile / scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 => List()
-      case Some((2, n)) if n == 12 => List()
-      case Some((2, n)) if n == 13 => List()
+      case Some((2, n)) if n == 12 => List("-Xlint:unused")
+      case Some((2, n)) if n == 13 => List("-Xlint:unused")
     }
   }
   //

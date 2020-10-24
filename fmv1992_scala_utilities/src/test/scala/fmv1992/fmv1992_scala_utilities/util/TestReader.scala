@@ -1,7 +1,5 @@
 package fmv1992.fmv1992_scala_utilities.util
 
-import scala.util.Random
-
 import org.scalatest.funsuite.AnyFunSuite
 
 // ???: This is a **CLASS** not an object...
@@ -15,7 +13,7 @@ class TestReader extends AnyFunSuite {
     // a `java.net.SocketException: Socket closed` exception not on the tests
     // but on the execution of the tests itself.
     // assertThrows[java.lang.NullPointerException](
-    //   Reader.readLines("/tmp/" + Random.nextString(100)).toList
+    //   Reader.readLines("/tmp/unexisting_path_" + Random.nextString(100)).toList
     // )
   }
 
