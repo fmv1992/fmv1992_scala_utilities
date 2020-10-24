@@ -53,7 +53,7 @@ trait ConfigFileParser extends CLIParser {
         case Nil => acc
         case h :: t => {
           val name = h.stripPrefix("--")
-          require(format.contains(name), format.keys + name)
+          require(format.contains(name), String.valueOf(format.keys) + name)
           val n = format(name)("n").toInt
           val values = t.take(n)
           val newArg: Argument = GNUArg(name, values)
@@ -72,7 +72,7 @@ trait ConfigFileParser extends CLIParser {
     val notIncludedDefaultKeys: Seq[String] = (defaultKeys diff argsLongNames)
     require(
       argsLongNames.intersect(notIncludedDefaultKeys).isEmpty,
-      argsLongNames + "|" + notIncludedDefaultKeys
+      String.valueOf(argsLongNames) + "|" + notIncludedDefaultKeys
     )
     val additionalArgs: Seq[Argument] = {
       notIncludedDefaultKeys.map(x => GNUArg(x, List(format(x)("default"))))
@@ -145,10 +145,10 @@ object StandardParser {
 case class GNUParser(format: Map[String, Map[String, String]])
     extends ConfigFileParser {
 
-  require(format.contains("help"), format + " has to contain entry 'help'.")
+  require(format.contains("help"), String.valueOf(format) + " has to contain entry 'help'.")
   require(
     format.contains("version"),
-    format + " has to contain entry 'version'."
+    String.valueOf(format) + " has to contain entry 'version'."
   )
 
 }

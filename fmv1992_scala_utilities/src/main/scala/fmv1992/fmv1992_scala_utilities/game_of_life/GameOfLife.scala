@@ -182,8 +182,8 @@ object Cell {
     }
 
     val res: Cell = cell match {
-      case _: Alive => getNextGenStateForAlive
-      case _: Dead  => getNextGenStateForDead
+      case _: Alive => getNextGenStateForAlive()
+      case _: Dead  => getNextGenStateForDead()
       case _        => throw new Exception()
     }
 
@@ -225,21 +225,21 @@ object Main extends CLIConfigTestableMain {
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.
-  def getInfiniteStreamOfGames(i: Int): LazyList[String] = {
+  def getInfiniteStreamOfGames(i: Int): Stream[String] = {
 
-    def origStream: LazyList[GameOfLife] = infiniteGameOfLife(i)
+    def origStream: Stream[GameOfLife] = infiniteGameOfLife(i)
     // ???: Print at least one dead game.
-    def truncEndingStream: LazyList[GameOfLife] = origStream.takeWhile(!_.isOver)
+    def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
 
     // ???: Games take O(n) memory.
     type SGOL = Set[GameOfLife]
-    lazy val previousGames: LazyList[SGOL] = {
+    lazy val previousGames: Stream[SGOL] = {
       (Set.empty: Set[GameOfLife]) #::
         previousGames
           .zip(truncEndingStream)
           .map({ case (a: SGOL, b: GameOfLife) => a + b })
     }
-    def truncNonRepeatingStream: LazyList[GameOfLife] =
+    def truncNonRepeatingStream: Stream[GameOfLife] =
       previousGames
         .zip(truncEndingStream)
         .takeWhile({ case (a: SGOL, b: GameOfLife) => !a.contains(b) })
@@ -248,7 +248,7 @@ object Main extends CLIConfigTestableMain {
     // Lazily append streams.
     val r = new scala.util.Random(i)
     truncNonRepeatingStream.map(_.toString) #::: getInfiniteStreamOfGames(
-      r.nextInt
+      r.nextInt()
     )
 
   }
@@ -289,13 +289,13 @@ object Main extends CLIConfigTestableMain {
 
   }
 
-  def infiniteGameOfLife(seed: Int = 0): LazyList[GameOfLife] = {
+  def infiniteGameOfLife(seed: Int = 0): Stream[GameOfLife] = {
     val first = GameOfLife(seed)
     infiniteGameOfLife(first)
   }
 
-  def infiniteGameOfLife(game: GameOfLife): LazyList[GameOfLife] = {
-    def s1: LazyList[GameOfLife] = game #:: s1.map(_.next)
+  def infiniteGameOfLife(game: GameOfLife): Stream[GameOfLife] = {
+    def s1: Stream[GameOfLife] = game #:: s1.map(_.next)
     s1
   }
 

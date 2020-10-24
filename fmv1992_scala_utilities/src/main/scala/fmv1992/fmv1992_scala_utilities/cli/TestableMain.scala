@@ -100,7 +100,7 @@ trait TestableMain {
     if (!a.isEmpty && a(0).value(0) != "null") {
       Reader.readLines(a(0).value(0))
     } else {
-      scala.io.Source.stdin.getLines.toSeq
+      scala.io.Source.stdin.getLines().toSeq
     }
   }
 

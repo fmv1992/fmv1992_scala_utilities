@@ -27,7 +27,7 @@ object TestCases {
     |###
     |lastline""")
 
-  val s3 = multiLineStringtoSeq(LazyList.fill(10)("a").mkString("\n"))
+  val s3 = multiLineStringtoSeq(Stream.fill(10)("a").mkString("\n"))
 
 }
 
@@ -59,10 +59,10 @@ class TestUniq extends AnyFunSuite {
 
   test("Test infinite iteration.") {
 
-    // ???: Test that LazyList is being used in a memory efficient way.
+    // ???: Test that Stream is being used in a memory efficient way.
     // val megabytes500: Int = 500 * 1024 * 1024
     // assert(Uniq.filterUnique(
-    // LazyList.continually("e"))
+    // Stream.continually("e"))
     // .take(megabytes500).toList == List("e"))
 
   }

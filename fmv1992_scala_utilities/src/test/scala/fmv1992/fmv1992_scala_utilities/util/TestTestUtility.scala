@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class TestTestUtility extends AnyFunSuite {
 
   def mockProgramRunning(): Unit = {
-    val in = scala.io.Source.stdin.getLines.toSeq
+    val in = scala.io.Source.stdin.getLines().toSeq
     val input = in.mkString("\n")
     Console.out.print(input.toUpperCase)
     Console.err.print(input.toLowerCase)

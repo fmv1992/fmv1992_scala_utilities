@@ -58,7 +58,7 @@ object Uniq extends CLIConfigTestableMain {
 
     val set: Set[A] = Set.empty
     // By using a def we ensure that no references to the Steam exists.
-    def uniqueSets: LazyList[Set[A]] =
+    def uniqueSets: Stream[Set[A]] =
       set #:: Set(seq.head) #::
         uniqueSets.tail.zip(seq.tail).map(x => x._1 + x._2)
     seq.zip(uniqueSets).filter(x => !x._2.contains(x._1)).map(_._1)
