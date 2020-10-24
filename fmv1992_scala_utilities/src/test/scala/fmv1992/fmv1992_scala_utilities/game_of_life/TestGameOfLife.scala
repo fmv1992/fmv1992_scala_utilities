@@ -15,9 +15,9 @@ trait TestGameOfLifeHelper {
   val a = Alive(-1, -1)
   val d = Dead(-1, -1)
 
-  val standardGOL = GameOfLife(1)
+  val standardGOL = GameOfLifeGame(1)
 
-  val infiniteGameOfLife = Main.infiniteGameOfLife(1)
+  val infiniteGameOfLife = GameOfLife.infiniteGameOfLife(1)
 
   def buildAliveNeighbours(i: Int): List[Cell] = {
     List.fill(i)(a) ++ List.fill(8 - i)(d)
@@ -39,8 +39,8 @@ trait TestGameOfLifeHelper {
   |oxx
   |xxx""".stripMargin.trim
 
-  val tinyGame = GameOfLife(tinyGameStr)
-  val tinyGameNextManual = GameOfLife(tinyGameNextManualStr)
+  val tinyGame = GameOfLifeGame(tinyGameStr)
+  val tinyGameNextManual = GameOfLifeGame(tinyGameNextManualStr)
 
   val stretchedGameStr = """
   |oxx
@@ -51,11 +51,11 @@ trait TestGameOfLifeHelper {
   |oox
   |xox""".stripMargin.trim
 
-  val stretchedGame = GameOfLife(stretchedGameStr)
-  val stretchedGameNextManual = GameOfLife(stretchedGameNextManualStr)
+  val stretchedGame = GameOfLifeGame(stretchedGameStr)
+  val stretchedGameNextManual = GameOfLifeGame(stretchedGameNextManualStr)
 
   // Test parsing.
-  val parser = GNUParser(Main.CLIConfigPath)
+  val parser = GNUParser(GameOfLife.CLIConfigPath)
 
   val finiteArguments =
     parser.parse("--make-games --n-games 7".split(" ").toList)
@@ -69,8 +69,8 @@ class TestGameOfLife extends AnyFunSuite with TestGameOfLifeHelper {
   }
 
   test("The most basic tests.") {
-    val aliveGame = GameOfLife("o")
-    val deadGame = GameOfLife("x")
+    val aliveGame = GameOfLifeGame("o")
+    val deadGame = GameOfLifeGame("x")
     assert(aliveGame.next === deadGame)
     assert(deadGame.next === deadGame)
   }
@@ -169,24 +169,26 @@ class TestGameOfLife extends AnyFunSuite with TestGameOfLifeHelper {
   test("Test testableMain.") {
 
     // // Test API.
-    Main.testableMain(finiteArguments)
+    GameOfLife.testableMain(finiteArguments)
 
     // // Assert that with no random seed two different games will be different.
     assert(
-      Main.testableMain(finiteArguments) != Main.testableMain(finiteArguments)
+      GameOfLife.testableMain(finiteArguments) != GameOfLife.testableMain(
+        finiteArguments
+      )
     )
 
     // Assert that random seed determines games..
     def deterministicArguments(x: Int): Seq[Argument] = {
       parser.parse(s"--n-games ${x} --seed 987".split(" ").toList)
     }
-    assert(Main.testableMain(deterministicArguments(0)) != Seq(""))
+    assert(GameOfLife.testableMain(deterministicArguments(0)) != Seq(""))
     assert(
-      Main.testableMain(deterministicArguments(1)) == Main
+      GameOfLife.testableMain(deterministicArguments(1)) == GameOfLife
         .testableMain(deterministicArguments(1))
     )
     assert(
-      Main.testableMain(deterministicArguments(10)) == Main
+      GameOfLife.testableMain(deterministicArguments(10)) == GameOfLife
         .testableMain(deterministicArguments(10))
     )
 
@@ -198,8 +200,8 @@ class TestGameOfLifeOscillators extends AnyFunSuite with TestGameOfLifeHelper {
 
   test("Oscillator 01.") {
 
-    val o01 = GameOfLife(GameOfLifeOscillators.oscillator01)
-    val stream01 = Main.infiniteGameOfLife(o01)
+    val o01 = GameOfLifeGame(GameOfLifeOscillators.oscillator01)
+    val stream01 = GameOfLife.infiniteGameOfLife(o01)
     val stream02 = stream01.tail.tail
     stream01
       .zip(stream02)
@@ -226,7 +228,7 @@ class TestGameOfLifePoolOfCases extends AnyFunSuite with TestGameOfLifeHelper {
         )
       }
       // Force evaluation of testableMain.
-      Main.testableMain(arg1).toList
+      GameOfLife.testableMain(arg1).toList
     })
   }
 
