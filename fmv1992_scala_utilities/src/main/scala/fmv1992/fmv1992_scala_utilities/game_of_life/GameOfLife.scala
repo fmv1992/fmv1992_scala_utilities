@@ -154,7 +154,7 @@ object Cell {
     lazy val cp = yindexes.flatMap(y => xindexes.map(x => (x, y)))
     // NOTE: Defective product here caused big bug...
     lazy val cpNotSelf =
-      cp.filter(_ != (cell.x, cell.y)).map(x => mapOutOfBoundsToDeadCells(x))
+      cp.filter(_.!=(cell.x, cell.y)).map(x => mapOutOfBoundsToDeadCells(x))
 
     require(cpNotSelf.length == 8)
     cpNotSelf
