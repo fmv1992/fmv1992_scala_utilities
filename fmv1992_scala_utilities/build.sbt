@@ -27,27 +27,11 @@ scalaVersion := scala213
 // // ???: [error] (Compile / doc) Scaladoc generation failed
 // sources in (Compile, doc) := Seq.empty
 
-// ???: Try to remove all resource files from the assembly process to check if
-// the macro is working.
-//
-// (unmanagedResourceDirectories in Compile) := (unmanagedResourceDirectories in Compile).value .filter(x => false)
-// (unmanagedResourceDirectories in assembly) := (unmanagedResourceDirectories in assembly).value .filter(x => false)
-//
-// mappings in (Compile, packageBin) ~= {
-//   x =>
-//     {
-//       scala.Console.err.println(x)
-//       x.filter(y => {
-//         scala.Console.err.println(y)
-//         !y._1.getName.endsWith(".conf")
-//       })
-//       throw new Exception()
-//     }
-// }
-
 inThisBuild(
   List(
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
+    // ???: https://github.com/scala/scala-rewrites/issues/67
+    //
     // semanticdbEnabled := true,
     // semanticdbOptions += "-P:semanticdb:synthetics:on", // make sure to add this
     // semanticdbVersion := scalafixSemanticdb.revision,
@@ -68,8 +52,6 @@ lazy val commonSettings = Seq(
   version := IO
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
-  //
-  scalaVersion := scala213,
   crossScalaVersions := supportedScalaVersions,
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
@@ -79,11 +61,34 @@ lazy val commonSettings = Seq(
   // Ship resource files with each jar.
   resourceDirectory in Compile := file(".") / "./src/main/resources",
   resourceDirectory in Runtime := file(".") / "./src/main/resources",
-  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   //
-  libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
   addCompilerPlugin(scalafixSemanticdb),
-  scalacOptions ++= List("-Yrangepos", "-P:semanticdb:synthetics:on"),
+  scalacOptions ++= (
+    Seq(
+      "-Yrangepos",
+      "-P:semanticdb:synthetics:on",
+      "-feature",
+      "-deprecation",
+      "-Xfatal-warnings",
+      "-Yrangepos"
+      // "-Ywarn-unuse"
+    )
+      ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
+  ),
+  //
+  // logLevel in assembly := Level.Debug,
+  //
+  test in assembly := {},
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
+    case x                                   => MergeStrategy.first
+  }
+)
+
+lazy val commonDependencies = Seq(
+  //
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
+  libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
@@ -96,33 +101,25 @@ lazy val commonSettings = Seq(
   libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
   addCompilerPlugin(scalafixSemanticdb),
   //
-  // logLevel in assembly := Level.Debug,
-  scalacOptions ++= (
-    Seq(
-      "-feature",
-      "-deprecation",
-      "-Xfatal-warnings"
-      // "-Ywarn-unuse"
-    )
-      ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
-      ++ Seq("-Yrangepos")
-  ),
-  //
-  test in assembly := {},
-  assemblyMergeStrategy in assembly := {
-    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
-    // case PathList(ps @ _*) if ps.contains("scalanative") => MergeStrategy.first
-    // case x if x.contains("org.scala-native") => MergeStrategy.first
-    // case PathList(ps @ _*) if ps.last.endsWith(".nir") => MergeStrategy.keep
-    // case PathList(ps @ _*)                               => scala.Console.err.println("‡" + ps.toString) ; MergeStrategy.first
-    // case PathList(ps @ _*)                               => scala.Console.err.println("‡" + ps.toString) ; MergeStrategy.singleOrError
-    case x => MergeStrategy.first
-    // case x => {
-    //   val oldStrategy = (assemblyMergeStrategy in assembly).value
-    //   oldStrategy(x)
-    // }
+  libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, n)) if n == 11 => List()
+      case Some((2, n)) if n == 12 => List()
+      case Some((2, n)) if n == 13 => List()
+      case _                       => Nil
+    }
+  },
+  Compile / scalacOptions ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, n)) if n == 11 => List()
+      case Some((2, n)) if n == 12 => List()
+      case Some((2, n)) if n == 13 => List()
+    }
   }
+  //
 )
+
+lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val GOLSettings = Seq(
   assemblyJarName in assembly := "game_of_life.jar",
@@ -161,33 +158,33 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 //
 lazy val util =
   (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-    .settings(commonSettings)
+    .settings(commonSettingsAndDependencies)
     .settings(crossScalaVersions := supportedScalaVersions)
 
 lazy val gameOfLife = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"
-)).settings(commonSettings)
+)).settings(commonSettingsAndDependencies)
   .settings(GOLSettings)
   .settings(crossScalaVersions := supportedScalaVersions)
   .dependsOn(util, cli)
 
 lazy val uniq =
   (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
-    .settings(commonSettings)
+    .settings(commonSettingsAndDependencies)
     .settings(uniqSettings)
     .settings(crossScalaVersions := supportedScalaVersions)
     .dependsOn(util, cli)
 
 lazy val cli = (project in file(
   "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
-)).settings(commonSettings)
+)).settings(commonSettingsAndDependencies)
   .settings(crossScalaVersions := supportedScalaVersions)
   .dependsOn(util)
 
 // Root project.
 lazy val fmv1992_scala_utilities = (project in file("."))
   .settings(fmv1992_scala_utilitiesSettings)
-  .settings(commonSettings)
+  .settings(commonSettingsAndDependencies)
   .settings(crossScalaVersions := supportedScalaVersions)
   .dependsOn(util)
   .aggregate(
