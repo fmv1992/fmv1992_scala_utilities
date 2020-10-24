@@ -5,6 +5,9 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
 
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
+
 /** General concept of game. */
 trait Game {
 
@@ -217,7 +220,8 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 /** Main program. */
 object Main extends CLIConfigTestableMain {
 
-  val version: String = Reader.readLines("./src/main/resources/version").mkString
+  val version: String =
+    Reader.readLines("./src/main/resources/version").mkString
 
   val programName = "GameOfLife"
 
@@ -229,7 +233,8 @@ object Main extends CLIConfigTestableMain {
 
     def origStream: LazyList[GameOfLife] = infiniteGameOfLife(i)
     // ???: Print at least one dead game.
-    def truncEndingStream: LazyList[GameOfLife] = origStream.takeWhile(!_.isOver)
+    def truncEndingStream: LazyList[GameOfLife] =
+      origStream.takeWhile(!_.isOver)
 
     // ???: Games take O(n) memory.
     type SGOL = Set[GameOfLife]

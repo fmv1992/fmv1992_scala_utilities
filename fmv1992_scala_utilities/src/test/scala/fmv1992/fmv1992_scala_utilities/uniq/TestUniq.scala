@@ -4,6 +4,9 @@ package fmv1992.fmv1992_scala_utilities.uniq
 
 import org.scalatest.funsuite.AnyFunSuite
 
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
+
 object TestCases {
 
   def multiLineStringtoSeq: String => Seq[String] = {

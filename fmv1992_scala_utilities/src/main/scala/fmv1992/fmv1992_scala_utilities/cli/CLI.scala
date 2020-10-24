@@ -145,7 +145,10 @@ object StandardParser {
 case class GNUParser(format: Map[String, Map[String, String]])
     extends ConfigFileParser {
 
-  require(format.contains("help"), String.valueOf(format) + " has to contain entry 'help'.")
+  require(
+    format.contains("help"),
+    String.valueOf(format) + " has to contain entry 'help'."
+  )
   require(
     format.contains("version"),
     String.valueOf(format) + " has to contain entry 'version'."

@@ -7,6 +7,9 @@ import fmv1992.fmv1992_scala_utilities.util.Reader
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
 
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
+
 /** Filter repeated lines independent of their position.
   *
   * The memory requirements are O(n).
@@ -15,7 +18,8 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version: String = Reader.readLines("./src/main/resources/version").mkString
+  val version: String =
+    Reader.readLines("./src/main/resources/version").mkString
 
   val programName = "Uniq"
 
