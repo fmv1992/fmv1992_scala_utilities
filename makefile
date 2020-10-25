@@ -86,7 +86,7 @@ compile: $(SBT_FILES) $(SCALA_FILES)
 assembly: $(FINAL_TARGET)
 
 publishlocal: .FORCE
-	cd ./fmv1992_scala_utilities && sbt clean update publishLocal
+	cd ./fmv1992_scala_utilities && sbt clean update '+ publishLocal'
 
 dev:
 	cp -f ./other/git_hooks/git_pre_commit_hook.sh ./.git/hooks/pre-commit || true
