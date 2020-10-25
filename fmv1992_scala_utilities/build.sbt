@@ -31,15 +31,11 @@ scalaVersion := scala213
 
 inThisBuild(
   List(
-    libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
     semanticdbEnabled := true,
-    semanticdbOptions += "-P:semanticdb:synthetics:on",
+    semanticdbOptions += "-P:semanticdb:synthetics:on", // make sure to add this
     semanticdbVersion := scalafixSemanticdb.revision,
     scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
       scalaVersion.value
-    ),
-    addCompilerPlugin(
-      "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full
     ),
     addCompilerPlugin(scalafixSemanticdb)
   )
@@ -62,7 +58,6 @@ lazy val commonSettings = Seq(
   resourceDirectory in Compile := file(".") / "./src/main/resources",
   resourceDirectory in Runtime := file(".") / "./src/main/resources",
   //
-  addCompilerPlugin(scalafixSemanticdb),
   scalacOptions ++= (
     Seq(
       "-P:semanticdb:synthetics:on",
@@ -123,7 +118,6 @@ lazy val commonDependencies = Seq(
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
   //
-  addCompilerPlugin(scalafixSemanticdb),
   //
   scalafixDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -142,7 +136,7 @@ lazy val commonDependencies = Seq(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 => List()
       case Some((2, n)) if n == 12 =>
-        List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
+        List("com.sandinh" %% "scala-rewrites" % "1.0.0")
       case Some((2, n)) if n == 13 =>
         List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
       case _ => Nil

@@ -26,7 +26,10 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
 format:
-	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
+	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
+            | xargs --verbose -0 \
+                scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
+	cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
