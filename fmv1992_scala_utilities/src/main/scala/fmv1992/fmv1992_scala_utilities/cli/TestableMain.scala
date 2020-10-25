@@ -1,6 +1,7 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import scala.Iterable
 
 /** Testable main trait with a configurable file CLI implementation.
   *
@@ -28,10 +29,10 @@ trait CLIConfigTestableMain extends TestableMain {
     */
   def printHelp(format: Map[String, Map[String, String]]): Seq[String] = {
     val usage: String = s"$programName " + format.keys.toList.sorted
-      .map(x ⇒ "--" + x.format("name"))
+      .map(x => "--" + x.format("name"))
       .mkString(" ")
     val description: String = format.keys.toList.sorted
-      .map(x ⇒ " " * 4 + "--" + x.format("name") + ": " + format(x)("help"))
+      .map(x => " " * 4 + "--" + x.format("name") + ": " + format(x)("help"))
       .mkString("\n")
     Seq(usage, description)
   }
@@ -72,10 +73,12 @@ trait TestableMain {
   // Does not need to specify the input stream (i.e. file or stdin). These
   // should be encoded by the parsed arguments.
   /** Testable interface for main program. */
-  def testableMain(args: Seq[Argument]): Traversable[String]
+  def testableMain(args: Seq[Argument]): Iterable[String]
 
   /** Split input [[Argument Arguments]] from other arguments. */
-  def splitInputArgumentFromOthers(args: Seq[Argument]) =
+  def splitInputArgumentFromOthers(
+      args: Seq[Argument]
+  ): (Seq[Argument], Seq[Argument]) =
     splitArgumentFromOthers(args, "input")
 
   /** Split input [[Argument Arguments]] from other arguments. */
@@ -99,7 +102,7 @@ trait TestableMain {
     if (!a.isEmpty && a(0).value(0) != "null") {
       Reader.readLines(a(0).value(0))
     } else {
-      scala.io.Source.stdin.getLines.toSeq
+      scala.io.Source.stdin.getLines().toSeq
     }
   }
 

@@ -14,11 +14,11 @@ object TestMainExample01 extends CLIConfigTestableMain {
   def testableMain(args: Seq[Argument]): List[String] = {
 
     val res = args
-      .foldLeft(Nil: List[String])((l, x) ⇒ {
+      .foldLeft(Nil: List[String])((l, x) => {
         x match {
-          case GNUArg("debug", _) ⇒ "Got debug flag." +: l
-          case GNUArg("verbose", _) ⇒ "Got verbose flag." +: l
-          case _ ⇒ throw new Exception()
+          case GNUArg("debug", _)   => "Got debug flag." +: l
+          case GNUArg("verbose", _) => "Got verbose flag." +: l
+          case _                    => throw new Exception()
         }
       })
       .reverse

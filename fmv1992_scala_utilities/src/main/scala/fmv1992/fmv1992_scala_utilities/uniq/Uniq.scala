@@ -7,16 +7,19 @@ import fmv1992.fmv1992_scala_utilities.util.Reader
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
 
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
+
 /** Filter repeated lines independent of their position.
   *
   * The memory requirements are O(n).
   *
   * @see [[https://en.wikipedia.org/wiki/Uniq]]
-  *
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version = Reader.readLines("./src/main/resources/version").mkString
+  val version: String =
+    Reader.readLines("./src/main/resources/version").mkString
 
   val programName = "Uniq"
 
@@ -30,7 +33,7 @@ object Uniq extends CLIConfigTestableMain {
     val inputString = readInputArgument(inputArgs)
 
     val res = otherArgs
-      .foldLeft(Seq.empty: Seq[String])((l, x) ⇒ {
+      .foldLeft(Seq.empty: Seq[String])((l, x) => {
         if (x.longName == "unique") {
           filterUnique(inputString)
         } else if (x.longName == "filter-adjacent") {
@@ -59,10 +62,10 @@ object Uniq extends CLIConfigTestableMain {
 
     val set: Set[A] = Set.empty
     // By using a def we ensure that no references to the Steam exists.
-    def uniqueSets: Stream[Set[A]] =
+    def uniqueSets: LazyList[Set[A]] =
       set #:: Set(seq.head) #::
-        uniqueSets.tail.zip(seq.tail).map(x ⇒ x._1 + x._2)
-    seq.zip(uniqueSets).filter(x ⇒ !x._2.contains(x._1)).map(_._1)
+        uniqueSets.tail.zip(seq.tail).map(x => x._1 + x._2)
+    seq.zip(uniqueSets).filter(x => !x._2.contains(x._1)).map(_._1)
 
   }
 }

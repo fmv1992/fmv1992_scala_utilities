@@ -5,6 +5,9 @@ import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
 
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
+
 /** General concept of game. */
 trait Game {
 
@@ -29,16 +32,15 @@ trait Game {
   * 4. Any dead cell with exactly three live neighbours becomes a live cell, as
   * if by reproduction.
   */
-case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
+case class GameOfLifeGame(state: Seq[Seq[Cell]]) extends Game {
 
   lazy val isOver: Boolean = {
 
-    state.flatten.forall(
-      c ⇒
-        c match {
-          case _: Dead ⇒ true
-          case _: Alive ⇒ false
-        }
+    state.flatten.forall(c =>
+      c match {
+        case _: Dead  => true
+        case _: Alive => false
+      }
     )
   }
 
@@ -50,57 +52,56 @@ case class GameOfLife(state: Seq[Seq[Cell]]) extends Game {
   override def toString: String = this.representation
 
   /** Get next state for this game of life. */
-  def next: GameOfLife = {
-    GameOfLife(this.state.map(l ⇒ l.map(c ⇒ Cell.getNextState(c, state))))
+  def next: GameOfLifeGame = {
+    GameOfLifeGame(this.state.map(l => l.map(c => Cell.getNextState(c, state))))
   }
 
 }
 
 /** Companion object for Game of Life. */
-object GameOfLife {
+object GameOfLifeGame {
 
   // ???: Tests must be "resistant" to these (parametrize!).
   val xdim = 5
   val ydim = 5
 
   private def getCells(r: scala.util.Random): Seq[Seq[Cell]] = {
-    val listOfCells = Seq.tabulate(xdim)(
-      x ⇒
-        Seq.tabulate(ydim)(y ⇒ {
-          val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
-          c
-        })
+    val listOfCells = Seq.tabulate(xdim)(x =>
+      Seq.tabulate(ydim)(y => {
+        val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
+        c
+      })
     )
     listOfCells.toSeq
   }
 
-  def apply(seed: Int): GameOfLife = {
+  def apply(seed: Int): GameOfLifeGame = {
     val rState = new scala.util.Random(seed)
     val cells = getCells(rState)
-    GameOfLife(cells)
+    GameOfLifeGame(cells)
   }
 
-  def apply(repr: String): GameOfLife = {
+  def apply(repr: String): GameOfLifeGame = {
 
     val splitted = repr.split('\n')
     val xdim = splitted(0).length - 1
     val ydim = splitted.length - 1
 
     val index: IndexedSeq[Tuple2[Int, Int]] =
-      (0 to xdim).map(x ⇒ (0 to ydim).map(y ⇒ (x, y))).flatten
+      (0 to xdim).map(x => (0 to ydim).map(y => (x, y))).flatten
 
-    val constructed = index.map(i ⇒ {
+    val constructed = index.map(i => {
       val cAsString = splitted(i._1)(i._2).toChar
       cAsString match {
-        case 'x' ⇒ Dead(i._1, i._2)
-        case 'o' ⇒ Alive(i._1, i._2)
-        case _ ⇒ throw new Exception()
+        case 'x' => Dead(i._1, i._2)
+        case 'o' => Alive(i._1, i._2)
+        case _   => throw new Exception()
       }
     })
 
     val constructedAsCells = constructed.grouped(xdim + 1).toSeq
 
-    GameOfLife(constructedAsCells)
+    GameOfLifeGame(constructedAsCells)
 
   }
 
@@ -122,11 +123,11 @@ object Cell {
 
   def countAliveCells(l: Seq[Cell]): Int = {
 
-    val aliveCount: Int = l.count(c ⇒ {
+    val aliveCount: Int = l.count(c => {
       c match {
-        case _: Alive ⇒ true
-        case _: Dead ⇒ false
-        case _ ⇒ throw new Exception()
+        case _: Alive => true
+        case _: Dead  => false
+        case _        => throw new Exception()
       }
     })
 
@@ -151,10 +152,10 @@ object Cell {
 
     lazy val xindexes = ((cell.x - 1) to (cell.x + 1)).toSeq
     lazy val yindexes = ((cell.y - 1) to (cell.y + 1)).toSeq
-    lazy val cp = yindexes.flatMap(y ⇒ xindexes.map(x ⇒ (x, y)))
+    lazy val cp = yindexes.flatMap(y => xindexes.map(x => (x, y)))
     // NOTE: Defective product here caused big bug...
     lazy val cpNotSelf =
-      cp.filter(_ != (cell.x, cell.y)).map(x ⇒ mapOutOfBoundsToDeadCells(x))
+      cp.filter(_.!=(cell.x, cell.y)).map(x => mapOutOfBoundsToDeadCells(x))
 
     require(cpNotSelf.length == 8)
     cpNotSelf
@@ -182,9 +183,9 @@ object Cell {
     }
 
     val res: Cell = cell match {
-      case _: Alive ⇒ getNextGenStateForAlive
-      case _: Dead ⇒ getNextGenStateForDead
-      case _ ⇒ throw new Exception()
+      case _: Alive => getNextGenStateForAlive()
+      case _: Dead  => getNextGenStateForDead()
+      case _        => throw new Exception()
     }
 
     require(res.x == cell.x)
@@ -215,40 +216,42 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 }
 
 /** Main program. */
-object Main extends CLIConfigTestableMain {
+object GameOfLife extends CLIConfigTestableMain {
 
-  val version = Reader.readLines("./src/main/resources/version").mkString
+  val version: String =
+    Reader.readLines("./src/main/resources/version").mkString
 
-  val programName = "GameOfLife"
+  val programName = "GameOfLifeGame"
 
   val CLIConfigPath = "./src/main/resources/game_of_life_cli_config.conf"
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.
-  def getInfiniteStreamOfGames(i: Int): Stream[String] = {
+  def getInfiniteStreamOfGames(i: Int): LazyList[String] = {
 
-    def origStream: Stream[GameOfLife] = infiniteGameOfLife(i)
+    def origStream: LazyList[GameOfLifeGame] = infiniteGameOfLife(i)
     // ???: Print at least one dead game.
-    def truncEndingStream: Stream[GameOfLife] = origStream.takeWhile(!_.isOver)
+    def truncEndingStream: LazyList[GameOfLifeGame] =
+      origStream.takeWhile(!_.isOver)
 
     // ???: Games take O(n) memory.
-    type SGOL = Set[GameOfLife]
-    lazy val previousGames: Stream[SGOL] = {
-      (Set.empty: Set[GameOfLife]) #::
+    type SGOL = Set[GameOfLifeGame]
+    lazy val previousGames: LazyList[SGOL] = {
+      (Set.empty: Set[GameOfLifeGame]) #::
         previousGames
           .zip(truncEndingStream)
-          .map({ case (a: SGOL, b: GameOfLife) ⇒ a + b })
+          .map({ case (a: SGOL, b: GameOfLifeGame) => a + b })
     }
-    def truncNonRepeatingStream: Stream[GameOfLife] =
+    def truncNonRepeatingStream: LazyList[GameOfLifeGame] =
       previousGames
         .zip(truncEndingStream)
-        .takeWhile({ case (a: SGOL, b: GameOfLife) ⇒ !a.contains(b) })
+        .takeWhile({ case (a: SGOL, b: GameOfLifeGame) => !a.contains(b) })
         .map(_._2)
 
     // Lazily append streams.
     val r = new scala.util.Random(i)
     truncNonRepeatingStream.map(_.toString) #::: getInfiniteStreamOfGames(
-      r.nextInt
+      r.nextInt()
     )
 
   }
@@ -275,7 +278,7 @@ object Main extends CLIConfigTestableMain {
 
     // action.
 
-    val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) ⇒ {
+    val res: Seq[String] = args.foldLeft(Seq.empty: Seq[String])((l, a) => {
       if (a.longName == "find-cyclic") {
         findCycles()
       } else if (a.longName == "make-games") {
@@ -289,13 +292,13 @@ object Main extends CLIConfigTestableMain {
 
   }
 
-  def infiniteGameOfLife(seed: Int = 0): Stream[GameOfLife] = {
-    val first = GameOfLife(seed)
+  def infiniteGameOfLife(seed: Int = 0): LazyList[GameOfLifeGame] = {
+    val first = GameOfLifeGame(seed)
     infiniteGameOfLife(first)
   }
 
-  def infiniteGameOfLife(game: GameOfLife): Stream[GameOfLife] = {
-    def s1: Stream[GameOfLife] = game #:: s1.map(_.next)
+  def infiniteGameOfLife(game: GameOfLifeGame): LazyList[GameOfLifeGame] = {
+    def s1: LazyList[GameOfLifeGame] = game #:: s1.map(_.next)
     s1
   }
 

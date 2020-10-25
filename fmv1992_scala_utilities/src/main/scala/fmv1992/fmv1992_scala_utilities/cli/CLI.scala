@@ -9,7 +9,6 @@ import fmv1992.fmv1992_scala_utilities.util.Utilities
   *
   * @define parseDoc Parse a sequence of strings into a sequence of
   * [[Argument Arguments]].
-  *
   */
 trait CLIParser {
 
@@ -36,7 +35,6 @@ trait ConfigFileParser extends CLIParser {
     *
     * Map(debug -> Map(n -> 0, type -> int, help -> Help text.),
     * verbose -> Map(n -> 0, type -> int, help -> Help text.))
-    *
     */
   val format: Map[String, Map[String, String]]
 
@@ -50,10 +48,10 @@ trait ConfigFileParser extends CLIParser {
     ): Seq[Argument] = {
 
       goArgs match {
-        case Nil ⇒ acc
-        case h :: t ⇒ {
+        case Nil => acc
+        case h :: t => {
           val name = h.stripPrefix("--")
-          require(format.contains(name), format.keys + name)
+          require(format.contains(name), String.valueOf(format.keys) + name)
           val n = format(name)("n").toInt
           val values = t.take(n)
           val newArg: Argument = GNUArg(name, values)
@@ -68,14 +66,14 @@ trait ConfigFileParser extends CLIParser {
 
     // Add default arguments if there is any.
     val defaultKeys: Seq[String] =
-      format.filter(x ⇒ x._2.contains("default")).keys.toSeq
+      format.filter(x => x._2.contains("default")).keys.toSeq
     val notIncludedDefaultKeys: Seq[String] = (defaultKeys diff argsLongNames)
     require(
       argsLongNames.intersect(notIncludedDefaultKeys).isEmpty,
-      argsLongNames + "|" + notIncludedDefaultKeys
+      String.valueOf(argsLongNames) + "|" + notIncludedDefaultKeys
     )
     val additionalArgs: Seq[Argument] = {
-      notIncludedDefaultKeys.map(x ⇒ GNUArg(x, List(format(x)("default"))))
+      notIncludedDefaultKeys.map(x => GNUArg(x, List(format(x)("default"))))
     }
 
     parsedArgs ++ additionalArgs
@@ -97,8 +95,8 @@ object StandardParser {
         acc: Map[String, String]
     ): Map[String, String] = {
       val parsedM: Map[String, String] = rest match {
-        case Nil ⇒ acc
-        case h :: t ⇒ {
+        case Nil => acc
+        case h :: t => {
           // ???: Allow the char ':' to be present in string.
           val Array(pre, post): Array[String] = h.split(":").map(_.trim)
           go(t, acc ++ (Map((pre, post)): Map[String, String]))
@@ -115,20 +113,20 @@ object StandardParser {
     // val groupSize = isFilledLines.takeWhile(identity(_)).length
     // val validLines = lines.zip(isFilledLines).filter(_._2).map(_._1)
     val indexes = Utilities.getContiguousElementsIndexes(isFilledLines)
-    val validIndexes = indexes.filter(x ⇒ isFilledLines(x._1))
-    val groupedLines = validIndexes.map(x ⇒ lines.slice(x._1, x._2))
+    val validIndexes = indexes.filter(x => isFilledLines(x._1))
+    val groupedLines = validIndexes.map(x => lines.slice(x._1, x._2))
 
     // Test that all groups have the same size: this is not a requirement
     // anymore.
 
     val res = groupedLines.map(go(_, (Map(): Map[String, String])))
     // Nest the map.
-    val nested = res.map(x ⇒ {
+    val nested = res.map(x => {
       val name = x("name")
       Map((name, x - "name"))
     })
     val folded =
-      nested.foldLeft(Map(): Map[String, Map[String, String]])((l, x) ⇒ l ++ x)
+      nested.foldLeft(Map(): Map[String, Map[String, String]])((l, x) => l ++ x)
     StandardParser(folded)
   }
 
@@ -145,10 +143,13 @@ object StandardParser {
 case class GNUParser(format: Map[String, Map[String, String]])
     extends ConfigFileParser {
 
-  require(format.contains("help"), format + " has to contain entry 'help'.")
+  require(
+    format.contains("help"),
+    String.valueOf(format) + " has to contain entry 'help'."
+  )
   require(
     format.contains("version"),
-    format + " has to contain entry 'version'."
+    String.valueOf(format) + " has to contain entry 'version'."
   )
 
 }

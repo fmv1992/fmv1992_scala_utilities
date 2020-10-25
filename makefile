@@ -2,14 +2,13 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-export PROJECT_NAME := $(notdir $(ROOT_DIR))
-
 # Find all scala files.
 SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
-export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
+export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
+
 export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
 
 # Build files.
@@ -27,7 +26,10 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
 format:
-	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config .scalafmt.conf
+	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
+            | xargs --verbose -0 \
+                scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
+	cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
 	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
@@ -72,11 +74,11 @@ test: test_sbt test_bash
 
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
-test_sbt: $(SBT_FILES)
-	cd ./fmv1992_scala_utilities && sbt '+ test'
+test_sbt:
+	cd $(PROJECT_NAME) && sbt '+ test'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
-	cd $(dir $@) && sbt compile
+	cd $(PROJECT_NAME) && sbt '+ compile'
 
 # --- }}}
 

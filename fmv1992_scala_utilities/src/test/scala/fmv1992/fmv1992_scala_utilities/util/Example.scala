@@ -56,4 +56,12 @@ object Example {
 
   // --- }
 
+  // Provide examples for Uniq. --- {
+
+  val uniq01Path: String = "./src/test/resources/test_uniq_01.txt"
+  val uniq01File: File = new File(reader01Path)
+  require(uniq01File.exists, uniq01File.getCanonicalPath)
+
+  // --- }
+
 }

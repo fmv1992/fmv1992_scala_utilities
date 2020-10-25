@@ -1,5 +1,13 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
+// ???: Compare with `f9a9d75e72c7580dcd3fdb10b5f0aed34b101896`
+//
+// ```
+// object PrimitiveParsers {
+//  ⋯
+// object CompoundedParsers {
+// ```
+
 import ParserTypes._
 
 /** Parse a CLI config file. This file consists of:
@@ -24,7 +32,6 @@ import ParserTypes._
   * type: int
   * help: Help text.
   *
-  *
   * name: verbose
   * n: 0
   * type: int
@@ -33,98 +40,10 @@ import ParserTypes._
   *
   * This design is influenced by <https://github.com/fpinscala/fpinscala>.
   */
-/** As we could see in SICP: <https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-14.html#%25_sec_2.1.2>
-  *
-  * """
-  * Constraining the dependence on the representation to a few interface
-  * procedures helps us design programs as well as modify them, because it
-  * allows us to maintain the flexibility to consider alternate implementations.
-  * """
-  *
-  * And that's precisely what it is done in the chapter 09 (parsing) of FPIS:
-  *
-  * Abstraction:
-  *
-  * ```
-  * trait Parsers[Parser[+_]] { self ⇒ * // so inner classes may call methods of trait
-  * def run[A](p: Parser[A])(input: String): Either[ParseError,A]
-  *
-  * ...
-  *
-  * ```
-  *
-  * Implementation:
-  *
-  * ```
-  * object ReferenceTypes {
-  *
-  * \/\*\* A parser is a kind of state action that can fail. \*\/
-  * type Parser[+A] = ParseState ⇒ Result[A]
-  *
-  * ...
-  *
-  * ```
-  *
-  */
 object ParserTypes {
   type MS = Map[String, String]
   type OMS = Option[MS]
-  type Parser = String ⇒ (String, OMS)
-}
-
-object PrimitiveParsers {
-
-  def newLine(s: String): (String, OMS) = {
-    val newlines = s.takeWhile(_ == '\n')
-    val rest = s.drop(newlines.size)
-    if (newlines.isEmpty) {
-      (s, None)
-    } else {
-      (rest, Some(Map(("s", "s"))))
-    }
-  }
-
-  def comment(s: String): (String, OMS) = {
-    val lines: List[String] = s.split("\n").toList
-    val commentLines = lines.takeWhile(_.startsWith("#"))
-    val otherLines = lines.drop(commentLines.length)
-    if (commentLines.isEmpty) {
-      (s, None)
-    } else {
-      (otherLines.mkString("\n"), Some(Map(("c", "c"))))
-    }
-  }
-
-  def kvp(s: String): (String, OMS) = {
-    val lines: List[String] = s.split("\n").toList
-    val nonSpaceLines =
-      lines.takeWhile(
-        x ⇒ (!x.isEmpty) && (!x(0).isSpaceChar) && (!(x(0) == '#'))
-      )
-    val otherLines = nonSpaceLines.drop(nonSpaceLines.length)
-    if (nonSpaceLines.isEmpty) {
-      (s, None)
-    } else {
-      (otherLines.mkString("\n"), Some(Map(("k", "k"))))
-    }
-  }
-
-}
-
-object CompoundedParsers {
-
-  val lines: Parser = CLIConfigParser.many1(PrimitiveParsers.newLine)
-
-  val comments: Parser = CLIConfigParser.many1(PrimitiveParsers.comment)
-
-  val content: Parser = CLIConfigParser.many1(PrimitiveParsers.kvp)
-
-  val orThree: Parser =
-    CLIConfigParser.or(lines, CLIConfigParser.or(comments, content))
-
-  val many1Three: Parser =
-    CLIConfigParser.raiseError(CLIConfigParser.many1(orThree))
-
+  type Parser = String => (String, OMS)
 }
 
 trait Parsers
@@ -137,60 +56,43 @@ object CLIConfigParser extends Parsers {
 
   // Parser combinators. --- {{{
 
-  def or(p1: Parser, p2: Parser): Parser = { (x: String) ⇒
-    {
-      val (s1: String, newP: OMS) = p1(x)
-      val res = newP match {
-        case Some(_) ⇒ (s1, newP)
-        case None ⇒ p2(x)
-      }
-      res
-    }
-  }
+  lazy val Success: Parser = x => (x, Some(Map.empty))
 
-  def many1(p1: Parser): Parser = { (x: String) ⇒
+  def or(p1: Parser, p2: Parser): Parser = { (x: String) =>
     {
       val (s1: String, newP: OMS) = p1(x)
       newP match {
-        case Some(_) ⇒ many(p1)(s1)
-        case None ⇒ (x, None)
+        case Some(_) => (s1, newP)
+        case None    => p2(x)
       }
     }
   }
 
-  def Success(a: String): Parser = (x ⇒ (a, Some(Map.empty)))
-
-  def many(p1: Parser): Parser = { (x: String) ⇒
+  def many1(p1: Parser): Parser = { (x: String) =>
     {
       val (s1: String, newP: OMS) = p1(x)
       newP match {
-        case Some(_) ⇒
-          if (s1.isEmpty) {
-            (s1, newP)
-          } else {
-            many(p1)(s1)
-          }
-        case None ⇒ Success(x)("")
+        case Some(_) => many(p1)(x)
+        case None    => (x, newP)
       }
     }
   }
 
-  def raiseError(p1: Parser): Parser = { (x: String) ⇒
-    {
-      val (s1: String, newP: OMS) = p1(x)
-      newP.orElse(throw new Exception())
-      (s1, newP)
-    }
+  def many(p1: Parser): Parser = {
+    ???
   }
 
   // --- }}}
 
+  case object Newline extends CLIConfigParser {
+    val get = "\n"
+  }
   case class Comment(get: OMS) extends CLIConfigParser
   case class Config(get: OMS) extends CLIConfigParser
   case class SubConfig(get: OMS) extends CLIConfigParser
 
   def parse(s: String)(p: Parser): OMS = {
-    p(s)._2
+    ???
   }
 
 }

@@ -2,11 +2,14 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
+
+import scala.collection.compat._
+import scala.collection.compat.immutable.LazyList
 
 object TestCases {
 
-  def multiLineStringtoSeq: String ⇒ Seq[String] = {
+  def multiLineStringtoSeq: String => Seq[String] = {
     _.stripMargin.trim.split("\n").toSeq
   }
 
@@ -27,7 +30,7 @@ object TestCases {
     |###
     |lastline""")
 
-  val s3 = multiLineStringtoSeq(Stream.fill(10)("a").mkString("\n"))
+  val s3 = multiLineStringtoSeq(LazyList.fill(10)("a").mkString("\n"))
 
 }
 
@@ -35,7 +38,7 @@ object TestCases {
 //
 // Se matchers here:
 // http://www.scalatest.org/user_guide/using_matchers#checkingObjectIdentity
-class TestUniq extends FunSuite {
+class TestUniq extends AnyFunSuite {
 
   test("Simplemost test.") {
     assert(
@@ -51,7 +54,7 @@ class TestUniq extends FunSuite {
     Uniq
       .filterUnique(TestCases.s2)
       .zip(copyOfs2)
-      .foreach((x: Tuple2[String, String]) ⇒ assert(x._1 == x._2))
+      .foreach((x: Tuple2[String, String]) => assert(x._1 == x._2))
 
     assert(Uniq.filterUnique(TestCases.s3).mkString("") == "a")
 
@@ -59,10 +62,10 @@ class TestUniq extends FunSuite {
 
   test("Test infinite iteration.") {
 
-    // ???: Test that Stream is being used in a memory efficient way.
+    // ???: Test that LazyList is being used in a memory efficient way.
     // val megabytes500: Int = 500 * 1024 * 1024
     // assert(Uniq.filterUnique(
-    // Stream.continually("e"))
+    // LazyList.continually("e"))
     // .take(megabytes500).toList == List("e"))
 
   }

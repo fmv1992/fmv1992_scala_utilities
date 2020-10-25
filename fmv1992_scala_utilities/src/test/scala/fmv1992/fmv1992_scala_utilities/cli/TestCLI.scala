@@ -1,10 +1,10 @@
 package fmv1992.fmv1992_scala_utilities.cli
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 import fmv1992.fmv1992_scala_utilities.util.Example
 
-class TestStandardParser extends FunSuite {
+class TestStandardParser extends AnyFunSuite {
 
   val defaultArgs = "--debug --verbose".split(" ").toList
 
@@ -34,7 +34,7 @@ class TestStandardParser extends FunSuite {
 
 }
 
-class TestGNUParser extends FunSuite {
+class TestGNUParser extends AnyFunSuite {
 
   test("Test API.") {
     // Test valid instantiation.
@@ -63,60 +63,4 @@ class TestGNUParser extends FunSuite {
 
 }
 
-class TestNewParser extends FunSuite {
-
-  def ParserChar(c: Char)(x: String) =
-    if (x.startsWith(c.toString))
-      (x.slice(1, x.length), Some(Map.empty: ParserTypes.MS))
-    else (x, None)
-
-  test("Test many1.") {
-    val parserAs = CLIConfigParser.many1(ParserChar('a'))
-    val parsedOK = parserAs("aaa")
-    parsedOK._2.orElse(throw new Exception())
-
-    val parsedError = parserAs("xaaaa")
-    assert(!parsedError._2.isDefined)
-  }
-
-  test("Test newlines.") {
-    val p = CompoundedParsers.lines("\n\n \n \n  \n")
-    assert(p._1 == " \n \n  \n")
-    p._2.orElse(throw new Exception())
-  }
-
-  test("Test or.") {
-    val parseAorB = CLIConfigParser.many1(
-      CLIConfigParser.or(ParserChar('a'), ParserChar('b'))
-    )
-    val parsedOK = parseAorB("abaaaaba")
-    assert(parsedOK._1.isEmpty)
-    parsedOK._2.orElse(throw new Exception())
-
-    val parsedError = parseAorB("abaaaabaX")
-    assert(parsedError._1 == "X")
-    parsedError._2.orElse(throw new Exception())
-  }
-
-}
-
-class TestSingle extends FunSuite {
-
-  val t1 = """
-  |# Comment.
-  |
-  |Name: name.
-  |
-  |Name2: name2.
-  |
-  |# Comment2.
-  |
-  """.trim.stripMargin
-
-  test("Test API.") {
-    println(
-      CLIConfigParser.parse(t1)(CompoundedParsers.many1Three)
-    )
-  }
-
-}
+// ???: Compare with `f9a9d75e72c7580dcd3fdb10b5f0aed34b101896`
