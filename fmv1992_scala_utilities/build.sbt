@@ -108,7 +108,8 @@ lazy val commonSettings = Seq(
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(
     true
-  )
+  ),
+  publishTo in ThisBuild := sonatypePublishTo.value
 )
 
 lazy val commonDependencies = Seq(
