@@ -14,7 +14,7 @@ RUN apt-get install --yes wget zip make
 
 RUN rm -rf /var/lib/apt/lists/*
 
-# Install sbt
+# Install sbt.
 RUN mkdir -p /home/user/bin
 WORKDIR /home/user/bin
 RUN wget -O sbt.zip -- https://github.com/sbt/sbt/releases/download/v1.3.13/sbt-1.3.13.zip

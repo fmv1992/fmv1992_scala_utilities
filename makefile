@@ -2,14 +2,15 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
+
 # Find all scala files.
 SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
-export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
-
-export _JAVA_OPTIONS := -Xms3072m -Xmx6144m
+export SCALAC_OPTS := -Ywarn-dead-code
+export _JAVA_OPTIONS ?= -Xms3072m -Xmx6144m
 
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
@@ -27,12 +28,12 @@ all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
 format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
-            | xargs --verbose -0 \
-                scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
+        | xargs --verbose -0 \
+            scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
 	cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
-	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
+	cd $(PROJECT_NAME) && sbt '+ doc'
 
 clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
