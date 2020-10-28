@@ -81,6 +81,10 @@ test_sbt:
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
 
+$(SBT_FILES): $(SCALA_FILES)
+	cd $(dir $@) && sbt test assembly
+	touch --no-create -m $@
+
 # --- }}}
 
 # ???: make the assembly process general.
@@ -96,7 +100,7 @@ dev:
 	chmod a+x ./.git/hooks/pre-push
 
 $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
-	cd ./fmv1992_scala_utilities && sbt '+ assembly'
+	cd ./fmv1992_scala_utilities && sbt assembly
 	touch --no-create -m $@
 
 test%.sh: .FORCE

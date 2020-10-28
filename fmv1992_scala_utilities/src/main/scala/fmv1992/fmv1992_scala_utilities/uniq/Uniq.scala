@@ -3,9 +3,14 @@
 package fmv1992.fmv1992_scala_utilities.uniq
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
-import fmv1992.fmv1992_scala_utilities.cli.Argument
-import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+// import fmv1992.fmv1992_scala_utilities.cli.Argument
+// import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+import fmv1992.scala_cli_parser.Argument
+import fmv1992.scala_cli_parser.CLIConfigTestableMain
+
+import scala.language.experimental.macros
 
 import scala.collection.compat._
 import scala.collection.compat.immutable.LazyList
@@ -23,7 +28,15 @@ object Uniq extends CLIConfigTestableMain {
 
   val programName = "Uniq"
 
-  val CLIConfigPath = "./src/main/resources/uniq_cli_config.conf"
+  @inline override final val CLIConfigPath =
+    S.putabspath("./src/main/resources/uniq_cli_config.conf")
+
+  // override def main(args: Array[String]): Unit = {
+  // println("-" * 79)
+  // Console.err.println(version)
+  // Console.err.println(CLIConfigPath)
+  // println("-" * 79)
+  // }
 
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
