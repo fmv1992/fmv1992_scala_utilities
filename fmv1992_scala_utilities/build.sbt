@@ -16,8 +16,8 @@ lazy val supportedScalaVersions = List(
   scala212,
   scala213
 )
-ThisBuild / scalaVersion := scala213
-scalaVersion := scala213
+ThisBuild / scalaVersion := scala211
+scalaVersion := scala211
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
@@ -112,6 +112,13 @@ lazy val commonSettings = Seq(
   publishTo in ThisBuild := sonatypePublishTo.value
 )
 
+lazy val scalaNativeSettings = Seq(
+  crossScalaVersions := List(scala211),
+  scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
+  nativeLinkStubs := true,
+  Test / test := {}
+)
+
 lazy val commonDependencies = Seq(
   //
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
@@ -197,39 +204,66 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // ```
 //
 lazy val util =
-  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+  crossProject
+    .crossType(CrossType.Pure)
+    .crossProject(JVMPlatform, NativePlatform)
+    .nativeSettings(scalaNativeSettings)
+    .enablePlugins(ScalaNativePlugin)
+    .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
     .settings(commonSettingsAndDependencies)
     .settings(crossScalaVersions := supportedScalaVersions)
 
-lazy val gameOfLife = (project in file(
-  "./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"
-)).settings(commonSettingsAndDependencies)
-  .settings(GOLSettings)
-  .settings(crossScalaVersions := supportedScalaVersions)
-  .dependsOn(util, cli)
+lazy val gameOfLife =
+  crossProject
+    .crossType(CrossType.Pure)
+    .crossProject(JVMPlatform, NativePlatform)
+    .nativeSettings(scalaNativeSettings)
+    .enablePlugins(ScalaNativePlugin)
+    .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+    .settings(commonSettingsAndDependencies)
+    .settings(GOLSettings)
+    .settings(crossScalaVersions := supportedScalaVersions)
+    .dependsOn(util, cli)
 
 lazy val uniq =
-  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+  crossProject
+    .crossType(CrossType.Pure)
+    .crossProject(JVMPlatform, NativePlatform)
+    .nativeSettings(scalaNativeSettings)
+    .enablePlugins(ScalaNativePlugin)
+    .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
     .settings(commonSettingsAndDependencies)
     .settings(uniqSettings)
     .settings(crossScalaVersions := supportedScalaVersions)
     .dependsOn(util, cli)
 
-lazy val cli = (project in file(
-  "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
-)).settings(commonSettingsAndDependencies)
-  .settings(crossScalaVersions := supportedScalaVersions)
-  .dependsOn(util)
+lazy val cli =
+  crossProject
+    .crossType(CrossType.Pure)
+    .crossProject(JVMPlatform, NativePlatform)
+    .nativeSettings(scalaNativeSettings)
+    .enablePlugins(ScalaNativePlugin)
+    .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+    .settings(commonSettingsAndDependencies)
+    .settings(crossScalaVersions := supportedScalaVersions)
+    .dependsOn(util)
 
 // Root project.
-lazy val fmv1992_scala_utilities = (project in file("."))
-  .settings(fmv1992_scala_utilitiesSettings)
-  .settings(commonSettingsAndDependencies)
-  .settings(crossScalaVersions := supportedScalaVersions)
-  .dependsOn(util)
-  .aggregate(
-    cli,
-    gameOfLife,
-    uniq,
-    util
-  )
+lazy val fmv1992_scala_utilities =
+  crossProject
+    .crossType(CrossType.Pure)
+    .crossProject(JVMPlatform, NativePlatform)
+    .nativeSettings(scalaNativeSettings)
+    .enablePlugins(ScalaNativePlugin)
+    .in(file("."))
+    .settings(fmv1992_scala_utilitiesSettings)
+    .settings(commonSettingsAndDependencies)
+    .settings(crossScalaVersions := supportedScalaVersions)
+    .settings(publish / skip := true)
+    .dependsOn(util)
+    .aggregate(
+      cli,
+      gameOfLife,
+      uniq,
+      util
+    )
