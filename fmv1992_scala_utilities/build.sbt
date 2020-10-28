@@ -119,8 +119,8 @@ lazy val commonSettings = Seq(
 lazy val scalaNativeSettings = Seq(
   crossScalaVersions := List(scala211),
   scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
-  nativeLinkStubs := true,
-  Test / test := {}
+  nativeLinkStubs := true
+  // Test / test := {}
 )
 
 lazy val commonDependencies = Seq(
@@ -128,7 +128,6 @@ lazy val commonDependencies = Seq(
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
-  // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   // scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   //
@@ -152,7 +151,10 @@ lazy val commonDependencies = Seq(
   },
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 => List()
+      case Some((2, n)) if n == 11 =>
+        List(
+          "org.scala-lang" % "scala-reflect" % scala211
+        )
       case Some((2, n)) if n == 12 =>
         List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
       case Some((2, n)) if n == 13 =>

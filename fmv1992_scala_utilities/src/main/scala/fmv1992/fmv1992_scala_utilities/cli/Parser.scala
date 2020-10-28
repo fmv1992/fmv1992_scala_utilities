@@ -65,6 +65,7 @@ object CLIConfigParser extends Parsers {
         case Some(_) => (s1, newP)
         case None    => p2(x)
       }
+    }
   }
 
   def many1(p1: Parser): Parser = { (x: String) =>
@@ -74,6 +75,7 @@ object CLIConfigParser extends Parsers {
         case Some(_) => many(p1)(x)
         case None    => (x, newP)
       }
+    }
   }
 
   def many(p1: Parser): Parser = {
