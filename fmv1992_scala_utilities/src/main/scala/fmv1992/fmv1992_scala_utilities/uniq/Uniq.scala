@@ -2,11 +2,10 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
-import fmv1992.fmv1992_scala_utilities.util.Reader
-import fmv1992.fmv1992_scala_utilities.util.S
-
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
 import scala.collection.compat._
 import scala.collection.compat.immutable.LazyList

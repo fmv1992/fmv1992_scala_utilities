@@ -7,17 +7,17 @@ import xerial.sbt.Sonatype._
 // 2.   https://github.com/sbt/sbt-projectmatrix
 //      *   For some reason this messed up with `sbt-assembly`.
 
-ThisBuild / scalaVersion := scala213
-scalaVersion := scala213
-
-// https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
 lazy val scala211 = "2.11.12"
 lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.3"
 
-val versionsBase = Seq(scala211, scala212, scala213)
-val versionsJVM = versionsBase
-val versionsNative = Seq(scala211)
+lazy val supportedScalaVersions = List(
+  scala211,
+  scala212,
+  scala213
+)
+ThisBuild / scalaVersion := scala213
+scalaVersion := scala213
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
@@ -52,7 +52,7 @@ lazy val commonSettings = Seq(
   version := IO
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
-  // crossScalaVersions := supportedScalaVersions,
+  crossScalaVersions := supportedScalaVersions,
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
@@ -109,18 +109,7 @@ lazy val commonSettings = Seq(
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(
     true
   ),
-  publishTo in ThisBuild := sonatypePublishTo.value,
-  //
-  target := {
-    (ThisBuild / baseDirectory).value / "target" / thisProject.value.id
-  }
-)
-
-lazy val scalaNativeSettings = Seq(
-  crossScalaVersions := List(scala211),
-  scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
-  nativeLinkStubs := true
-  // Test / test := {}
+  publishTo in ThisBuild := sonatypePublishTo.value
 )
 
 lazy val commonDependencies = Seq(
@@ -128,6 +117,7 @@ lazy val commonDependencies = Seq(
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
   libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
+  // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   // scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
   //
@@ -151,10 +141,7 @@ lazy val commonDependencies = Seq(
   },
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 =>
-        List(
-          "org.scala-lang" % "scala-reflect" % scala211
-        )
+      case Some((2, n)) if n == 11 => List()
       case Some((2, n)) if n == 12 =>
         List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
       case Some((2, n)) if n == 13 =>
@@ -171,23 +158,6 @@ lazy val commonDependencies = Seq(
   }
   //
 )
-
-lazy val crossProjectConfig =
-  crossProject(JVMPlatform, NativePlatform)
-    .crossType(CrossType.Full)
-    .jvmSettings(
-      crossScalaVersions := versionsJVM
-    )
-    .nativeSettings(
-      scalaNativeSettings
-      // crossScalaVersions := versionsNative,
-      // scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
-      // sharedJvmNativeSource,
-      // nativeLinkStubs := true,
-      // logLevel := Level.Info, // Info or Debug
-      // libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
-      // testFrameworks += new TestFramework("minitest.runner.Framework")
-    )
 
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
@@ -226,63 +196,40 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // sbt "clean" "clean" "update" compile
 // ```
 //
-lazy val utilNative = crossProjectConfig.native
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-  .settings(commonSettingsAndDependencies)
-  .settings(name := "utilNative")
-lazy val utilJVM = crossProjectConfig.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-  .settings(crossScalaVersions := versionsJVM)
+lazy val util =
+  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+    .settings(commonSettingsAndDependencies)
+    .settings(crossScalaVersions := supportedScalaVersions)
 
-// lazy val gameOfLife =
-//   crossProject
-//     .crossType(CrossType.Pure)
-//     .crossProject(JVMPlatform, NativePlatform)
-//     .nativeSettings(scalaNativeSettings)
-//     .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
-//     .settings(commonSettingsAndDependencies)
-//     .settings(GOLSettings)
-//     .settings(crossScalaVersions := supportedScalaVersions)
-//     .dependsOn(util, cli)
-//
-// lazy val uniq =
-//   crossProject
-//     .crossType(CrossType.Pure)
-//     .crossProject(JVMPlatform, NativePlatform)
-//     .nativeSettings(scalaNativeSettings)
-//     .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
-//     .settings(commonSettingsAndDependencies)
-//     .settings(uniqSettings)
-//     .settings(crossScalaVersions := supportedScalaVersions)
-//     .dependsOn(util, cli)
-//
-// lazy val cli =
-//   crossProject
-//     .crossType(CrossType.Pure)
-//     .crossProject(JVMPlatform, NativePlatform)
-//     .nativeSettings(scalaNativeSettings)
-//     .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
-//     .settings(commonSettingsAndDependencies)
-//     .settings(crossScalaVersions := supportedScalaVersions)
-//     .dependsOn(util)
+lazy val gameOfLife = (project in file(
+  "./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"
+)).settings(commonSettingsAndDependencies)
+  .settings(GOLSettings)
+  .settings(crossScalaVersions := supportedScalaVersions)
+  .dependsOn(util, cli)
+
+lazy val uniq =
+  (project in file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+    .settings(commonSettingsAndDependencies)
+    .settings(uniqSettings)
+    .settings(crossScalaVersions := supportedScalaVersions)
+    .dependsOn(util, cli)
+
+lazy val cli = (project in file(
+  "./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"
+)).settings(commonSettingsAndDependencies)
+  .settings(crossScalaVersions := supportedScalaVersions)
+  .dependsOn(util)
 
 // Root project.
-// lazy val root =
-lazy val fmv1992_scala_utilities =
-  (project in file("."))
-    .settings(fmv1992_scala_utilitiesSettings)
-    .settings(commonSettingsAndDependencies)
-    .settings(
-      publish / skip := true,
-      crossScalaVersions := Nil,
-      doc / aggregate := false,
-      packageDoc / aggregate := false
-    )
-    .dependsOn(utilJVM)
-    .aggregate(
-      // cli,
-      // gameOfLife,
-      // uniq,
-      utilJVM,
-      utilNative
-    )
+lazy val fmv1992_scala_utilities = (project in file("."))
+  .settings(fmv1992_scala_utilitiesSettings)
+  .settings(commonSettingsAndDependencies)
+  .settings(crossScalaVersions := supportedScalaVersions)
+  .dependsOn(util)
+  .aggregate(
+    cli,
+    gameOfLife,
+    uniq,
+    util
+  )
