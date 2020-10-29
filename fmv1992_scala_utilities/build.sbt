@@ -267,7 +267,7 @@ lazy val fmv1992_scala_utilities: sbt.Project =
     .settings(commonSettingsAndDependencies)
     .settings(
       publish / skip := true,
-      crossScalaVersions := Nil,
+      crossScalaVersions := versionsJVM,
       doc / aggregate := false,
       packageDoc / aggregate := false
     )
