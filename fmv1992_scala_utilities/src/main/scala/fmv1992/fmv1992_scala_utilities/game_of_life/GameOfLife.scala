@@ -2,8 +2,8 @@ package fmv1992.fmv1992_scala_utilities.game_of_life
 
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
-
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
 import scala.collection.compat._
 import scala.collection.compat.immutable.LazyList
@@ -218,12 +218,13 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 /** Main program. */
 object GameOfLife extends CLIConfigTestableMain {
 
-  val version: String =
-    Reader.readLines("./src/main/resources/version").mkString
+  @inline override final val version =
+    Reader.readLines(S.putabspath("./src/main/resources/version")).mkString
 
   val programName = "GameOfLifeGame"
 
-  val CLIConfigPath = "./src/main/resources/game_of_life_cli_config.conf"
+  @inline override final val CLIConfigPath =
+    S.putabspath("./src/main/resources/game_of_life_cli_config.conf")
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.

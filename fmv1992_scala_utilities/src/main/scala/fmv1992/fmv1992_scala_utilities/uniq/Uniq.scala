@@ -2,10 +2,10 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
-import fmv1992.fmv1992_scala_utilities.util.Reader
-
 import fmv1992.fmv1992_scala_utilities.cli.Argument
 import fmv1992.fmv1992_scala_utilities.cli.CLIConfigTestableMain
+import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
 import scala.collection.compat._
 import scala.collection.compat.immutable.LazyList
@@ -18,12 +18,13 @@ import scala.collection.compat.immutable.LazyList
   */
 object Uniq extends CLIConfigTestableMain {
 
-  val version: String =
-    Reader.readLines("./src/main/resources/version").mkString
+  @inline override final val version =
+    Reader.readLines(S.putabspath("./src/main/resources/version")).mkString
 
   val programName = "Uniq"
 
-  val CLIConfigPath = "./src/main/resources/uniq_cli_config.conf"
+  @inline override final val CLIConfigPath =
+    S.putabspath("./src/main/resources/uniq_cli_config.conf")
 
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {

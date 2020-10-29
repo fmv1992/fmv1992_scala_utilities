@@ -5,6 +5,7 @@
 package fmv1992.fmv1992_scala_utilities.util
 
 import java.io.File
+import java.io.FileNotFoundException
 
 object Reader {
 
@@ -45,10 +46,9 @@ object Reader {
       // Raises java.io.FileNotFoundException if it does not exist.
       scala.io.Source.fromFile(f)
     } else {
-      // When loading resource at runtime.
-      val shortenedPath = path.slice(path.lastIndexOf("/"), path.length)
-      scala.io.Source
-        .fromInputStream(getClass.getResourceAsStream(shortenedPath))
+      throw new FileNotFoundException(
+        s"File '$path' does not exist. Scala Native does not support java resources."
+      )
     }
     val res: List[String] = loanPattern(bufSource)(_.getLines().toList)
     // ???
