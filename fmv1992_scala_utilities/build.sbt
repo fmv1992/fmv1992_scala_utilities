@@ -221,26 +221,20 @@ lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
   .settings(commonSettingsAndDependencies)
 
-// lazy val gameOfLife =
-//   crossProject
-//     .crossType(CrossType.Pure)
-//     .crossProject(JVMPlatform, NativePlatform)
-//     .nativeSettings(scalaNativeSettings)
-//     .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
-//     .settings(commonSettingsAndDependencies)
-//     .settings(GOLSettings)
-//     .settings(crossScalaVersions := supportedScalaVersions)
-//     .dependsOn(util, cli)
+lazy val gameOfLife: sbtcrossproject.CrossProject =
+  crossProject(JVMPlatform)
+    .crossType(CrossType.Pure)
+    .jvmSettings(
+      crossScalaVersions := versionsJVM
+    )
+    .dependsOn(util)
+lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+  .settings(commonSettingsAndDependencies)
+  .settings(GOLSettings)
+  .dependsOn(utilJVM)
+  .dependsOn(cliJVM)
 
-// lazy val uniqNative = crossProjectConfig
-//   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
-//   .settings(commonSettingsAndDependencies)
-//   .settings(uniqSettings)
-//   .nativeSettings(
-//     mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq"),
-//     mainClass in nativeLink := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
-//   )
-//   .native
 lazy val uniq: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform)
     .crossType(CrossType.Pure)
@@ -279,13 +273,10 @@ lazy val fmv1992_scala_utilities: sbt.Project =
     )
     .dependsOn(utilJVM)
     .aggregate(
-      // cli,
-      // gameOfLife,
-      // uniq,
+      gameOfLifeJVM,
+      cliJVM,
       utilJVM,
       uniqJVM
-      // utilNative,
-      // uniqNative
     )
 
 // --- }}}
