@@ -43,9 +43,9 @@ lazy val commonSettings = Seq(
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
   organization := "io.github.fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
-  version := IO
-    .readLines(new File("./src/main/resources/version"))
-    .mkString(""),
+  // version := IO
+  //   .readLines(new File("./util/main/resources/version"))
+  //   .mkString(""),
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
@@ -222,9 +222,9 @@ lazy val util: sbtcrossproject.CrossProject =
       scalaNativeSettings
     )
 lazy val utilJVM: sbt.Project = util.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+  .in(file("./util"))
 lazy val utilNative: sbt.Project = util.native
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+  .in(file("./util"))
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
@@ -239,13 +239,13 @@ lazy val gameOfLife: sbtcrossproject.CrossProject =
     .dependsOn(cli)
     .dependsOn(util)
 lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+  .in(file("game_of_life"))
   .settings(commonSettingsAndDependencies)
   .settings(GOLSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
 lazy val gameOfLifeNative: sbt.Project = gameOfLife.native
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+  .in(file("game_of_life"))
   .dependsOn(utilNative)
   .dependsOn(cliNative)
 
@@ -262,13 +262,13 @@ lazy val uniq: sbtcrossproject.CrossProject =
     .dependsOn(cli)
     .dependsOn(util)
 lazy val uniqJVM: sbt.Project = uniq.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+  .in(file("uniq"))
   .settings(commonSettingsAndDependencies)
   .settings(uniqSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
 lazy val uniqNative: sbt.Project = uniq.native
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+  .in(file("uniq"))
   .dependsOn(utilNative)
   .dependsOn(cliNative)
 
@@ -282,16 +282,16 @@ lazy val cli: sbtcrossproject.CrossProject =
     .nativeSettings(
       scalaNativeSettings
     )
-    .dependsOn(util)
+    .dependsOn(util % "compile->compile;test->test")
 lazy val cliJVM = cli.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+  .in(file("cli"))
   .settings(commonSettingsAndDependencies)
   .dependsOn(utilJVM)
 lazy val cliNative: sbt.Project = cli.native
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+  .in(file("cli"))
   .dependsOn(utilNative)
 
-lazy val fmv1992_scala_utilities: sbt.Project =
+lazy val root: sbt.Project =
   (project in file("."))
     .settings(fmv1992_scala_utilitiesSettings)
     .settings(commonSettingsAndDependencies)
@@ -305,13 +305,13 @@ lazy val fmv1992_scala_utilities: sbt.Project =
     // .dependsOn(utilNative)
     .aggregate(
       utilJVM,
-      // utilNative,
+      utilNative,
       gameOfLifeJVM,
-      // gameOfLifeNative,
+      gameOfLifeNative,
       uniqJVM,
-      // uniqNative,
-      cliJVM
-      // cliNative,
+      uniqNative,
+      cliJVM,
+      cliNative,
     )
 
 // --- }}}

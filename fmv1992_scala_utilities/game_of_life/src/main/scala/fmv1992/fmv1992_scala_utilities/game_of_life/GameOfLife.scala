@@ -219,12 +219,16 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 object GameOfLife extends CLIConfigTestableMain {
 
   @inline override final val version =
-    Reader.readLines(S.putabspath("./src/main/resources/version")).mkString
+    Reader
+      .readLines(S.putabspath("./game_of_life/src/main/resources/version"))
+      .mkString
 
   val programName = "GameOfLifeGame"
 
   @inline override final val CLIConfigPath =
-    S.putabspath("./src/main/resources/game_of_life_cli_config.conf")
+    S.putabspath(
+      "./game_of_life/src/main/resources/game_of_life_cli_config.conf"
+    )
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.

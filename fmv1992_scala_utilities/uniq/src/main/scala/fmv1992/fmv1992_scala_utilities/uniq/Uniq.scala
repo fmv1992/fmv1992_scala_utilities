@@ -19,12 +19,12 @@ import scala.collection.compat.immutable.LazyList
 object Uniq extends CLIConfigTestableMain {
 
   @inline override final val version =
-    Reader.readLines(S.putabspath("./src/main/resources/version")).mkString
+    Reader.readLines(S.putabspath("./uniq/src/main/resources/version")).mkString
 
   val programName = "Uniq"
 
   @inline override final val CLIConfigPath =
-    S.putabspath("./src/main/resources/uniq_cli_config.conf")
+    S.putabspath("./uniq/src/main/resources/uniq_cli_config.conf")
 
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
