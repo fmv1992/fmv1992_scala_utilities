@@ -30,7 +30,7 @@ format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
         | xargs --verbose -0 \
             scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
-	cd $(PROJECT_NAME) && sbt 'scalafix'
+	@# ???: cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
 	cd $(PROJECT_NAME) && sbt '+ doc'

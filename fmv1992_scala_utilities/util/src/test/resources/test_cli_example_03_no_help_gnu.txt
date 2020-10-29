@@ -1,0 +1,25 @@
+# Missing "help" file.
+
+name: debug
+    n: 0
+    type: int
+    help: Help text.
+
+
+name: version
+    n: 0
+    type: int
+    help: Help text.
+# This is a comment.
+
+name: sum
+    n: 2
+    type: int
+    help: Sum arguments.
+
+# name: help
+#     n: 2
+#     type: int
+#     help: Help text.
+
+# vim: set filetype=config fileformat=unix wrap:
