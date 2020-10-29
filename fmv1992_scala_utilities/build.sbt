@@ -24,6 +24,7 @@ val versionsNative = Seq(scala211)
 
 inThisBuild(
   List(
+    crossScalaVersions := versionsJVM,
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
     semanticdbEnabled := true,
     semanticdbOptions += "-P:semanticdb:synthetics:on",
@@ -45,7 +46,6 @@ lazy val commonSettings = Seq(
   version := IO
     .readLines(new File("./src/main/resources/version"))
     .mkString(""),
-  // crossScalaVersions := supportedScalaVersions,
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
@@ -82,7 +82,6 @@ lazy val commonSettings = Seq(
     GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")
   ),
   licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
-  organization := "io.github.fmv1992",
   // or if you want to set these fields manually
   scmInfo := Some(
     ScmInfo(
@@ -110,7 +109,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val scalaNativeSettings = Seq(
-  crossScalaVersions := List(scala211),
+  crossScalaVersions := versionsNative,
   scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
@@ -226,18 +225,18 @@ lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
 lazy val utilNative: sbt.Project = util.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-  .settings(
-    unmanagedSourceDirectories in Test := baseDirectory { base =>
-      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
-    }.value
-  )
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
+    .nativeSettings(
+      scalaNativeSettings
+    )
+    .dependsOn(cli)
     .dependsOn(util)
 lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
@@ -247,20 +246,20 @@ lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
   .dependsOn(cliJVM)
 lazy val gameOfLifeNative: sbt.Project = gameOfLife.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
-  .settings(
-    unmanagedSourceDirectories in Test := baseDirectory { base =>
-      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
-    }.value
-  )
   .dependsOn(utilNative)
   .dependsOn(cliNative)
 
 lazy val uniq: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
+    .nativeSettings(
+      scalaNativeSettings
+    )
+    .dependsOn(cli)
     .dependsOn(util)
 lazy val uniqJVM: sbt.Project = uniq.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
@@ -270,21 +269,16 @@ lazy val uniqJVM: sbt.Project = uniq.jvm
   .dependsOn(cliJVM)
 lazy val uniqNative: sbt.Project = uniq.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
-  .settings(
-    unmanagedSourceDirectories in Test := baseDirectory { base =>
-      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/uniq"))
-    }.value
-  )
   .dependsOn(utilNative)
   .dependsOn(cliNative)
 
 lazy val cli: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
-    .settings(commonSettingsAndDependencies)
     .nativeSettings(
       scalaNativeSettings
     )
@@ -295,11 +289,6 @@ lazy val cliJVM = cli.jvm
   .dependsOn(utilJVM)
 lazy val cliNative: sbt.Project = cli.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
-  .settings(
-    unmanagedSourceDirectories in Test := baseDirectory { base =>
-      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/cli"))
-    }.value
-  )
   .dependsOn(utilNative)
 
 lazy val fmv1992_scala_utilities: sbt.Project =
@@ -313,14 +302,16 @@ lazy val fmv1992_scala_utilities: sbt.Project =
       packageDoc / aggregate := false
     )
     .dependsOn(utilJVM)
+    // .dependsOn(utilNative)
     .aggregate(
       utilJVM,
-      utilNative,
-      cliNative,
+      // utilNative,
+      gameOfLifeJVM,
+      // gameOfLifeNative,
+      uniqJVM,
+      // uniqNative,
       cliJVM
-      // gameOfLifeJVM,
-      // cliJVM,
-      // uniqJVM
+      // cliNative,
     )
 
 // --- }}}
