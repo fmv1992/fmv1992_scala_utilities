@@ -115,6 +115,7 @@ lazy val scalaNativeSettings = Seq(
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
   nativeLinkStubs in Test := true,
+  Test / nativeLinkStubs := true,
   sources in (Compile, doc) := Seq.empty
 )
 
@@ -212,14 +213,24 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // instance creations. See:
 // <https://gitter.im/scala-native/sbt-crossproject?at=5f9aa5d906fa0513dd7da676>.
 lazy val util: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
+    .nativeSettings(
+      scalaNativeSettings
+    )
 lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-  .settings(commonSettingsAndDependencies)
+lazy val utilNative: sbt.Project = util.native
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
+// .settings(
+//   unmanagedSourceDirectories in Test := baseDirectory { base =>
+//     Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
+//   }.value
+// )
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform)
@@ -250,16 +261,27 @@ lazy val uniqJVM: sbt.Project = uniq.jvm
   .dependsOn(cliJVM)
 
 lazy val cli: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
     .jvmSettings(
       crossScalaVersions := versionsJVM
+    )
+    .settings(commonSettingsAndDependencies)
+    .nativeSettings(
+      scalaNativeSettings
     )
     .dependsOn(util)
 lazy val cliJVM = cli.jvm
   .settings(commonSettingsAndDependencies)
   .dependsOn(utilJVM)
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+lazy val cliNative: sbt.Project = cli.native
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+  .settings(
+    unmanagedSourceDirectories in Test := baseDirectory { base =>
+      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
+    }.value
+  )
 
 lazy val fmv1992_scala_utilities: sbt.Project =
   (project in file("."))
@@ -273,10 +295,11 @@ lazy val fmv1992_scala_utilities: sbt.Project =
     )
     .dependsOn(utilJVM)
     .aggregate(
-      gameOfLifeJVM,
-      cliJVM,
-      utilJVM,
-      uniqJVM
+      // utilJVM,
+      cliNative
+      // gameOfLifeJVM,
+      // cliJVM,
+      // uniqJVM
     )
 
 // --- }}}
