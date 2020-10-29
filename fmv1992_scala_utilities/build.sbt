@@ -311,7 +311,7 @@ lazy val root: sbt.Project =
       uniqJVM,
       uniqNative,
       cliJVM,
-      cliNative,
+      cliNative
     )
 
 // --- }}}

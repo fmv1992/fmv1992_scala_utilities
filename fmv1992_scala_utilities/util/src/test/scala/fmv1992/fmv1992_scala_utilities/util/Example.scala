@@ -2,7 +2,7 @@ package fmv1992.fmv1992_scala_utilities.util
 
 import java.io.File
 
-import fmv1992.fmv1992_scala_utilities.cli.StandardParser
+// import fmv1992.fmv1992_scala_utilities.cli.StandardParser
 
 object Example {
 
@@ -19,7 +19,7 @@ object Example {
   val cli01Path: String = "./src/test/resources/test_cli_example_01.txt"
   val cli01File: File = new File(cli01Path)
   require(cli01File.exists, cli01File.getCanonicalPath)
-  val cli01Parser: StandardParser = StandardParser(cli01File)
+  // val cli01Parser: StandardParser = StandardParser(cli01File)
 
   // --- }
 
@@ -52,7 +52,7 @@ object Example {
   val cli05Path: String = "./src/test/resources/test_cli_example_05_sum.txt"
   val cli05File: File = new File(cli05Path)
   require(cli05File.exists, cli05File.getCanonicalPath)
-  val cli05Parser: StandardParser = StandardParser(cli05File)
+  // val cli05Parser: StandardParser = StandardParser(cli05File)
 
   // --- }
 
