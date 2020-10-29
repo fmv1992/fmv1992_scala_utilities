@@ -226,14 +226,14 @@ lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
 lazy val utilNative: sbt.Project = util.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-// .settings(
-//   unmanagedSourceDirectories in Test := baseDirectory { base =>
-//     Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
-//   }.value
-// )
+  .settings(
+    unmanagedSourceDirectories in Test := baseDirectory { base =>
+      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
+    }.value
+  )
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
     .jvmSettings(
       crossScalaVersions := versionsJVM
@@ -245,9 +245,18 @@ lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
   .settings(GOLSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
+lazy val gameOfLifeNative: sbt.Project = gameOfLife.native
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+  .settings(
+    unmanagedSourceDirectories in Test := baseDirectory { base =>
+      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+    }.value
+  )
+  .dependsOn(utilNative)
+  .dependsOn(cliNative)
 
 lazy val uniq: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
     .jvmSettings(
       crossScalaVersions := versionsJVM
@@ -259,6 +268,15 @@ lazy val uniqJVM: sbt.Project = uniq.jvm
   .settings(uniqSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
+lazy val uniqNative: sbt.Project = uniq.native
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+  .settings(
+    unmanagedSourceDirectories in Test := baseDirectory { base =>
+      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+    }.value
+  )
+  .dependsOn(utilNative)
+  .dependsOn(cliNative)
 
 lazy val cli: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
@@ -272,16 +290,17 @@ lazy val cli: sbtcrossproject.CrossProject =
     )
     .dependsOn(util)
 lazy val cliJVM = cli.jvm
+  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
   .settings(commonSettingsAndDependencies)
   .dependsOn(utilJVM)
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
 lazy val cliNative: sbt.Project = cli.native
   .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
   .settings(
     unmanagedSourceDirectories in Test := baseDirectory { base =>
-      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/util"))
+      Seq(file("./src/test/scala/fmv1992/fmv1992_scala_utilities/cli"))
     }.value
   )
+  .dependsOn(utilNative)
 
 lazy val fmv1992_scala_utilities: sbt.Project =
   (project in file("."))
@@ -295,8 +314,10 @@ lazy val fmv1992_scala_utilities: sbt.Project =
     )
     .dependsOn(utilJVM)
     .aggregate(
-      // utilJVM,
-      cliNative
+      utilJVM,
+      utilNative,
+      cliNative,
+      cliJVM
       // gameOfLifeJVM,
       // cliJVM,
       // uniqJVM
