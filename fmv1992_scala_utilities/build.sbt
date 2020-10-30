@@ -24,6 +24,11 @@ val versionsNative = Seq(scala211)
 
 inThisBuild(
   List(
+    //
+    // parallelExecution in ThisBuild := false,
+    // concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
+    //
+    //
     crossScalaVersions := versionsJVM,
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
     semanticdbEnabled := true,
@@ -168,24 +173,12 @@ lazy val commonDependencies = Seq(
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val GOLSettings = Seq(
-  assemblyJarName in assembly := "game_of_life.jar",
-  mainClass in Compile := Some(
-    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
-  )
 )
 
 lazy val uniqSettings = Seq(
-  assemblyJarName in assembly := "uniq.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq"),
-  mainClass in nativeLink := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq"),
-  selectMainClass in (nativeLink) := Some(
-    "fmv1992.fmv1992_scala_utilities.uniq.Uniq"
-  )
 )
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
-  assemblyJarName in assembly := "root.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name

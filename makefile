@@ -18,6 +18,9 @@ FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
 # Test files.
 BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -print)
 
+# Increase the `ulimit` to avoid: "java.nio.file.ClosedFileSystemException".
+$(shell ulimit -HSn 10000)
+
 # Set scala compilation flags.
 # SCALAC_CFLAGS = -cp $$PWD:$(ROOT_DIR)/code/my_scala_project/
 
@@ -25,6 +28,9 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 # https://drive.google.com/open?id=1FoY3kQi52PWllwc3ytYU9452qJ4ack1u
 
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
+
+echo:
+	ulimit -a ; exit 1
 
 format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
@@ -78,6 +84,9 @@ test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
+
+nativelink:
+	cd $(PROJECT_NAME) && sbt 'nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
