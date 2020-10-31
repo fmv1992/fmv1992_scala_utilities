@@ -24,6 +24,14 @@ RUN unzip sbt.zip
 RUN rm sbt.zip
 ENV PATH $PATH:/home/user/bin/sbt/bin
 
+# Install commit `e0498e8b3b97f8c60e290fa78c63dec70a9654b6` at `scala-native`.
+WORKDIR /tmp
+RUN git clone https://github.com/scala-native/scala-native
+RUN cd ./scala-native \
+    && git reset --hard e0498e8b3b97f8c60e290fa78c63dec70a9654b6 \
+    && sbt '+ publishLocal'
+RUN rm -rf ./scala-native
+
 WORKDIR /home/user/
 RUN mkdir ./${PROJECT_NAME}
 COPY ./${PROJECT_NAME} ./${PROJECT_NAME}
