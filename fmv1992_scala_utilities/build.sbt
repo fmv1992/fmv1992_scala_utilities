@@ -24,13 +24,11 @@ val versionsNative = Seq(scala211)
 
 inThisBuild(
   List(
-    resolvers += Resolver.mavenLocal,
     //
     // parallelExecution in ThisBuild := false,
     // concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     //
     //
-    crossScalaVersions := versionsJVM,
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
     semanticdbEnabled := true,
     semanticdbOptions += "-P:semanticdb:synthetics:on",
@@ -126,9 +124,8 @@ lazy val scalaNativeSettings = Seq(
 
 lazy val commonDependencies = Seq(
   //
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-  libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
-  // libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0+20-b3aadcba-SNAPSHOT",
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
+  libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
@@ -292,8 +289,8 @@ lazy val root: sbt.Project =
     .settings(commonSettingsAndDependencies)
     .settings(
       publish / skip := true,
-      crossScalaVersions := versionsJVM,
       doc / aggregate := false,
+      crossScalaVersions := Nil,
       packageDoc / aggregate := false
     )
     .dependsOn(utilJVM)
