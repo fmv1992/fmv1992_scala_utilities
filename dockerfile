@@ -41,6 +41,7 @@ RUN cd ./${PROJECT_NAME} && sbt update
 RUN rm -rf ./${PROJECT_NAME}
 COPY . .
 RUN make publishlocal
+RUN make clean
 
 CMD bash
 ENTRYPOINT bash
