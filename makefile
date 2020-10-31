@@ -18,6 +18,9 @@ FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
 # Test files.
 BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -print)
 
+# Increase the `ulimit` to avoid: "java.nio.file.ClosedFileSystemException".
+$(shell ulimit -HSn 10000)
+
 # Set scala compilation flags.
 # SCALAC_CFLAGS = -cp $$PWD:$(ROOT_DIR)/code/my_scala_project/
 
@@ -26,11 +29,14 @@ BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -prin
 
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
+echo:
+	ulimit -a ; exit 1
+
 format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
         | xargs --verbose -0 \
             scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
-	cd $(PROJECT_NAME) && sbt 'scalafix'
+	@# ???: cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
 	cd $(PROJECT_NAME) && sbt '+ doc'
@@ -39,6 +45,7 @@ clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
 	find . -iname '*.class' -print0 | xargs -0 rm -rf
+	find . -iname '*.hnir' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
 coverage:
@@ -77,6 +84,9 @@ test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
+
+nativelink:
+	cd $(PROJECT_NAME) && sbt 'nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'

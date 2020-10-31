@@ -24,6 +24,12 @@ val versionsNative = Seq(scala211)
 
 inThisBuild(
   List(
+    resolvers += Resolver.mavenLocal,
+    //
+    // parallelExecution in ThisBuild := false,
+    // concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
+    //
+    //
     libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
     semanticdbEnabled := true,
     semanticdbOptions += "-P:semanticdb:synthetics:on",
@@ -42,10 +48,9 @@ lazy val commonSettings = Seq(
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
   organization := "io.github.fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
-  version := IO
-    .readLines(new File("./src/main/resources/version"))
-    .mkString(""),
-  // crossScalaVersions := supportedScalaVersions,
+  // version := IO
+  //   .readLines(new File("./util/main/resources/version"))
+  //   .mkString(""),
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
@@ -82,7 +87,6 @@ lazy val commonSettings = Seq(
     GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")
   ),
   licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
-  organization := "io.github.fmv1992",
   // or if you want to set these fields manually
   scmInfo := Some(
     ScmInfo(
@@ -110,18 +114,20 @@ lazy val commonSettings = Seq(
 )
 
 lazy val scalaNativeSettings = Seq(
-  crossScalaVersions := List(scala211),
+  crossScalaVersions := versionsNative,
   scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
   nativeLinkStubs in Test := true,
+  Test / nativeLinkStubs := true,
   sources in (Compile, doc) := Seq.empty
 )
 
 lazy val commonDependencies = Seq(
   //
-  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % Test,
   libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
+  // libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0+20-b3aadcba-SNAPSHOT",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
   // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
@@ -168,24 +174,12 @@ lazy val commonDependencies = Seq(
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val GOLSettings = Seq(
-  assemblyJarName in assembly := "game_of_life.jar",
-  mainClass in Compile := Some(
-    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
-  )
 )
 
 lazy val uniqSettings = Seq(
-  assemblyJarName in assembly := "uniq.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq"),
-  mainClass in nativeLink := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq"),
-  selectMainClass in (nativeLink) := Some(
-    "fmv1992.fmv1992_scala_utilities.uniq.Uniq"
-  )
 )
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
-  assemblyJarName in assembly := "root.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
@@ -212,71 +206,106 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // instance creations. See:
 // <https://gitter.im/scala-native/sbt-crossproject?at=5f9aa5d906fa0513dd7da676>.
 lazy val util: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
+    )
+    .nativeSettings(
+      scalaNativeSettings
     )
 lazy val utilJVM: sbt.Project = util.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/util"))
-  .settings(commonSettingsAndDependencies)
+  .in(file("./util"))
+lazy val utilNative: sbt.Project = util.native
+  .in(file("./util"))
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
+    .nativeSettings(
+      scalaNativeSettings
+    )
+    .dependsOn(cli)
     .dependsOn(util)
 lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/game_of_life"))
+  .in(file("game_of_life"))
   .settings(commonSettingsAndDependencies)
   .settings(GOLSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
+lazy val gameOfLifeNative: sbt.Project = gameOfLife.native
+  .in(file("game_of_life"))
+  .dependsOn(utilNative)
+  .dependsOn(cliNative)
 
 lazy val uniq: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
+    .nativeSettings(
+      scalaNativeSettings
+    )
+    .dependsOn(cli)
     .dependsOn(util)
 lazy val uniqJVM: sbt.Project = uniq.jvm
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/uniq"))
+  .in(file("uniq"))
   .settings(commonSettingsAndDependencies)
   .settings(uniqSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
+lazy val uniqNative: sbt.Project = uniq.native
+  .in(file("uniq"))
+  .dependsOn(utilNative)
+  .dependsOn(cliNative)
 
 lazy val cli: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Pure)
+    .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM
     )
-    .dependsOn(util)
+    .nativeSettings(
+      scalaNativeSettings
+    )
+    .dependsOn(util % "compile->compile;test->test")
 lazy val cliJVM = cli.jvm
+  .in(file("cli"))
   .settings(commonSettingsAndDependencies)
   .dependsOn(utilJVM)
-  .in(file("./src/main/scala/fmv1992/fmv1992_scala_utilities/cli"))
+lazy val cliNative: sbt.Project = cli.native
+  .in(file("cli"))
+  .dependsOn(utilNative)
 
-lazy val fmv1992_scala_utilities: sbt.Project =
+lazy val root: sbt.Project =
   (project in file("."))
     .settings(fmv1992_scala_utilitiesSettings)
     .settings(commonSettingsAndDependencies)
     .settings(
       publish / skip := true,
-      crossScalaVersions := Nil,
       doc / aggregate := false,
+      crossScalaVersions := Nil,
       packageDoc / aggregate := false
     )
     .dependsOn(utilJVM)
+    // .dependsOn(utilNative)
     .aggregate(
-      gameOfLifeJVM,
-      cliJVM,
       utilJVM,
-      uniqJVM
+      utilNative,
+      gameOfLifeJVM,
+      gameOfLifeNative,
+      uniqJVM,
+      uniqNative,
+      cliJVM,
+      cliNative
     )
 
 // --- }}}
