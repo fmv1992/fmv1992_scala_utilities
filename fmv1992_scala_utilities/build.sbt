@@ -48,9 +48,9 @@ lazy val commonSettings = Seq(
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
   organization := "io.github.fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
-  // version := IO
-  //   .readLines(new File("./util/main/resources/version"))
-  //   .mkString(""),
+  version := IO
+    .readLines(new File("./util/src/main/resources/version"))
+    .mkString(""),
   //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
@@ -174,12 +174,20 @@ lazy val commonDependencies = Seq(
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val GOLSettings = Seq(
+  assemblyJarName in assembly := "game_of_life.jar",
+  mainClass in Compile := Some(
+    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
+  )
 )
 
 lazy val uniqSettings = Seq(
+  assemblyJarName in assembly := "uniq.jar",
+  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
+  assemblyJarName in assembly := "root.jar",
+  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
