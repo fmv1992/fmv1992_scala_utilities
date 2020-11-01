@@ -86,7 +86,7 @@ test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
 nativelink:
-	cd $(PROJECT_NAME) && sbt 'nativeLink'
+	cd $(PROJECT_NAME) && sbt '+ nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
@@ -132,7 +132,8 @@ docker_run:
         $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
 
 docker_test:
-	DOCKER_CMD='make test' make docker_run
+	DOCKER_CMD='make "+ test"' make docker_run
+	DOCKER_CMD='make "+ nativeLink"' make docker_run
 
 # --- }}}
 

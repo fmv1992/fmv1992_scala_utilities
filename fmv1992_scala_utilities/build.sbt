@@ -153,11 +153,23 @@ lazy val commonDependencies = Seq(
   },
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 => List()
+      case Some((2, n)) if n == 11 =>
+        List(
+          "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
+          "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0"
+        )
       case Some((2, n)) if n == 12 =>
-        List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
+        List(
+          "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
+          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
+          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+        )
       case Some((2, n)) if n == 13 =>
-        List("com.sandinh" %% "scala-rewrites" % "0.1.10-sd")
+        List(
+          "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
+          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
+          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+        )
       case _ => Nil
     }
   },
@@ -227,6 +239,9 @@ lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./util"))
 lazy val utilNative: sbt.Project = util.native
   .in(file("./util"))
+  .settings(
+    nativeLink := file("")
+  )
 
 lazy val gameOfLife: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
@@ -292,6 +307,9 @@ lazy val cliJVM = cli.jvm
 lazy val cliNative: sbt.Project = cli.native
   .in(file("cli"))
   .dependsOn(utilNative)
+  .settings(
+    nativeLink := file("")
+  )
 
 lazy val root: sbt.Project =
   (project in file("."))
