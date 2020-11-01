@@ -60,6 +60,7 @@ coverage:
         ; exit "$${exit_code}"
 
 # Test actions. --- {{{
+
 # Killing a running process with:
 #
 #    SIGKILL                 → 137
@@ -112,6 +113,8 @@ $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
 test%.sh: .FORCE
 	bash -xv $@
 
+nativelink:
+	cd ./fmv1992_scala_utilities && sbt '+ nativeLink'
 
 # Docker actions. --- {{{
 
@@ -132,8 +135,8 @@ docker_run:
         $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
 
 docker_test:
-	DOCKER_CMD='make "+ test"' make docker_run
-	DOCKER_CMD='make "+ nativeLink"' make docker_run
+	DOCKER_CMD='make test' make docker_run
+	DOCKER_CMD='make nativelink' make docker_run
 
 # --- }}}
 
