@@ -87,7 +87,7 @@ test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
 nativelink:
-	cd $(PROJECT_NAME) && sbt '+ nativeLink'
+	cd $(PROJECT_NAME) && sbt 'nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
@@ -112,9 +112,6 @@ $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
 
 test%.sh: .FORCE
 	bash -xv $@
-
-nativelink:
-	cd ./fmv1992_scala_utilities && sbt '+ nativeLink'
 
 # Docker actions. --- {{{
 
