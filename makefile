@@ -86,6 +86,7 @@ test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
+# ???: This tasks fails erratically but succeeds after a few retries.
 nativelink:
 	cd $(PROJECT_NAME) && sbt 'nativeLink'
 
