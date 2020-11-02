@@ -107,6 +107,18 @@ lazy val commonSettings = Seq(
     true
   ),
   publishTo in ThisBuild := sonatypePublishTo.value,
+  credentials += Credentials(
+    file(
+      sys.env
+        .get("SBT_CREDENTIALS_PATH")
+        .getOrElse(throw new Exception("Set 'SBT_CREDENTIALS_PATH'."))
+    )
+  ),
+  usePgpKeyHex(
+    sys.env
+      .get("SBT_PGP_KEY")
+      .getOrElse(throw new Exception("Set 'SBT_PGP_KEY'."))
+  ),
   //
   target := {
     (ThisBuild / baseDirectory).value / "target" / thisProject.value.id
@@ -257,7 +269,6 @@ lazy val gameOfLife: sbtcrossproject.CrossProject =
     .dependsOn(util)
 lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
   .in(file("game_of_life"))
-  .settings(commonSettingsAndDependencies)
   .settings(GOLSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
@@ -280,7 +291,6 @@ lazy val uniq: sbtcrossproject.CrossProject =
     .dependsOn(util)
 lazy val uniqJVM: sbt.Project = uniq.jvm
   .in(file("uniq"))
-  .settings(commonSettingsAndDependencies)
   .settings(uniqSettings)
   .dependsOn(utilJVM)
   .dependsOn(cliJVM)
@@ -302,7 +312,6 @@ lazy val cli: sbtcrossproject.CrossProject =
     .dependsOn(util % "compile->compile;test->test")
 lazy val cliJVM = cli.jvm
   .in(file("cli"))
-  .settings(commonSettingsAndDependencies)
   .dependsOn(utilJVM)
 lazy val cliNative: sbt.Project = cli.native
   .in(file("cli"))
