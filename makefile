@@ -2,18 +2,24 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
+
 # Find all scala files.
 SBT_FILES := $(shell find ./ -iname "build.sbt")
 SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
-export SCALAC_OPTS := -Ywarn-dead-code -Xlint:unused
+export SCALAC_OPTS := -Ywarn-dead-code
+export _JAVA_OPTIONS ?= -Xms3072m -Xmx6144m
 
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
 
 # Test files.
 BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -print)
+
+# Increase the `ulimit` to avoid: "java.nio.file.ClosedFileSystemException".
+$(shell ulimit -HSn 10000)
 
 # Set scala compilation flags.
 # SCALAC_CFLAGS = -cp $$PWD:$(ROOT_DIR)/code/my_scala_project/
@@ -27,7 +33,7 @@ format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config .scalafmt.conf
 
 doc:
-	cd $(dir $(firstword $(SBT_FILES))) && sbt doc
+	cd $(PROJECT_NAME) && sbt '+ doc'
 
 clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
@@ -38,10 +44,17 @@ clean:
 
 coverage:
 	# ???: hack to build the report.
-	cd ./fmv1992_scala_utilities && sbt clean coverage test && (sbt coverageReport || sbt coverageAggregate || true)
-	echo "Report can be found on '$$(find . -iname "index.html")'."
+	exit_code=0 \
+        && cd ./fmv1992_scala_utilities \
+        && sbt clean coverage test \
+        && (sbt coverageReport || true) \
+        && sbt coverageAggregate \
+        ; exit_code=$$? \
+        ; echo "Report can be found on '$$(find . -iname "index.html")'." \
+        ; exit "$${exit_code}"
 
 # Test actions. --- {{{
+
 # Killing a running process with:
 #
 #    SIGKILL                 → 137
@@ -64,14 +77,15 @@ test: test_sbt test_bash
 
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
-test_sbt: $(SBT_FILES)
+test_sbt:
+	cd $(PROJECT_NAME) && sbt '+ test'
+
+# ???: This tasks fails erratically but succeeds after a few retries.
+nativelink:
+	cd $(PROJECT_NAME) && sbt 'nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
-	cd $(dir $@) && sbt compile
-
-$(SBT_FILES): $(SCALA_FILES)
-	cd $(dir $@) && sbt test assembly
-	touch --no-create -m $@
+	cd $(PROJECT_NAME) && sbt '+ compile'
 
 # --- }}}
 
@@ -88,11 +102,35 @@ dev:
 	chmod a+x ./.git/hooks/pre-push
 
 $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
-	cd ./fmv1992_scala_utilities && sbt assembly
+	cd ./fmv1992_scala_utilities && sbt '+ assembly'
 	touch --no-create -m $@
 
 test%.sh: .FORCE
 	bash -xv $@
+
+# Docker actions. --- {{{
+
+docker_build:
+	docker build \
+        --file ./dockerfile \
+        --tag $(PROJECT_NAME) \
+        --build-arg project_name=$(PROJECT_NAME) \
+        -- . \
+        1>&2
+
+docker_run:
+	docker run \
+        --interactive \
+        --tty \
+        --entrypoint '' \
+        $(PROJECT_NAME) \
+        $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
+
+docker_test:
+	DOCKER_CMD='make test' make docker_run
+	DOCKER_CMD='make nativelink' make docker_run
+
+# --- }}}
 
 .FORCE:
 

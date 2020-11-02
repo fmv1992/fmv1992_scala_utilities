@@ -7,19 +7,12 @@ export MAKEFLAGS='-j1'
 # It should be symlinked to ../../.git/hooks/pre-commit.
 
 # Halt on error.
-set -e
-set -x
+set -euo pipefail
 
 # Go to execution directory.
 # cd $(dirname $0)
 
-git diff --name-only --cached --diff-filter=ACMRTUXB \
-    | grep '\.scala' \
-    | parallel \
-        -I % \
-        --verbose \
-        --jobs $((2*$(nproc))) \
-        "vim -i NONE -n -c 'VimScalafmt' -c 'noautocmd x!' %"
+make format
 git diff --name-only --cached --diff-filter=ACMRTUXB \
     | xargs --verbose git add --force
 # --diff-filter=ACDMRTUXB
@@ -31,7 +24,6 @@ test -f $versionfile
 
 make --jobs 1 dev
 make --jobs 1 clean
-make --jobs 1 assembly
 make --jobs 1 test
 
 # Bump minor version.

@@ -1,8 +1,11 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
 import xerial.sbt.Sonatype._
 
-coverageMinimum := 90
-coverageFailOnMinimum := true
+// References on how to do multi project builds:
+// 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
+//      *   Used by this repos.
+// 2.   https://github.com/sbt/sbt-projectmatrix
+//      *   For some reason this messed up with `sbt-assembly`.
 
 name := "fmv1992_scala_utilities"
 
@@ -84,9 +87,17 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val GOLSettings = Seq(assemblyJarName in assembly := "game_of_life.jar")
+lazy val GOLSettings = Seq(
+  assemblyJarName in assembly := "game_of_life.jar",
+  mainClass in Compile := Some(
+    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
+  )
+)
 
-lazy val uniqSettings = Seq(assemblyJarName in assembly := "uniq.jar")
+lazy val uniqSettings = Seq(
+  assemblyJarName in assembly := "uniq.jar",
+  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
+)
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
   assemblyJarName in assembly := "root.jar"

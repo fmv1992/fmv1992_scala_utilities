@@ -11,7 +11,7 @@ before_install:
     - cd $(mktemp -d) && git clone --depth 1 --branch dev https://github.com/fmv1992/scala_cli_parser && cd ./scala_cli_parser && make publishlocal
 
 script:
-    - make
+    - make docker_build docker_test
 
 after_success:
   - export CODECOV_TOKEN="15bf6b07-622f-48d8-b746-e001b5fc8e73"

@@ -6,7 +6,7 @@ curdir=$(readlink -f $PWD)
 
 tempdir=$(mktemp -d)
 
-java_abs=$(find . -iname "uniq.jar" -print0 | xargs -0 readlink -f )
+java_abs=$(find . -iname "uniq.jar" -print0 | sort -z -u | tail -z -n 1 | xargs -0 readlink -f)
 java_name=$(basename $java_abs)
 
 randomstring=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 30)¦
