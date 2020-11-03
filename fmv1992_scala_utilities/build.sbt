@@ -111,13 +111,13 @@ lazy val commonSettings = Seq(
     file(
       sys.env
         .get("SBT_CREDENTIALS_PATH")
-        .getOrElse(throw new Exception("Set 'SBT_CREDENTIALS_PATH'."))
+        .getOrElse("")
     )
   ),
   usePgpKeyHex(
     sys.env
       .get("SBT_PGP_KEY")
-      .getOrElse(throw new Exception("Set 'SBT_PGP_KEY'."))
+      .getOrElse("B145230D09E5330C9A0ED5BC1FEB8CD8FBFDC1CB")
   ),
   //
   target := {

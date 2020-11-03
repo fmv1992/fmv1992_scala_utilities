@@ -10,7 +10,7 @@ SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
 export SCALAC_OPTS := -Ywarn-dead-code
-export _JAVA_OPTIONS ?= -Xms3072m -Xmx6144m
+export _JAVA_OPTIONS ?= -Xms1024m -Xmx2048m
 
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
