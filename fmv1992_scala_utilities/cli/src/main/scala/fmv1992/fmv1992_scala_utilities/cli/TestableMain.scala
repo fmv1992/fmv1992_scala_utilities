@@ -9,6 +9,9 @@ import scala.Iterable
   */
 trait CLIConfigTestableMain extends TestableMain {
 
+  // ???: Due to Scala Native's limitations as of 2020-12-16, one cannot embed
+  // files as resources. A workaround is to embed the string themselves,
+  // perhaps wrapping around a `scala.io.Source.fromString` object.
   val CLIConfigPath: String
 
   val version: String
