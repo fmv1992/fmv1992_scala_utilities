@@ -46,9 +46,15 @@ object Reader {
       // Raises java.io.FileNotFoundException if it does not exist.
       scala.io.Source.fromFile(f)
     } else {
-      throw new FileNotFoundException(
-        s"File '$path' does not exist. Scala Native does not support java resources."
-      )
+      if (Utilities.isScalaNative) {
+        throw new FileNotFoundException(
+          s"File '$path' does not exist. Scala Native does not support java resources."
+        )
+      } else {
+        val shortenedPath = path.slice(path.lastIndexOf("/"), path.length)
+        scala.io.Source
+          .fromInputStream(getClass.getResourceAsStream(shortenedPath))
+      }
     }
     val res: List[String] = loanPattern(bufSource)(_.getLines().toList)
     // ???
