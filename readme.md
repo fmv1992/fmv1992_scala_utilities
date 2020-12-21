@@ -20,7 +20,7 @@ This project illustrates my journey in learning Scala and trying to deploy my fi
 
 ### CLI
 
-A simple yet powerful command line parser.
+Deprecated sub-project. It is not a project of its own: [scala_cli_parser](https://github.com/fmv1992/scala_cli_parser).
 
 ### Game of life
 
