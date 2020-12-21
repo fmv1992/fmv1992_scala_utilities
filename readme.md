@@ -8,7 +8,7 @@
 
 *   `v1.x`:
 
-    *   ![Build status](https://travis-ci.org/fmv1992/fmv1992_scala_utilities.svg?branch=v1.x)
+    *   ![Build status](https://travis-ci.org/fmv1992/fmv1992_scala_utilities.svg?branch=v1.x) → **Failing due to an error similar to [this](https://github.com/shadaj/scalapy/issues/37)**.
 
 *   `dev_1.x_scala_native`:
 
