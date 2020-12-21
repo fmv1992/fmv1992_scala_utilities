@@ -15,9 +15,6 @@ export _JAVA_OPTIONS ?= -Xms1024m -Xmx2048m
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
 
-# Test files.
-BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -print)
-
 # Increase the `ulimit` to avoid: "java.nio.file.ClosedFileSystemException".
 $(shell ulimit -HSn 10000)
 
@@ -28,9 +25,6 @@ $(shell ulimit -HSn 10000)
 # https://drive.google.com/open?id=1FoY3kQi52PWllwc3ytYU9452qJ4ack1u
 
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
-
-echo:
-	ulimit -a ; exit 1
 
 format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
@@ -45,6 +39,9 @@ clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
 	find . -iname '*.class' -print0 | xargs -0 rm -rf
+	find . -iname '.bsp' -print0 | xargs -0 rm -rf
+	find . -iname '.metals' -print0 | xargs -0 rm -rf
+	find . -iname '.bloop' -print0 | xargs -0 rm -rf
 	find . -iname '*.hnir' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
@@ -79,16 +76,21 @@ coverage:
 #
 # The logic above does not work because `scala` inside a shell script does not
 # terminate with timeout (meaning it always timeouts).
-test: test_sbt test_bash
+test: docker_test test_host
 
-test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
+test_host: test_sbt test_bash
+
+test_bash: $(FINAL_TARGET)
+	find ./test/bash/ -iname '*.sh' -print0 | xargs -0 -I % -n 1 -- bash -xv %
 
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
 # ???: This tasks fails erratically but succeeds after a few retries.
 nativelink:
-	cd $(PROJECT_NAME) && sbt 'nativeLink'
+	ulimit -HSn 10000 ; cd $(PROJECT_NAME) && { sbt 'nativeLink' || sbt 'nativeLink' ; }
+#                                             ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+# See: `fmv1992_scala_utilities:2af7678:readme.md:11` (<https://github.com/shadaj/scalapy/issues/37>); this improves the success rate of this task.
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
@@ -111,9 +113,6 @@ $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
 	cd ./fmv1992_scala_utilities && sbt '+ assembly'
 	touch --no-create -m $@
 
-test%.sh: .FORCE
-	bash -xv $@
-
 # Docker actions. --- {{{
 
 docker_build:
@@ -133,8 +132,8 @@ docker_run:
         $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
 
 docker_test:
-	DOCKER_CMD='make test' make docker_run
-	DOCKER_CMD='make nativelink' make docker_run
+	DOCKER_CMD='bash -c "make clean && make test_host && make clean"' make docker_run
+	DOCKER_CMD='bash -c "make clean && make nativelink && make clean"' make docker_run
 
 # --- }}}
 
