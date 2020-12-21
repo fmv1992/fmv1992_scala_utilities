@@ -88,9 +88,11 @@ test_sbt:
 
 # ???: This tasks fails erratically but succeeds after a few retries.
 nativelink:
-	ulimit -HSn 10000 ; cd $(PROJECT_NAME) && { sbt 'nativeLink' || sbt 'nativeLink' ; }
-#                                             ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-# See: `fmv1992_scala_utilities:2af7678:readme.md:11` (<https://github.com/shadaj/scalapy/issues/37>); this improves the success rate of this task.
+	cd $(PROJECT_NAME) && { sbt 'nativeLink' || sbt 'nativeLink' ; }
+#                         ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+# See: `fmv1992_scala_utilities:2af7678:readme.md:11`
+# (<https://github.com/shadaj/scalapy/issues/37>); this improves the success
+# rate of this task.
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
