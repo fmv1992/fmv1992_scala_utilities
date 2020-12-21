@@ -39,6 +39,9 @@ clean:
 	find . -iname 'target' -print0 | xargs -0 rm -rf
 	find . -path '*/project/*' -type d -prune -print0 | xargs -0 rm -rf
 	find . -iname '*.class' -print0 | xargs -0 rm -rf
+	find . -iname '.bsp' -print0 | xargs -0 rm -rf
+	find . -iname '.metals' -print0 | xargs -0 rm -rf
+	find . -iname '.bloop' -print0 | xargs -0 rm -rf
 	find . -iname '*.hnir' -print0 | xargs -0 rm -rf
 	find . -type d -empty -delete
 
@@ -73,7 +76,9 @@ coverage:
 #
 # The logic above does not work because `scala` inside a shell script does not
 # terminate with timeout (meaning it always timeouts).
-test: test_sbt test_bash
+test: docker_test test_host
+
+test_host: test_sbt test_bash
 
 test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
 
