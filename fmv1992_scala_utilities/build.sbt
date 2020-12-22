@@ -24,6 +24,7 @@ val versionsNative = Seq(scala211)
 
 inThisBuild(
   List(
+    scalaVersion := scala213,
     resolvers += Resolver.mavenLocal,
     //
     // parallelExecution in ThisBuild := false,
