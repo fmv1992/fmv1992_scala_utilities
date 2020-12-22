@@ -19,23 +19,18 @@ RUN rm -rf /var/lib/apt/lists/*
 # Install sbt.
 RUN mkdir -p /home/user/bin
 WORKDIR /home/user/bin
-RUN wget -O sbt.zip -- https://github.com/sbt/sbt/releases/download/v1.4.5/sbt-1.4.5.zip
+RUN wget -O sbt.zip -- https://github.com/sbt/sbt/releases/download/v1.3.13/sbt-1.3.13.zip
 RUN unzip sbt.zip
 RUN rm sbt.zip
 ENV PATH $PATH:/home/user/bin/sbt/bin
 
-# Install commit `c27fa07f757b0a83f54bdf817514db3920c64ad4` at `scala-native`.
-WORKDIR /tmp
-RUN git clone https://github.com/scala-native/scala-native
-RUN cd ./scala-native \
-    && git reset --hard c27fa07f757b0a83f54bdf817514db3920c64ad4 \
-    && echo "ZGlmZiAtLWdpdCBhL25pci9zcmMvbWFpbi9zY2FsYS9zY2FsYS9zY2FsYW5hdGl2ZS9uaXIvVmVyc2lvbnMuc2NhbGEgYi9uaXIvc3JjL21haW4vc2NhbGEvc2NhbGEvc2NhbGFuYXRpdmUvbmlyL1ZlcnNpb25zLnNjYWxhCmluZGV4IDAwZGE3OGEuLjZjZDViZjMgMTAwNjQ0Ci0tLSBhL25pci9zcmMvbWFpbi9zY2FsYS9zY2FsYS9zY2FsYW5hdGl2ZS9uaXIvVmVyc2lvbnMuc2NhbGEKKysrIGIvbmlyL3NyYy9tYWluL3NjYWxhL3NjYWxhL3NjYWxhbmF0aXZlL25pci9WZXJzaW9ucy5zY2FsYQpAQCAtMjUsNSArMjUsNSBAQCBvYmplY3QgVmVyc2lvbnMgewogICBmaW5hbCB2YWwgcmV2aXNpb246IEludCA9IDggLy8gYS5rLmEuIE1JTk9SIHZlcnNpb24KIAogICAvKiBDdXJyZW50IHB1YmxpYyByZWxlYXNlIHZlcnNpb24gb2YgU2NhbGEgTmF0aXZlLiAqLwotICBmaW5hbCB2YWwgY3VycmVudDogU3RyaW5nID0gIjAuNC4wLVNOQVBTSE9UIgorICBmaW5hbCB2YWwgY3VycmVudDogU3RyaW5nID0gIjAuNC4wLU0yIgogfQo=" \
-        | base64 -d \
-        | git apply \
-    && sbt ';++2.11.12;update;compile;'
-RUN cd ./scala-native \
-    && sbt ';++2.11.12;publishLocal;'
-RUN rm -rf ./scala-native
+# # Install commit `e0498e8b3b97f8c60e290fa78c63dec70a9654b6` at `scala-native`.
+# WORKDIR /tmp
+# RUN git clone https://github.com/scala-native/scala-native
+# RUN cd ./scala-native \
+#     && git reset --hard e0498e8b3b97f8c60e290fa78c63dec70a9654b6 \
+#     && sbt '+ publishLocal'
+# RUN rm -rf ./scala-native
 
 WORKDIR /home/user/
 RUN mkdir ./${PROJECT_NAME}
