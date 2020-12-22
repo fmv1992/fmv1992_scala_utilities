@@ -5,21 +5,15 @@ ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 export PROJECT_NAME ?= $(notdir $(ROOT_DIR))
 
 # Find all scala files.
-SBT_FILES := $(shell find ./ -iname "build.sbt")
-SCALA_FILES := $(shell find $(dir $@) -iname '*.scala')
+SBT_FILES := $(shell find $(PROJECT_NAME) -iname "build.sbt")
+SCALA_FILES := $(shell find $(PROJECT_NAME) -iname '*.scala')
 SBT_FOLDERS := $(dir $(SBT_FILES))
 
 export SCALAC_OPTS := -Ywarn-dead-code
-export _JAVA_OPTIONS ?= -Xms3072m -Xmx6144m
+export _JAVA_OPTIONS ?= -Xms2048m -Xmx4096m
 
 # Build files.
 FINAL_TARGET := ./fmv1992_scala_utilities/target/scala-2.12/root.jar
-
-# Test files.
-BASH_TEST_FILES := $(shell find . -name 'tmp' -prune -o -iname '*test*.sh' -print)
-
-# Increase the `ulimit` to avoid: "java.nio.file.ClosedFileSystemException".
-$(shell ulimit -HSn 10000)
 
 # Set scala compilation flags.
 # SCALAC_CFLAGS = -cp $$PWD:$(ROOT_DIR)/code/my_scala_project/
@@ -30,7 +24,10 @@ $(shell ulimit -HSn 10000)
 all: dev test assembly publishlocal doc coverage $(FINAL_TARGET)
 
 format:
-	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 | xargs --verbose -0 scalafmt --config .scalafmt.conf
+	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
+        | xargs --verbose -0 \
+            scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
+	@# ???: cd $(PROJECT_NAME) && sbt 'scalafix'
 
 doc:
 	cd $(PROJECT_NAME) && sbt '+ doc'
@@ -80,22 +77,23 @@ test: docker_test test_host
 
 test_host: test_sbt test_bash
 
-test_bash: $(FINAL_TARGET) $(BASH_TEST_FILES)
+test_bash: $(FINAL_TARGET)
+	find ./test/bash/ -iname '*.sh' -print0 | xargs -0 -I % -n 1 -- bash -xv %
 
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
-# ???: This tasks fails erratically but succeeds after a few retries.
-nativelink:
-	cd $(PROJECT_NAME) && sbt 'nativeLink'
-
 compile: $(SBT_FILES) $(SCALA_FILES)
-	cd $(PROJECT_NAME) && sbt '+ compile'
 
 # --- }}}
 
 # ???: make the assembly process general.
 assembly: $(FINAL_TARGET)
+	cd $(PROJECT_NAME) && sbt projects 2>&1 \
+        | sed -E '0,/[*] fmv1992_scala_utilities$$/d' \
+        | sed -E 's/.* (\w+)/\1/g' \
+        | sort -u \
+        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/assembly'
 
 publishlocal: .FORCE
 	cd ./fmv1992_scala_utilities && sbt clean update publishLocal
@@ -109,9 +107,6 @@ dev:
 $(FINAL_TARGET): $(SCALA_FILES) $(SBT_FILES)
 	cd ./fmv1992_scala_utilities && sbt '+ assembly'
 	touch --no-create -m $@
-
-test%.sh: .FORCE
-	bash -xv $@
 
 # Docker actions. --- {{{
 
@@ -132,8 +127,8 @@ docker_run:
         $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
 
 docker_test:
-	DOCKER_CMD='make test' make docker_run
-	DOCKER_CMD='make nativelink' make docker_run
+	DOCKER_CMD='bash -c "make clean && make assembly test_host && make clean"' make docker_run
+	DOCKER_CMD='bash -c "make clean && make nativelink && make clean"' make docker_run
 
 # --- }}}
 

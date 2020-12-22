@@ -50,12 +50,12 @@ lazy val commonSettings = Seq(
   licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
   organization := "io.github.fmv1992",
   version := IO
-    .readLines(new File("./src/main/resources/version"))
+    .readLines(new File("./util/src/main/resources/version"))
     .mkString(""),
   scalaVersion := "2.12.8",
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Workaround according to: https://github.com/sbt/sbt/issues/3497
-  watchService := (() ⇒ new sbt.io.PollingWatchService(pollInterval.value)),
+  // watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
   maxErrors := 100,
   // Ship resource files with each jar.
   resourceDirectory in Compile := file(".") / "./src/main/resources",
@@ -66,15 +66,15 @@ lazy val commonSettings = Seq(
   // Removed on commit 'cd9d482' to enable 'trait ScalaInitiativesTest' define
   // 'namedTest'.
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5",
-  libraryDependencies += "fmv1992" %% "scala_cli_parser" % "(,9.0[",
+  libraryDependencies += "io.github.fmv1992" %% "scala_cli_parser" % "0.2.0",
   // parallelExecution := false,
 
   // logLevel in assembly := Level.Debug,
   test in assembly := {},
   assemblyMergeStrategy in assembly := {
-    case "version" ⇒ MergeStrategy.first
-    case x if x.endsWith(".conf") ⇒ MergeStrategy.first
-    case x ⇒ {
+    case "version"                => MergeStrategy.first
+    case x if x.endsWith(".conf") => MergeStrategy.first
+    case x => {
       val oldStrategy = (assemblyMergeStrategy in assembly).value
       oldStrategy(x)
     }

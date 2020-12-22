@@ -90,8 +90,7 @@ object Uniq extends CLIConfigTestableMain {
     * *     Cons: is imperative (?).
     *
     * Test version: `comm9652bc5`.
-    *
-    * */
+    */
   def filterUnique[A](
       inSeq: Seq[A],
       skipEmptyLines: Boolean = false

@@ -11,7 +11,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $JAVA_HOME/bin:$PATH
 
 # Install support programs.
-RUN apt-get install --yes git make wget zip
+RUN apt-get install --yes git make wget zip parallel
 # Install Scala Native dependencies.
 RUN apt-get install --yes clang libgc-dev
 RUN rm -rf /var/lib/apt/lists/*
@@ -19,7 +19,7 @@ RUN rm -rf /var/lib/apt/lists/*
 # Install sbt.
 RUN mkdir -p /home/user/bin
 WORKDIR /home/user/bin
-RUN wget -O sbt.zip -- https://github.com/sbt/sbt/releases/download/v1.3.13/sbt-1.3.13.zip
+RUN wget -O sbt.zip -- https://github.com/sbt/sbt/releases/download/v1.4.1/sbt-1.4.1.zip
 RUN unzip sbt.zip
 RUN rm sbt.zip
 ENV PATH $PATH:/home/user/bin/sbt/bin
