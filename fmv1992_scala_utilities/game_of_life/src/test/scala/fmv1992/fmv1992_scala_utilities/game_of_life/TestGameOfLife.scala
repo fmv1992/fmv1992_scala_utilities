@@ -55,7 +55,7 @@ trait TestGameOfLifeHelper {
   val stretchedGameNextManual = GameOfLifeGame(stretchedGameNextManualStr)
 
   // Test parsing.
-  val parser = GNUParser(GameOfLife.CLIConfigPath)
+  val parser = GNUParser(GameOfLife.CLIConfigContents)
 
   val finiteArguments =
     parser.parse("--make-games --n-games 7".split(" ").toList)

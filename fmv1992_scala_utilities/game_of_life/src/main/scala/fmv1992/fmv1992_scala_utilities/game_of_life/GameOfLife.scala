@@ -37,12 +37,11 @@ case class GameOfLifeGame(state: Seq[Seq[Cell]]) extends Game {
 
   lazy val isOver: Boolean = {
 
-    state.flatten.forall(
-      c ⇒
-        c match {
-          case _: Dead ⇒ true
-          case _: Alive ⇒ false
-        }
+    state.flatten.forall(c =>
+      c match {
+        case _: Dead => true
+        case _: Alive => false
+      }
     )
   }
 
@@ -68,12 +67,11 @@ object GameOfLifeGame {
   val ydim = 5
 
   private def getCells(r: scala.util.Random): Seq[Seq[Cell]] = {
-    val listOfCells = Seq.tabulate(xdim)(
-      x ⇒
-        Seq.tabulate(ydim)(y ⇒ {
-          val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
-          c
-        })
+    val listOfCells = Seq.tabulate(xdim)(x =>
+      Seq.tabulate(ydim)(y => {
+        val c: Cell = if (r.nextBoolean()) Alive(x, y) else Dead(x, y)
+        c
+      })
     )
     listOfCells.toSeq
   }
@@ -221,17 +219,15 @@ case class Dead(x: Int, y: Int, representation: Char = 'x') extends Cell {
 /** Main program. */
 object GameOfLife extends CLIConfigTestableMain {
 
-  @inline override final val version =
+  @inline final val version =
     Reader
       .readLines(S.putabspath("./game_of_life/src/main/resources/version"))
       .mkString
 
   val programName = "GameOfLifeGame"
 
-  @inline override final val CLIConfigPath =
-    S.putabspath(
-      "./game_of_life/src/main/resources/game_of_life_cli_config.conf"
-    )
+  @inline override final val CLIConfigContents =
+    S.putfile("./game_of_life/src/main/resources/game_of_life_cli_config.conf")
 
   // ???: Uniformize the juggling of Int → Random and vice versa in this
   // package.

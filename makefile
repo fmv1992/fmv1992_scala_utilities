@@ -83,20 +83,25 @@ test_bash: $(FINAL_TARGET)
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
+# ???: This tasks fails erratically but succeeds after a few retries. See
+# details here `fmv1992_scala_utilities:330cddf:readme.md:13`.
+nativelink:
+	cd $(PROJECT_NAME) && sbt projects 2>&1 \
+        | grep -E 'Native$$' \
+        | sed -E 's/.* (\w+Native)/\1/g' \
+        | sort -u \
+        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/nativeLink'
+
 compile: $(SBT_FILES) $(SCALA_FILES)
+	cd $(PROJECT_NAME) && sbt '+ compile'
 
 # --- }}}
 
 # ???: make the assembly process general.
 assembly: $(FINAL_TARGET)
-	cd $(PROJECT_NAME) && sbt projects 2>&1 \
-        | sed -E '0,/[*] fmv1992_scala_utilities$$/d' \
-        | sed -E 's/.* (\w+)/\1/g' \
-        | sort -u \
-        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/assembly'
 
 publishlocal: .FORCE
-	cd ./fmv1992_scala_utilities && sbt clean update publishLocal
+	cd ./fmv1992_scala_utilities && sbt clean update '+ publishLocal'
 
 dev:
 	cp -f ./other/git_hooks/git_pre_commit_hook.sh ./.git/hooks/pre-commit || true
@@ -127,7 +132,7 @@ docker_run:
         $(if $(DOCKER_CMD),$(DOCKER_CMD),bash)
 
 docker_test:
-	DOCKER_CMD='bash -c "make clean && make assembly test_host && make clean"' make docker_run
+	DOCKER_CMD='bash -c "make clean && make test_host && make clean"' make docker_run
 	DOCKER_CMD='bash -c "make clean && make nativelink && make clean"' make docker_run
 
 # --- }}}

@@ -2,11 +2,11 @@
 // a package".
 package fmv1992.fmv1992_scala_utilities.uniq
 
-import fmv1992.fmv1992_scala_utilities.util.Example
+// import fmv1992.fmv1992_scala_utilities.util.Example
 
 import fmv1992.scala_cli_parser.GNUParser
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 object TestCases {
 
@@ -87,9 +87,14 @@ class TestUniq extends AnyFunSuite {
   }
 
   test("Test main function.") {
+
+    // ???: Also defined here:
+    // `fmv1992_scala_utilities:092c0bc:fmv1992_scala_utilities/util/src/test/scala/fmv1992/fmv1992_scala_utilities/util/Example.scala:1`.
+    val uniq01Path: String = "./util/src/test/resources/test_uniq_01.txt"
+
     assert(
       Uniq.testableMain(
-        GNUParser(Uniq.CLIConfigPath).parse(List("--input", Example.uniq01Path))
+        GNUParser(Uniq.CLIConfigContents).parse(List("--input", uniq01Path))
       ) == "abce".toList.map(_.toString)
     )
   }

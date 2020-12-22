@@ -3,6 +3,7 @@
 package fmv1992.fmv1992_scala_utilities.uniq
 
 import fmv1992.fmv1992_scala_utilities.util.Reader
+import fmv1992.fmv1992_scala_utilities.util.S
 
 import fmv1992.scala_cli_parser.CLIConfigTestableMain
 import fmv1992.scala_cli_parser.Argument
@@ -20,8 +21,8 @@ object Uniq extends CLIConfigTestableMain {
 
   val programName = "Uniq"
 
-  @inline override final val CLIConfigPath =
-    S.putabspath("./uniq/src/main/resources/uniq_cli_config.conf")
+  @inline override final val CLIConfigContents =
+    S.putfile("./uniq/src/main/resources/uniq_cli_config.conf")
 
   /** Testable interface for main program. */
   def testableMain(args: Seq[Argument]): Seq[String] = {
