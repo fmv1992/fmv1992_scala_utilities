@@ -35,4 +35,19 @@ object Utilities {
     go(l.tail, 0, 0, l.head, Nil).reverse
   }
 
+  def isScalaNative: Boolean = {
+    scala.util.Properties.javaVmName.toLowerCase
+      .filter(_.isLetter)
+      .contains("scalanative")
+  }
+
+  def getScalaVersion: (Int, Int, Int) = {
+    val vs = scala.util.Properties.versionString
+    val vint: Array[Int] = vs.split(".").map(x => x.toInt)
+    vint match {
+      case Array(a, b, c) ⇒ (a, b, c)
+      case _ ⇒ throw new Exception(vint.toString)
+    }
+  }
+
 }
