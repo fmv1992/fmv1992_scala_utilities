@@ -86,13 +86,14 @@ test_bash: $(FINAL_TARGET)
 test_sbt:
 	cd $(PROJECT_NAME) && sbt '+ test'
 
-# ???: This tasks fails erratically but succeeds after a few retries.
+# ???: This tasks fails erratically but succeeds after a few retries. See
+# details here `fmv1992_scala_utilities:330cddf:readme.md:13`.
 nativelink:
-	cd $(PROJECT_NAME) && { sbt 'nativeLink' || sbt 'nativeLink' ; }
-#                         ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-# See: `fmv1992_scala_utilities:2af7678:readme.md:11`
-# (<https://github.com/shadaj/scalapy/issues/37>); this improves the success
-# rate of this task.
+	cd $(PROJECT_NAME) && sbt projects 2>&1 \
+        | grep -E 'Native$$' \
+        | sed -E 's/.* (\w+Native)/\1/g' \
+        | sort -u \
+        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'

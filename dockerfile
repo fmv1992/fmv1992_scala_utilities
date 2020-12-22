@@ -11,7 +11,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $JAVA_HOME/bin:$PATH
 
 # Install support programs.
-RUN apt-get install --yes git make wget zip
+RUN apt-get install --yes git make wget zip parallel
 # Install Scala Native dependencies.
 RUN apt-get install --yes clang libgc-dev
 RUN rm -rf /var/lib/apt/lists/*
