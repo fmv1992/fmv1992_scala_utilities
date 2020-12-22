@@ -39,7 +39,7 @@ case class GameOfLifeGame(state: Seq[Seq[Cell]]) extends Game {
 
     state.flatten.forall(c =>
       c match {
-        case _: Dead => true
+        case _: Dead  => true
         case _: Alive => false
       }
     )
