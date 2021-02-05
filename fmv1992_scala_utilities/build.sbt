@@ -19,15 +19,15 @@ lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
 
 // val versionsJVM = Seq(scala211, scala212, scala213)
-val versionsJVM = Seq(scala213)
-val versionsNative = Seq(scala213)
+val versionsJVM = Seq(scala211)
+val versionsNative = Seq(scala211)
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
 
 inThisBuild(
   List(
-    scalaVersion := scala212,
+    scalaVersion := scala213,
     resolvers += Resolver.mavenLocal,
     //
     // parallelExecution in ThisBuild := false,
@@ -49,6 +49,13 @@ inThisBuild(
 )
 
 lazy val commonSettings = Seq(
+  // This needs to be compatible with all the plugins, so it must be supported by:
+  //
+  // 1. https://mvnrepository.com/artifact/org.scalameta/semanticdb
+  // 2. https://mvnrepository.com/artifact/org.scalatest/scalatest
+  // 3. https://mvnrepository.com/artifact/org.scala-lang.modules/scala-collection-compat
+  scalaVersion := scala211,
+  //
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
   organization := "io.github.fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
@@ -339,6 +346,7 @@ lazy val root: sbt.Project =
     .settings(commonSettingsAndDependencies)
     .settings(
       publish / skip := true,
+      compile / skip := true,
       doc / aggregate := false,
       crossScalaVersions := Nil,
       packageDoc / aggregate := false
