@@ -130,6 +130,7 @@ docker_build:
 docker_run:
 	docker run \
         --interactive \
+        --rm \
         --tty \
         --entrypoint '' \
         $(PROJECT_NAME) \

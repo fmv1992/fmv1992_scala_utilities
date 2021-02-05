@@ -78,11 +78,7 @@ class TestUniq extends AnyFunSuite {
 
   test("Test infinite iteration.") {
 
-    // ???: Test that LazyList is being used in a memory efficient way.
-    // val megabytes500: Int = 500 * 1024 * 1024
-    // assert(Uniq.filterUnique(
-    // LazyList.continually("e"))
-    // .take(megabytes500).toList == List("e"))
+    // Tested by `fmv1992_scala_utilities:25cda69:test/bash/test_uniq.sh:26`.
 
   }
 
@@ -92,12 +88,11 @@ class TestUniq extends AnyFunSuite {
     // `fmv1992_scala_utilities:092c0bc:fmv1992_scala_utilities/util/src/test/scala/fmv1992/fmv1992_scala_utilities/util/Example.scala:1`.
     val uniq01Path: String = "./util/src/test/resources/test_uniq_01.txt"
 
-    // // ???: 🐛: This is a hack.
-    // assert(
-    //   Uniq.testableMain(
-    //     GNUParser(Uniq.CLIConfigContents).parse(List("--input", uniq01Path))
-    //   ) == "abce".toList.map(_.toString)
-    // )
+    assert(
+      Uniq.testableMain(
+        GNUParser(Uniq.CLIConfigContents).parse(List("--input", uniq01Path))
+      ) == "abce".toList.map(_.toString)
+    )
   }
 
 }
