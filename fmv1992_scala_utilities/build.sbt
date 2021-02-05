@@ -137,8 +137,8 @@ lazy val scalaNativeSettings = Seq(
 
 lazy val commonDependencies = Seq(
   //
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-  libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.4-M1" % Test,
+  libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.1",
   // libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0+20-b3aadcba-SNAPSHOT",
   // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
   // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
@@ -167,20 +167,20 @@ lazy val commonDependencies = Seq(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 =>
         List(
-          "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %%% "scalatest" % "3.2.4-M1" % Test,
+          "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.1"
         )
       case Some((2, n)) if n == 12 =>
         List(
           "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %% "scalatest" % "3.2.4-M1" % Test,
+          "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.1"
         )
       case Some((2, n)) if n == 13 =>
         List(
           "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %% "scalatest" % "3.2.4-M1" % Test,
+          "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.1"
         )
       case _ => Nil
     }
