@@ -1,5 +1,8 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
 import xerial.sbt.Sonatype._
+import scala.scalanative.build._
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // References on how to do multi project builds:
 // 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
@@ -12,18 +15,19 @@ import xerial.sbt.Sonatype._
 
 // https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
 lazy val scala211 = "2.11.12"
-lazy val scala212 = "2.12.12"
-lazy val scala213 = "2.13.3"
+lazy val scala212 = "2.12.13"
+lazy val scala213 = "2.13.4"
 
 // val versionsJVM = Seq(scala211, scala212, scala213)
-val versionsJVM = Seq(scala211, scala212, scala213)
-val versionsNative = Seq(scala211)
+val versionsJVM = Seq(scala213)
+val versionsNative = Seq(scala213)
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
 
 inThisBuild(
   List(
+    scalaVersion := scala212,
     resolvers += Resolver.mavenLocal,
     //
     // parallelExecution in ThisBuild := false,
@@ -127,14 +131,23 @@ lazy val commonSettings = Seq(
 
 lazy val scalaNativeSettings = Seq(
   crossScalaVersions := versionsNative,
-  scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
+  // scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
   nativeLinkStubs in Test := true,
   Test / nativeLinkStubs := true,
   sources in (Compile, doc) := Seq.empty
 )
-
+// lazy val scalaNativeSettings =
+//   nativeConfig ~= {
+//     _.withLTO(LTO.none)
+//       .withMode(Mode.debug)
+//       .withGC(GC.none)
+//   }
+// ???: https://gitter.im/scala-native/scala-native?at=601d7f3b1ed88c58d8226472
+testFrameworks := Seq(TestFrameworks.ScalaTest)
+testOptions in Test += Tests.Argument("-oF")
+// testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-eNDXEHLO")
 lazy val commonDependencies = Seq(
   //
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.4-M1" % Test,
