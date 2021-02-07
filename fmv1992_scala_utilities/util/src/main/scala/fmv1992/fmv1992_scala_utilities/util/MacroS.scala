@@ -14,7 +14,7 @@ object S {
     import c._, universe._
     file.tree match {
       case Literal(Constant(s: String)) =>
-        val res = Source.fromFile(s, "UTF-8").getLines.mkString("\n")
+        val res = Source.fromFile(s, "UTF-8").getLines().mkString("\n")
         c.Expr[String](Literal(Constant(res)))
     }
   }
