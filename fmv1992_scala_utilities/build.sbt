@@ -5,12 +5,12 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
 lazy val scala211 = "2.11.12"
-lazy val scala212 = "2.12.12"
-lazy val scala213 = "2.13.3"
+lazy val scala212 = "2.12.13"
+lazy val scala213 = "2.13.4"
 
 // val versionsJVM = Seq(scala211, scala212, scala213)
-val versionsJVM = Seq(scala211, scala212, scala213)
-val versionsNative = Seq(scala211)
+val versionsJVM = Seq(scala213)
+val versionsNative = Seq(scala213)
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
@@ -24,17 +24,11 @@ inThisBuild(
     // concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     //
     //
-    libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
+    libraryDependencies += "org.scalameta" %% "scalameta" % "4.4.6",
+    // ???: https://github.com/scalameta/scalameta/issues/2234
+    libraryDependencies += "org.scalameta" % ("semanticdb-scalac-core" + "_" + scala213) % "4.4.6",
     semanticdbEnabled := true,
-    semanticdbOptions += "-P:semanticdb:synthetics:on",
-    semanticdbVersion := scalafixSemanticdb.revision,
-    scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
-      scalaVersion.value
-    ),
-    addCompilerPlugin(
-      "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full
-    ),
-    addCompilerPlugin(scalafixSemanticdb)
+    semanticdbVersion := scalafixSemanticdb.revision
   )
 )
 
@@ -62,8 +56,7 @@ lazy val commonSettings = Seq(
       "-Ywarn-dead-code",
       "-deprecation",
       "-feature"
-      // "-Xfatal-warnings",
-      // "-Ywarn-unuse"
+      // "-Ywarn-unused-import"
     )
       ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
   ),
@@ -121,7 +114,7 @@ lazy val commonSettings = Seq(
 
 lazy val scalaNativeSettings = Seq(
   crossScalaVersions := versionsNative,
-  scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
+  scalaVersion := scala213,
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
   nativeLinkStubs in Test := true,
@@ -135,8 +128,6 @@ lazy val commonDependencies = Seq(
   libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.1",
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
-  //
-  addCompilerPlugin(scalafixSemanticdb),
   //
   scalafixDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
