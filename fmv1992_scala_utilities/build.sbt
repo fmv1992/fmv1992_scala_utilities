@@ -3,14 +3,7 @@ import xerial.sbt.Sonatype._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-// Apply
-// `ZGlmZiAtLWdpdCBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEgYi9wcm9qZWN0L1ZlcnNpb25zLnNjYWxhCmluZGV4IGNmMWU4ZGIuLjg2ZDI0YjcgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEKKysrIGIvcHJvamVjdC9WZXJzaW9ucy5zY2FsYQpAQCAtNCw3ICs0LDcgQEAgcGFja2FnZSBidWlsZAogb2JqZWN0IFZlcnNpb25zIHsKICAgdmFsIExhdGVzdFNjYWxhMjExID0gIjIuMTEuMTIiCiAgIHZhbCBMYXRlc3RTY2FsYTIxMiA9ICIyLjEyLjEyIgotICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy4zIgorICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy40IgogICB2YWwgTGVnYWN5U2NhbGFWZXJzaW9ucyA9CiAgICAgTGlzdCgiMi4xMi44IiwgIjIuMTIuOSIsICIyLjEyLjEwIiwgIjIuMTIuMTEiLCAiMi4xMy4wIiwgIjIuMTMuMSIsICIyLjEzLjIiKQogfQpkaWZmIC0tZ2l0IGEvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzIGIvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzCmluZGV4IDY1NGZlNzAuLjBiMmUwOWMgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvYnVpbGQucHJvcGVydGllcworKysgYi9wcm9qZWN0L2J1aWxkLnByb3BlcnRpZXMKQEAgLTEgKzEgQEAKLXNidC52ZXJzaW9uPTEuMy4xMgorc2J0LnZlcnNpb249MS40LjcK`
-// to <https://github.com/scalameta/scalameta> and then `sbt publishLocal` and
-// then `cp -rf 4.3.20+0-ce628924+20210207-1837-SNAPSHOT 4.3.20`.
-
 // https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
-lazy val scala211 = "2.11.12"
-lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
 
 // val versionsJVM = Seq(scala211, scala212, scala213)
@@ -29,33 +22,30 @@ inThisBuild(
 // coverageFailOnMinimum := true
 
 lazy val commonSettings = Seq(
+  // General.
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
   organization := "io.github.fmv1992",
   licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html"),
   version := IO
-    .readLines(new File("./util/src/main/resources/version"))
+    .readLines(new File("./util/shared/src/main/resources/version"))
     .mkString(""),
-  //
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
-  // Workaround according to: https://github.com/sbt/sbt/issues/3497
-  // watchService := (() => new sbt.io.PollingWatchService(pollInterval.value)),
-  maxErrors := 100,
   // Ship resource files with each jar.
   resourceDirectory in Compile := file(".") / "./src/main/resources",
   resourceDirectory in Runtime := file(".") / "./src/main/resources",
   //
   scalacOptions ++= (
     Seq(
-      "-P:semanticdb:synthetics:on",
-      "-Yrangepos",
-      "-Ywarn-dead-code",
       "-deprecation",
       "-feature",
-      // "-Ywarn-unused-import"
+      "-P:semanticdb:synthetics:on",
+      "-Xlint:unused",
+      "-Yrangepos",
+      "-Ywarn-dead-code",
     )
       ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
   ),
-  //
+  // Assembly.
   // logLevel in assembly := Level.Debug,
   //
   test in assembly := {},
@@ -63,7 +53,7 @@ lazy val commonSettings = Seq(
     case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
     case x                                   => MergeStrategy.first
   },
-  //
+  // Scalafix.
   // <https://scalacenter.github.io/scalafix/docs/users/installation.html>.
   libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
   semanticdbEnabled := true,
@@ -77,9 +67,9 @@ lazy val commonSettings = Seq(
   ),
   addCompilerPlugin(scalafixSemanticdb),
   //
-  // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
-  // ???
+  // Scala rewrites <https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13>: See below.
   //
+  // Publishing.
   sonatypeProfileName := "io.github.fmv1992",
   publishMavenStyle := true,
   sonatypeProjectHosting := Some(
@@ -141,7 +131,7 @@ lazy val commonDependencies = Seq(
   libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
   //
   scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
-  Compile / scalacOptions += "-Xlint:unused",
+  Compile / scalacOptions += "",
 )
 
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
@@ -175,7 +165,7 @@ lazy val fmv1992_scala_utilitiesSettings = Seq(
 // <https://gitter.im/scala-native/sbt-crossproject?at=5f9aa5d906fa0513dd7da676>.
 lazy val util: sbtcrossproject.CrossProject =
   crossProject(JVMPlatform, NativePlatform)
-    .crossType(CrossType.Pure)
+    .crossType(CrossType.Full)
     .settings(commonSettingsAndDependencies)
     .jvmSettings(
       crossScalaVersions := versionsJVM,
@@ -184,9 +174,7 @@ lazy val util: sbtcrossproject.CrossProject =
       scalaNativeSettings,
     )
 lazy val utilJVM: sbt.Project = util.jvm
-  .in(file("./util"))
 lazy val utilNative: sbt.Project = util.native
-  .in(file("./util"))
 
 lazy val root: sbt.Project =
   (project in file("."))

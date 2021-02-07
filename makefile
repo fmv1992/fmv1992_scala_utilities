@@ -83,11 +83,7 @@ test_bash: $(FINAL_TARGET)
 	find ./test/bash/ -iname '*.sh' -print0 | xargs -0 -I % -n 1 -- bash -xv %
 
 test_sbt:
-	cd $(PROJECT_NAME) && sbt projects 2>&1 \
-        | grep -E '.*info.*(JVM|Native)$$' \
-        | sed -E 's/.* (\w+(Native|JVM))$$/\1/g' \
-        | sort -u \
-        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/test'
+	cd $(PROJECT_NAME) && sbt '+test'
 
 # ???: This tasks fails erratically but succeeds after a few retries. See
 # details here `fmv1992_scala_utilities:330cddf:readme.md:13`.
