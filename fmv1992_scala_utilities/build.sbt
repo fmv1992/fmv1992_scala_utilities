@@ -3,6 +3,11 @@ import xerial.sbt.Sonatype._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+// Apply
+// `ZGlmZiAtLWdpdCBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEgYi9wcm9qZWN0L1ZlcnNpb25zLnNjYWxhCmluZGV4IGNmMWU4ZGIuLjg2ZDI0YjcgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEKKysrIGIvcHJvamVjdC9WZXJzaW9ucy5zY2FsYQpAQCAtNCw3ICs0LDcgQEAgcGFja2FnZSBidWlsZAogb2JqZWN0IFZlcnNpb25zIHsKICAgdmFsIExhdGVzdFNjYWxhMjExID0gIjIuMTEuMTIiCiAgIHZhbCBMYXRlc3RTY2FsYTIxMiA9ICIyLjEyLjEyIgotICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy4zIgorICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy40IgogICB2YWwgTGVnYWN5U2NhbGFWZXJzaW9ucyA9CiAgICAgTGlzdCgiMi4xMi44IiwgIjIuMTIuOSIsICIyLjEyLjEwIiwgIjIuMTIuMTEiLCAiMi4xMy4wIiwgIjIuMTMuMSIsICIyLjEzLjIiKQogfQpkaWZmIC0tZ2l0IGEvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzIGIvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzCmluZGV4IDY1NGZlNzAuLjBiMmUwOWMgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvYnVpbGQucHJvcGVydGllcworKysgYi9wcm9qZWN0L2J1aWxkLnByb3BlcnRpZXMKQEAgLTEgKzEgQEAKLXNidC52ZXJzaW9uPTEuMy4xMgorc2J0LnZlcnNpb249MS40LjcK`
+// to <https://github.com/scalameta/scalameta> and then `sbt publishLocal` and
+// then `cp -rf 4.3.20+0-ce628924+20210207-1837-SNAPSHOT 4.3.20`.
+
 // https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
 lazy val scala211 = "2.11.12"
 lazy val scala212 = "2.12.13"
@@ -14,23 +19,6 @@ val versionsNative = Seq(scala213)
 
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
-
-inThisBuild(
-  List(
-    scalaVersion := scala213,
-    resolvers += Resolver.mavenLocal,
-    //
-    // parallelExecution in ThisBuild := false,
-    // concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
-    //
-    //
-    libraryDependencies += "org.scalameta" %% "scalameta" % "4.4.6",
-    // ???: https://github.com/scalameta/scalameta/issues/2234
-    libraryDependencies += "org.scalameta" % ("semanticdb-scalac-core" + "_" + scala213) % "4.4.6",
-    semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision
-  )
-)
 
 lazy val commonSettings = Seq(
   homepage := Some(url("https://github.com/fmv1992/fmv1992_scala_utilities")),
@@ -48,7 +36,6 @@ lazy val commonSettings = Seq(
   resourceDirectory in Compile := file(".") / "./src/main/resources",
   resourceDirectory in Runtime := file(".") / "./src/main/resources",
   //
-  addCompilerPlugin(scalafixSemanticdb),
   scalacOptions ++= (
     Seq(
       "-P:semanticdb:synthetics:on",
@@ -68,6 +55,23 @@ lazy val commonSettings = Seq(
     case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
     case x                                   => MergeStrategy.first
   },
+//
+  // <https://scalacenter.github.io/scalafix/docs/users/installation.html>.
+  libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
+  semanticdbEnabled := true,
+  semanticdbOptions += "-P:semanticdb:synthetics:on",
+  semanticdbVersion := scalafixSemanticdb.revision,
+  scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
+    scalaVersion.value
+  ),
+  addCompilerPlugin(
+    "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full
+  ),
+  addCompilerPlugin(scalafixSemanticdb),
+  //
+  // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
+  // ???
+  //
   sonatypeProfileName := "io.github.fmv1992",
   publishMavenStyle := true,
   sonatypeProjectHosting := Some(
@@ -125,11 +129,10 @@ lazy val scalaNativeSettings = Seq(
 lazy val commonDependencies = Seq(
   //
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.4-M1" % Test,
-  libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.1",
+  libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.0",
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
-  //
-  addCompilerPlugin(scalafixSemanticdb),
+  // ???
   //
   scalafixDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -148,20 +151,17 @@ lazy val commonDependencies = Seq(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 =>
         List(
-          "org.scalatest" %%% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %%% "scalatest" % "3.2.0" % Test
         )
       case Some((2, n)) if n == 12 =>
         List(
           "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %% "scalatest" % "3.2.0" % Test
         )
       case Some((2, n)) if n == 13 =>
         List(
           "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-          "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+          "org.scalatest" %% "scalatest" % "3.2.0" % Test
         )
       case _ => Nil
     }
