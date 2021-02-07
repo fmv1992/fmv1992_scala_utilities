@@ -6,15 +6,7 @@
 
     *   [![codecov](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities/branch/dev/graph/badge.svg)](https://codecov.io/gh/fmv1992/fmv1992_scala_utilities)
 
-*   `v1.x`:
-
-    *   ![Build status](https://travis-ci.org/fmv1992/fmv1992_scala_utilities.svg?branch=v1.x) → **Failing due to an error similar to [this](https://github.com/shadaj/scalapy/issues/37)**.
-
-        🐛: **BUG**: Compare [✔ this log](https://api.travis-ci.org/v3/job/750931146/log.txt) and [✘ this log](https://api.travis-ci.org/v3/job/750885216/log.txt) for the same build.
-
-*   `dev_1.x_scala_native`:
-
-    *   ![Build status](https://travis-ci.org/fmv1992/fmv1992_scala_utilities.svg?branch=dev_1.x_scala_native)
+*   `v1.x`: discontinued.
 
 This project illustrates my journey in learning Scala and trying to deploy my first project for other people to use.
 
@@ -26,11 +18,11 @@ Deprecated sub-project. It is not a project of its own: [scala_cli_parser](https
 
 ### Game of life
 
-A [game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) implementation in Scala.
+Deprecated sub-project.
 
 ### Uniq
 
-A [uniq](https://en.wikipedia.org/wiki/Uniq) implementation in Scala in which the order of the lines does not matter.
+Deprecated sub-project.
 
 ### Util
 
