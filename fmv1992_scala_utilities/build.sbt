@@ -1,14 +1,7 @@
 // https://www.scala-sbt.org/1.0/docs/Howto-Project-Metadata.html
 import xerial.sbt.Sonatype._
 
-// References on how to do multi project builds:
-// 1.   https://www.scala-sbt.org/1.x/docs/Cross-Build.html
-//      *   Used by this repos.
-// 2.   https://github.com/sbt/sbt-projectmatrix
-//      *   For some reason this messed up with `sbt-assembly`.
-
-// ThisBuild / scalaVersion := scala213
-// scalaVersion := scala213
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // https://github.com/SemanticSugar/sconfig/blob/9623f8401321fe847a49aecb7cfd92be73872ff6/build.sbt#L52
 lazy val scala211 = "2.11.12"
@@ -199,21 +192,8 @@ lazy val commonDependencies = Seq(
 
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
-lazy val GOLSettings = Seq(
-  assemblyJarName in assembly := "game_of_life.jar",
-  mainClass in Compile := Some(
-    "fmv1992.fmv1992_scala_utilities.game_of_life.GameOfLife"
-  )
-)
-
-lazy val uniqSettings = Seq(
-  assemblyJarName in assembly := "uniq.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
-)
-
 lazy val fmv1992_scala_utilitiesSettings = Seq(
   assemblyJarName in assembly := "root.jar",
-  mainClass in Compile := Some("fmv1992.fmv1992_scala_utilities.uniq.Uniq")
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
@@ -253,74 +233,6 @@ lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./util"))
 lazy val utilNative: sbt.Project = util.native
   .in(file("./util"))
-  .settings(
-    nativeLink := file("")
-  )
-
-lazy val gameOfLife: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform, NativePlatform)
-    .crossType(CrossType.Pure)
-    .settings(commonSettingsAndDependencies)
-    .jvmSettings(
-      crossScalaVersions := versionsJVM
-    )
-    .nativeSettings(
-      scalaNativeSettings
-    )
-    .dependsOn(cli)
-    .dependsOn(util)
-lazy val gameOfLifeJVM: sbt.Project = gameOfLife.jvm
-  .in(file("game_of_life"))
-  .settings(GOLSettings)
-  .dependsOn(utilJVM)
-  .dependsOn(cliJVM)
-lazy val gameOfLifeNative: sbt.Project = gameOfLife.native
-  .in(file("game_of_life"))
-  .dependsOn(utilNative)
-  .dependsOn(cliNative)
-
-lazy val uniq: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform, NativePlatform)
-    .crossType(CrossType.Pure)
-    .settings(commonSettingsAndDependencies)
-    .jvmSettings(
-      crossScalaVersions := versionsJVM
-    )
-    .nativeSettings(
-      scalaNativeSettings
-    )
-    .dependsOn(cli)
-    .dependsOn(util)
-lazy val uniqJVM: sbt.Project = uniq.jvm
-  .in(file("uniq"))
-  .settings(uniqSettings)
-  .dependsOn(utilJVM)
-  .dependsOn(cliJVM)
-lazy val uniqNative: sbt.Project = uniq.native
-  .in(file("uniq"))
-  .dependsOn(utilNative)
-  .dependsOn(cliNative)
-
-lazy val cli: sbtcrossproject.CrossProject =
-  crossProject(JVMPlatform, NativePlatform)
-    .crossType(CrossType.Pure)
-    .settings(commonSettingsAndDependencies)
-    .jvmSettings(
-      crossScalaVersions := versionsJVM
-    )
-    .nativeSettings(
-      scalaNativeSettings
-    )
-    .dependsOn(util % "compile->compile;test->test")
-lazy val cliJVM = cli.jvm
-  .in(file("cli"))
-  .dependsOn(utilJVM)
-lazy val cliNative: sbt.Project = cli.native
-  .in(file("cli"))
-  .dependsOn(utilNative)
-  .settings(
-    nativeLink := file("")
-  )
 
 lazy val root: sbt.Project =
   (project in file("."))
@@ -328,21 +240,15 @@ lazy val root: sbt.Project =
     .settings(commonSettingsAndDependencies)
     .settings(
       publish / skip := true,
+      test / skip := true,
       doc / aggregate := false,
       crossScalaVersions := Nil,
       packageDoc / aggregate := false
     )
     .dependsOn(utilJVM)
-    // .dependsOn(utilNative)
     .aggregate(
       utilJVM,
-      utilNative,
-      gameOfLifeJVM,
-      gameOfLifeNative,
-      uniqJVM,
-      uniqNative,
-      cliJVM,
-      cliNative
+      utilNative
     )
 
 // --- }}}
