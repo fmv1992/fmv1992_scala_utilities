@@ -45,8 +45,8 @@ object Utilities {
     val vs = scala.util.Properties.versionString
     val vint: Array[Int] = vs.split(".").map(x => x.toInt)
     vint match {
-      case Array(a, b, c) ⇒ (a, b, c)
-      case _ ⇒ throw new Exception(vint.toString)
+      case Array(a, b, c) => (a, b, c)
+      case _              => throw new Exception(vint.toString)
     }
   }
 

@@ -131,15 +131,8 @@ lazy val scalaNativeSettings = Seq(
 
 lazy val commonDependencies = Seq(
   //
-  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.1.0" % Test,
-  libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0",
-  libraryDependencies += "io.github.fmv1992" %%% "scala_cli_parser" % "0.2.0",
-  // libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0+20-b3aadcba-SNAPSHOT",
-  // https://stackoverflow.com/questions/20490108/what-happened-to-the-macros-api-in-scala-2-11
-  // libraryDependencies += "org.scala-lang" % "scala-reflect" % scala211,
-  // scalafixDependencies += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
-  // scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.2.0",
-  //
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.4-M1" % Test,
+  libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.1",
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
   //
@@ -193,7 +186,7 @@ lazy val commonDependencies = Seq(
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
-  assemblyJarName in assembly := "root.jar",
+  assemblyJarName in assembly := "root.jar"
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
