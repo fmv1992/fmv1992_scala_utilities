@@ -10,7 +10,7 @@ import java.io.FileNotFoundException
 object Reader {
 
   def loanPattern[A](
-      closeable: scala.io.Source
+      closeable: scala.io.Source,
   )(f: scala.io.Source => A): A = {
     try {
       f(closeable)
@@ -48,7 +48,7 @@ object Reader {
     } else {
       if (Utilities.isScalaNative) {
         throw new FileNotFoundException(
-          s"File '$path' does not exist. Scala Native does not support java resources."
+          s"File '$path' does not exist. Scala Native does not support java resources.",
         )
       } else {
         val shortenedPath = path.slice(path.lastIndexOf("/"), path.length)

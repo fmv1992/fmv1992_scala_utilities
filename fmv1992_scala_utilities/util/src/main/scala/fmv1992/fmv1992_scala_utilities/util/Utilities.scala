@@ -12,7 +12,7 @@ object Utilities {
         curIndex: Int,
         indexCounter: Int,
         curEl: A,
-        acc: List[(Int, Int)]
+        acc: List[(Int, Int)],
     ): List[(Int, Int)] = {
       val nextIndexCounter = indexCounter + 1
       gl match {
@@ -25,7 +25,7 @@ object Utilities {
               nextIndexCounter,
               nextIndexCounter,
               h,
-              (curIndex, nextIndexCounter) +: acc
+              (curIndex, nextIndexCounter) +: acc,
             )
           }
         }

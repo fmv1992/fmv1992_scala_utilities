@@ -30,11 +30,11 @@ object S {
         if (!res.toFile.exists) {
           val curdir = java.nio.file.Paths.get(".").toAbsolutePath.toString
           throw new Exception(
-            s"Curdir: '${curdir}'\nPath: '${s}'\nAbspath: '${resAsString}'."
+            s"Curdir: '${curdir}'\nPath: '${s}'\nAbspath: '${resAsString}'.",
           )
         }
         c.Expr[String](
-          Literal(Constant(resAsString))
+          Literal(Constant(resAsString)),
         )
       case x => throw new Exception(x.toString)
     }

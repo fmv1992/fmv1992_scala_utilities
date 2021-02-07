@@ -17,6 +17,14 @@ lazy val scala213 = "2.13.4"
 val versionsJVM = Seq(scala213)
 val versionsNative = Seq(scala213)
 
+inThisBuild(
+  List(
+    scalaVersion := scala213,
+    scalafixScalaBinaryVersion :=
+      CrossVersion.binaryScalaVersion(scalaVersion.value),
+  ),
+)
+
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
 
@@ -42,7 +50,7 @@ lazy val commonSettings = Seq(
       "-Yrangepos",
       "-Ywarn-dead-code",
       "-deprecation",
-      "-feature"
+      "-feature",
       // "-Ywarn-unused-import"
     )
       ++ sys.env.get("SCALAC_OPTS").getOrElse("").split(" ").toSeq
@@ -55,17 +63,17 @@ lazy val commonSettings = Seq(
     case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.rename
     case x                                   => MergeStrategy.first
   },
-//
+  //
   // <https://scalacenter.github.io/scalafix/docs/users/installation.html>.
   libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
   semanticdbEnabled := true,
   semanticdbOptions += "-P:semanticdb:synthetics:on",
   semanticdbVersion := scalafixSemanticdb.revision,
   scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
-    scalaVersion.value
+    scalaVersion.value,
   ),
   addCompilerPlugin(
-    "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full
+    "org.scalameta" % "semanticdb-scalac" % "4.3.24" cross CrossVersion.full,
   ),
   addCompilerPlugin(scalafixSemanticdb),
   //
@@ -75,111 +83,71 @@ lazy val commonSettings = Seq(
   sonatypeProfileName := "io.github.fmv1992",
   publishMavenStyle := true,
   sonatypeProjectHosting := Some(
-    GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com")
+    GitHubHosting("fmv1992", "fmv1992_scala_utilities", "fmv1992@gmail.com"),
   ),
   licenses := Seq("GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")),
   // or if you want to set these fields manually
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/fmv1992/fmv1992_scala_utilities"),
-      "scm:git@github.com:fmv1992/fmv1992_scala_utilities.git"
-    )
+      "scm:git@github.com:fmv1992/fmv1992_scala_utilities.git",
+    ),
   ),
   developers := List(
     Developer(
       id = "fmv1992",
       name = "Felipe Martins Vieira",
       email = "fmv1992@gmail.com",
-      url = url("https://github.com/fmv1992/")
-    )
+      url = url("https://github.com/fmv1992/"),
+    ),
   ),
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(
-    true
+    true,
   ),
   publishTo in ThisBuild := sonatypePublishTo.value,
   credentials += Credentials(
     file(
       sys.env
         .get("SBT_CREDENTIALS_PATH")
-        .getOrElse("")
-    )
+        .getOrElse(""),
+    ),
   ),
   usePgpKeyHex(
     sys.env
       .get("SBT_PGP_KEY")
-      .getOrElse("B145230D09E5330C9A0ED5BC1FEB8CD8FBFDC1CB")
+      .getOrElse("B145230D09E5330C9A0ED5BC1FEB8CD8FBFDC1CB"),
   ),
   //
   target := {
     (ThisBuild / baseDirectory).value / "target" / thisProject.value.id
-  }
+  },
 )
 
 lazy val scalaNativeSettings = Seq(
   crossScalaVersions := versionsNative,
-  scalaVersion := scala213,
   nativeLinkStubs := true,
   nativeLinkStubs in runMain := true,
   nativeLinkStubs in Test := true,
   Test / nativeLinkStubs := true,
-  sources in (Compile, doc) := Seq.empty
+  sources in (Compile, doc) := Seq.empty,
 )
 
 lazy val commonDependencies = Seq(
   //
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.4-M1" % Test,
   libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.0",
-  // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
-  // ???
+  libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
   //
-  scalafixDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 => List()
-      case Some((2, n)) if n == 12 =>
-        List(
-        )
-      case Some((2, n)) if n == 13 =>
-        List(
-          "org.scala-lang" %% "scala-rewrites" % "0.1.2"
-        )
-      case _ => Nil
-    }
-  },
-  libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 =>
-        List(
-          "org.scalatest" %%% "scalatest" % "3.2.0" % Test
-        )
-      case Some((2, n)) if n == 12 =>
-        List(
-          "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test
-        )
-      case Some((2, n)) if n == 13 =>
-        List(
-          "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
-          "org.scalatest" %% "scalatest" % "3.2.0" % Test
-        )
-      case _ => Nil
-    }
-  },
-  Compile / scalacOptions ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n == 11 => List()
-      case Some((2, n)) if n == 12 => List("-Xlint:unused")
-      case Some((2, n)) if n == 13 => List("-Xlint:unused")
-    }
-  }
-  //
+  scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
+  Compile / scalacOptions += "-Xlint:unused",
 )
 
 lazy val commonSettingsAndDependencies = commonSettings ++ commonDependencies
 
 lazy val fmv1992_scala_utilitiesSettings = Seq(
-  assemblyJarName in assembly := "root.jar"
+  assemblyJarName in assembly := "root.jar",
 )
 
 // IMPORTANT: The name of the variable is important here. It becomes the name
@@ -210,10 +178,10 @@ lazy val util: sbtcrossproject.CrossProject =
     .crossType(CrossType.Pure)
     .settings(commonSettingsAndDependencies)
     .jvmSettings(
-      crossScalaVersions := versionsJVM
+      crossScalaVersions := versionsJVM,
     )
     .nativeSettings(
-      scalaNativeSettings
+      scalaNativeSettings,
     )
 lazy val utilJVM: sbt.Project = util.jvm
   .in(file("./util"))
@@ -229,12 +197,12 @@ lazy val root: sbt.Project =
       test / skip := true,
       doc / aggregate := false,
       crossScalaVersions := Nil,
-      packageDoc / aggregate := false
+      packageDoc / aggregate := false,
     )
     .dependsOn(utilJVM)
     .aggregate(
       utilJVM,
-      utilNative
+      utilNative,
     )
 
 // --- }}}
