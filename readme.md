@@ -28,9 +28,11 @@ Deprecated sub-project.
 
 A very broad utilities package for Scala.
 
-<!--
-
 ## TODO
+
+*   Compare `./fmv1992_scala_utilities/build.sbt` to `43d2240` and fix the cross build.
+
+<!--
 
 *   Important commit: `b13d013d897bfbde2f6c94a6264cc3e5319078f6`: has no
     circular dependencies with other projects.

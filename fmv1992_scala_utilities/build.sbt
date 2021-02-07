@@ -129,6 +129,8 @@ lazy val commonDependencies = Seq(
   // Scala rewrites.
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
   //
+  addCompilerPlugin(scalafixSemanticdb),
+  //
   scalafixDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, n)) if n == 11 => List()
