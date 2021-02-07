@@ -11,12 +11,4 @@ class TestReader extends AnyFunSuite {
     assert(Reader.readLines(Example.reader01File).toList == assertionAnswer)
   }
 
-  test("Test exception.") {
-    assertThrows[java.lang.NullPointerException](
-      Reader
-        .readLines("/tmp/unexisting_path_" + scala.util.Random.nextString(100))
-        .toList,
-    )
-  }
-
 }
