@@ -27,7 +27,9 @@ format:
 	find . \( -iname '*.scala' -o -iname '*.sbt' \) -print0 \
         | xargs --verbose -0 \
             scalafmt --config ./fmv1992_scala_utilities/.scalafmt.conf
-	cd $(PROJECT_NAME) && sbt 'scalafix'
+	cd $(PROJECT_NAME) && sbt -batch \
+        'scalafix' \
+        ';scalafixAll dependency:fix.scala213.ConstructorProcedureSyntax@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.ParensAroundLambda@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.NullaryOverride@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.MultiArgInfix@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.Any2StringAdd@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.ExplicitNonNullaryApply@com.sandinh:scala-rewrites:0.1.10-sd ;scalafixAll dependency:fix.scala213.ExplicitNullaryEtaExpansion@com.sandinh:scala-rewrites:0.1.10-sd'
 
 doc:
 	cd $(PROJECT_NAME) && sbt '+ doc'
