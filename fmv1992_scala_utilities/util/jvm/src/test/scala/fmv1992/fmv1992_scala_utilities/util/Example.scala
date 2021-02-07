@@ -5,7 +5,7 @@ import java.io.File
 object Example {
 
   val reader01Path: String =
-    "./util/shared/src/test/resources/test_reader_01.txt"
+    "./util/jvm/src/test/resources/test_reader_01.txt"
   val reader01File: File = new File(reader01Path)
   require(reader01File.exists, reader01File.getCanonicalPath)
 

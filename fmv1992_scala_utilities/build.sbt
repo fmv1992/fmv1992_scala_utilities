@@ -31,8 +31,8 @@ lazy val commonSettings = Seq(
     .mkString(""),
   pollInterval := scala.concurrent.duration.FiniteDuration(150L, "ms"),
   // Ship resource files with each jar.
-  resourceDirectory in Compile := file(".") / "./src/main/resources",
-  resourceDirectory in Runtime := file(".") / "./src/main/resources",
+  resourceDirectory in Compile := file(".") / "./shared/src/main/resources",
+  resourceDirectory in Runtime := file(".") / "./shared/src/main/resources",
   //
   scalacOptions ++= (
     Seq(
