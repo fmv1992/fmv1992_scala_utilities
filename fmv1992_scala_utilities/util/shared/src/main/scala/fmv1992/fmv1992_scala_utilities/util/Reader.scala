@@ -9,6 +9,9 @@ import java.io.FileNotFoundException
 
 object Reader {
 
+  /** Superseded by <https://www.scala-lang.org/api/2.13.4/scala/util/Using$.html>.
+    */
+  @deprecated("Deprecated. Use `scala.util.Using` instead.")
   def loanPattern[A](
       closeable: scala.io.Source,
   )(f: scala.io.Source => A): A = {
@@ -35,11 +38,13 @@ object Reader {
   //        "Just make sure that all accesses to the resource are completed
   //        before exiting the block."
   //
+  @deprecated("Deprecated. Use `scala.io.Source.fromFile` instead.")
   def readLines(path: String): Seq[String] = {
     val f = new File(path)
     readLines(f)
   }
 
+  @deprecated("Deprecated. Use `scala.io.Source.fromFile` instead.")
   def readLines(f: File): Seq[String] = {
     val path = f.getCanonicalPath
     val bufSource: scala.io.Source = if (f.exists) {
