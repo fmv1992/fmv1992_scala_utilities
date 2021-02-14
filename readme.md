@@ -21,7 +21,7 @@ Unfortunately, [scalameta](https://repo1.maven.org/maven2/org/scalameta/) has no
 
 So one has to follow the [following](https://github.com/SemanticSugar/fmv1992_scala_utilities/blob/1d660e4e4dd24cc3db9bc5850e5547fec5684509/fmv1992_scala_utilities/build.sbt#L6):
 
-1.  Apply the `base64` encoded patch:
+1.  Apply the `base64` encoded patch to `ce6289241b6f9c780b4d79fea8c6b2bf7027f27b`:
 
     ```
     ZGlmZiAtLWdpdCBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEgYi9wcm9qZWN0L1ZlcnNpb25zLnNjYWxhCmluZGV4IGNmMWU4ZGIuLjg2ZDI0YjcgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvVmVyc2lvbnMuc2NhbGEKKysrIGIvcHJvamVjdC9WZXJzaW9ucy5zY2FsYQpAQCAtNCw3ICs0LDcgQEAgcGFja2FnZSBidWlsZAogb2JqZWN0IFZlcnNpb25zIHsKICAgdmFsIExhdGVzdFNjYWxhMjExID0gIjIuMTEuMTIiCiAgIHZhbCBMYXRlc3RTY2FsYTIxMiA9ICIyLjEyLjEyIgotICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy4zIgorICB2YWwgTGF0ZXN0U2NhbGEyMTMgPSAiMi4xMy40IgogICB2YWwgTGVnYWN5U2NhbGFWZXJzaW9ucyA9CiAgICAgTGlzdCgiMi4xMi44IiwgIjIuMTIuOSIsICIyLjEyLjEwIiwgIjIuMTIuMTEiLCAiMi4xMy4wIiwgIjIuMTMuMSIsICIyLjEzLjIiKQogfQpkaWZmIC0tZ2l0IGEvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzIGIvcHJvamVjdC9idWlsZC5wcm9wZXJ0aWVzCmluZGV4IDY1NGZlNzAuLjBiMmUwOWMgMTAwNjQ0Ci0tLSBhL3Byb2plY3QvYnVpbGQucHJvcGVydGllcworKysgYi9wcm9qZWN0L2J1aWxkLnByb3BlcnRpZXMKQEAgLTEgKzEgQEAKLXNidC52ZXJzaW9uPTEuMy4xMgorc2J0LnZlcnNpb249MS40LjcK
@@ -31,7 +31,7 @@ So one has to follow the [following](https://github.com/SemanticSugar/fmv1992_sc
 
 2.  Run `sbt publishLocal`.
 
-3.  Copy the destination to `4.3.20`, e.g.: `cp -rf 4.3.20+0-ce628924+20210207-1837-SNAPSHOT 4.3.20`.
+3.  Copy the destination to `4.3.20`, e.g.: `cp -rf 4.3.20+*-ce628924* 4.3.20`.
 
 
 ## Sub-projects
