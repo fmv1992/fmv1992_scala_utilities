@@ -1,5 +1,9 @@
 package fmv1992.fmv1992_scala_utilities.util
 
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestUtilities extends AnyFunSuite {
@@ -19,6 +23,26 @@ class TestUtilities extends AnyFunSuite {
   test("Test scala version.") {
     val (major: Int, minor: Int, patch: Int) = Utilities.getScalaVersion
     assert(major >= 2)
+  }
+
+  test("Test `findAll*`.") {
+    val pwd = sys.env.get("PWD").getOrElse(throw new Exception())
+    val allNodes =
+      Utilities.findAllNodes(pwd)
+
+    val knownDir = Paths.get(pwd, "project")
+    val knownFiles =
+      allNodes.filter(_.endsWith(this.getClass.getSimpleName + ".scala"))
+    assert(knownFiles.length == 1)
+    val knownFile = knownFiles(0)
+
+    // Assert that it contains a known file, a known directory and not the
+    // calling argument.
+    assert(allNodes.contains(knownFile))
+    assert(allNodes.contains(knownDir))
+    assert(!allNodes.contains(pwd))
+
+    // Assert that this is lazily evaluated.
   }
 
 }

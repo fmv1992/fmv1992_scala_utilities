@@ -4,6 +4,12 @@
 // IMPORTANT: see "projectnote01".
 package fmv1992.fmv1992_scala_utilities.util
 
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+
+import scala.jdk.CollectionConverters._
+
 object Utilities {
 
   def getContiguousElementsIndexes[A](l: Seq[A]): Seq[(Int, Int)] = {
@@ -56,6 +62,38 @@ object Utilities {
       case Array(a, b, c) => (a, b, c)
       case _              => throw new Exception(vint.toString)
     }
+  }
+
+  // ???: A `Seq` is not ideal here. A `Set` (with lazy evaluation) is better.
+
+  private def isFile(p: Path): Boolean = !Files.isDirectory(p)
+
+  private def isDirectory(p: Path): Boolean = !isFile(p)
+
+  def findAllNodes(s: String): Seq[Path] = findAllNodes(Paths.get(s))
+
+  def findAllNodes(pa: Path): Seq[Path] = {
+    def go(pb: Path): Seq[Path] = {
+      if (isFile(pb)) {
+        return LazyList(pb)
+      } else {
+        val nodes: LazyList[Path] = Files.list(pb).iterator.asScala.to(LazyList)
+        return nodes.filter(isFile) ++ nodes.filter(isDirectory) ++ nodes
+          .filter(isDirectory)
+          .map(go(_))
+          .reduceOption(_ ++ _)
+          .getOrElse(LazyList.empty)
+      }
+    }
+    go(pa).map(_.toAbsolutePath)
+  }
+
+  def findAllFiles(pa: Path): Seq[Path] = {
+    return findAllNodes(pa).filter(!Files.isDirectory(_))
+  }
+
+  def findAllDirectories(pa: Path): Seq[Path] = {
+    return findAllNodes(pa).filter(Files.isDirectory(_))
   }
 
 }
