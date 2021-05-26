@@ -13,8 +13,12 @@ val versionsNative = Seq(scala213)
 inThisBuild(
   List(
     scalaVersion := scala213,
-    scalafixScalaBinaryVersion :=
-      CrossVersion.binaryScalaVersion(scalaVersion.value),
+    semanticdbEnabled := true,
+    semanticdbOptions += "-P:semanticdb:synthetics:on",
+    semanticdbVersion := scalafixSemanticdb.revision,
+    scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(
+      scalaVersion.value,
+    ),
   ),
 )
 
@@ -55,7 +59,8 @@ lazy val commonSettings = Seq(
   },
   // Scalafix.
   // <https://scalacenter.github.io/scalafix/docs/users/installation.html>.
-  libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.24",
+  /* libraryDependencies += "org.scalameta" % "scalameta" % "4.3.24",*/
+  libraryDependencies += "org.scalameta" % "semanticdb-scalac-core_2.13.4" % "4.4.6",
   semanticdbEnabled := true,
   semanticdbOptions += "-P:semanticdb:synthetics:on",
   semanticdbVersion := scalafixSemanticdb.revision,
