@@ -92,7 +92,7 @@ nativelink:
         | grep -E 'Native$$' \
         | sed -E 's/.* (\w+Native)/\1/g' \
         | sort -u \
-        | parallel --verbose --jobs 1 --halt now,fail=1 -I % -n 1 -- sbt '%/nativeLink'
+        | parallel --verbose --jobs 1 --halt never,fail=1 -I % -n 1 -- sbt '%/nativeLink'
 
 compile: $(SBT_FILES) $(SCALA_FILES)
 	cd $(PROJECT_NAME) && sbt '+ compile'
