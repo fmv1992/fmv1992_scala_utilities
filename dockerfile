@@ -1,5 +1,7 @@
 FROM ubuntu:18.04@sha256:b58746c8a89938b8c9f5b77de3b8cf1fe78210c696ab03a1442e235eea65d84f
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 ARG project_name
 ENV PROJECT_NAME $project_name
 
