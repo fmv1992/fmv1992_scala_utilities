@@ -23,6 +23,9 @@ inThisBuild(
   ),
 )
 
+def excludeSpecs2(module: ModuleID): ModuleID =
+  module.excludeAll(ExclusionRule(organization = "com.sandinh"))
+
 // coverageMinimum := 90
 // coverageFailOnMinimum := true
 
@@ -117,6 +120,7 @@ lazy val commonSettings = Seq(
   target := {
     (ThisBuild / baseDirectory).value / "target" / thisProject.value.id
   },
+libraryDependencies ~= (_.map(excludeSpecs2)),
 )
 
 lazy val scalaNativeSettings = Seq(
@@ -133,9 +137,9 @@ lazy val commonDependencies = Seq(
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.4-M1" % Test,
   libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.4.0",
   // Scala rewrites: https://index.scala-lang.org/scala/scala-rewrites/scala-rewrites/0.1.2?target=_2.13.
-  libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
+  // libraryDependencies += "com.sandinh" %% "scala-rewrites" % "0.1.10-sd",
   //
-  scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
+  // scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.2",
   Compile / scalacOptions += "",
 )
 
