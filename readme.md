@@ -10,6 +10,12 @@
 
 This project illustrates my journey in learning Scala and trying to deploy my first project for other people to use.
 
+* * *
+
+This has not seen development for a log time and therefore it is archived (2022-06-11).
+
+* * *
+
 ## How to compile
 
 Unfortunately, [scalameta](https://repo1.maven.org/maven2/org/scalameta/) has not not published a version of `semanticdb` that is `2.13.4` compatible:
